@@ -1,341 +1,319 @@
 // upgradeManager.js – Verwaltet permanente Spieler-Upgrades die über alle Spielrunden erhalten bleiben
 
-// Definitionen aller verfügbaren Upgrade-Kategorien mit ihren Stufen
-const UPGRADE_DEFS = { // Objekt mit allen Upgrade-Definitionen
-  startgeld: { // Kategorie: Extra-Startmünzen
-    name:   'Startkapital', // Anzeigename
-    symbol: '💰',           // Symbol für das Icon
-    farbe:  [220, 180, 40], // Farbe der Karte (RGB)
-    stufen: [ // Drei Upgrade-Stufen
-      { kosten: 50,  beschreibung: '+50 Startmünzen',  kurztext: '+50 🪙' }, // Stufe 1
-      { kosten: 150, beschreibung: '+150 Startmünzen', kurztext: '+150 🪙' }, // Stufe 2
-      { kosten: 300, beschreibung: '+300 Startmünzen', kurztext: '+300 🪙' }  // Stufe 3
+const UPGRADE_DEFS = {
+  startgeld: {
+    name:   'Startkapital',
+    symbol: '💰',
+    farbe:  [220, 180, 40],
+    stufen: [
+      { kosten: 50,  beschreibung: '+50 Startmünzen',  kurztext: '+50 🪙' },
+      { kosten: 150, beschreibung: '+150 Startmünzen', kurztext: '+150 🪙' },
+      { kosten: 300, beschreibung: '+300 Startmünzen', kurztext: '+300 🪙' }
     ]
   },
-  leben: { // Kategorie: Extra-Startleben
-    name:   'Zähigkeit',   // Anzeigename
-    symbol: '❤️',          // Symbol
-    farbe:  [200, 60, 60], // Rote Farbe
-    stufen: [ // Drei Stufen
-      { kosten: 75,  beschreibung: '+2 Startleben',  kurztext: '+2 ❤️' }, // Stufe 1
-      { kosten: 200, beschreibung: '+5 Startleben',  kurztext: '+5 ❤️' }, // Stufe 2
-      { kosten: 400, beschreibung: '+10 Startleben', kurztext: '+10 ❤️' } // Stufe 3
+  leben: {
+    name:   'Zähigkeit',
+    symbol: '❤️',
+    farbe:  [200, 60, 60],
+    stufen: [
+      { kosten: 75,  beschreibung: '+2 Startleben',  kurztext: '+2 ❤️' },
+      { kosten: 200, beschreibung: '+5 Startleben',  kurztext: '+5 ❤️' },
+      { kosten: 400, beschreibung: '+10 Startleben', kurztext: '+10 ❤️' }
     ]
   },
-  rabatt: { // Kategorie: Rabatt auf Turmkosten
-    name:   'Sparlehrer', // Anzeigename
-    symbol: '🏷️',         // Symbol
-    farbe:  [60, 140, 200], // Blaue Farbe
-    stufen: [ // Drei Stufen
-      { kosten: 100, beschreibung: '10% Rabatt auf alle Türme', kurztext: '-10% Kosten' }, // Stufe 1
-      { kosten: 250, beschreibung: '20% Rabatt auf alle Türme', kurztext: '-20% Kosten' }, // Stufe 2
-      { kosten: 500, beschreibung: '30% Rabatt auf alle Türme', kurztext: '-30% Kosten' }  // Stufe 3
+  rabatt: {
+    name:   'Sparlehrer',
+    symbol: '🏷️',
+    farbe:  [60, 140, 200],
+    stufen: [
+      { kosten: 100, beschreibung: '10% Rabatt auf alle Türme', kurztext: '-10% Kosten' },
+      { kosten: 250, beschreibung: '20% Rabatt auf alle Türme', kurztext: '-20% Kosten' },
+      { kosten: 500, beschreibung: '30% Rabatt auf alle Türme', kurztext: '-30% Kosten' }
     ]
   },
-  muenzbonus: { // Kategorie: Bonus-Münzen pro geplatztem Ballon
-    name:   'Schatzsucher', // Anzeigename
-    symbol: '🪙',           // Symbol
-    farbe:  [80, 180, 80],  // Grüne Farbe
-    stufen: [ // Drei Stufen
-      { kosten: 80,  beschreibung: '+10% Münzen pro Ballon', kurztext: 'x1.10 🪙' }, // Stufe 1
-      { kosten: 200, beschreibung: '+25% Münzen pro Ballon', kurztext: 'x1.25 🪙' }, // Stufe 2
-      { kosten: 450, beschreibung: '+50% Münzen pro Ballon', kurztext: 'x1.50 🪙' }  // Stufe 3
+  muenzbonus: {
+    name:   'Schatzsucher',
+    symbol: '🪙',
+    farbe:  [80, 180, 80],
+    stufen: [
+      { kosten: 80,  beschreibung: '+10% Münzen pro Ballon', kurztext: 'x1.10 🪙' },
+      { kosten: 200, beschreibung: '+25% Münzen pro Ballon', kurztext: 'x1.25 🪙' },
+      { kosten: 450, beschreibung: '+50% Münzen pro Ballon', kurztext: 'x1.50 🪙' }
     ]
   }
 };
 
-class UpgradeManager { // Klasse für das permanente Upgrade-System
-  constructor() { // Konstruktor: lädt gespeicherte Upgrade-Daten
-    this.schluessel = 'lvs_upgrades_v2'; // localStorage-Schlüssel
-    this.daten = this._laden(); // Gespeicherte Daten laden
-    this.bestaetigungsDialog = null; // Aktiver Bestätigungs-Dialog (null = kein Dialog)
-    this.kaufErfolgTimer = 0; // Timer für die "Kauf erfolgreich"-Animation
-    this.kaufErfolgKat = ''; // Kategorie des letzten erfolgreichen Kaufs
+class UpgradeManager {
+  constructor() {
+    this.schluessel = 'lvs_upgrades_v2';
+    this.daten = this._laden();
+    this.bestaetigungsDialog = null;
+    this.kaufErfolgTimer = 0;
+    this.kaufErfolgKat = '';
   }
 
-  _standard() { // Standard-Datenstruktur zurückgeben
-    return { // Leere Datenstruktur
-      gesamtMuenzen: 0, // Gesamt verdiente Münzen über alle Spielrunden
-      gekauft: { // Welche Upgrade-Stufen gekauft wurden (0 = keine)
-        startgeld:  0, // Startkapital-Stufe
-        leben:      0, // Zähigkeit-Stufe
-        rabatt:     0, // Sparlehrer-Stufe
-        muenzbonus: 0  // Schatzsucher-Stufe
+  _standard() {
+    return {
+      gesamtMuenzen: 0,
+      gekauft: {
+        startgeld:  0,
+        leben:      0,
+        rabatt:     0,
+        muenzbonus: 0
       }
     };
   }
 
-  _laden() { // Upgrade-Daten aus localStorage laden
-    let json = localStorage.getItem(this.schluessel); // JSON-String aus localStorage
-    if (!json) return this._standard(); // Kein Eintrag: Standard zurückgeben
-    try { // Parsen versuchen
-      let parsed = JSON.parse(json); // JSON parsen
-      let std = this._standard(); // Standard-Objekt als Basis
-      std.gesamtMuenzen = parsed.gesamtMuenzen || 0; // Gesamtmünzen übernehmen
-      std.gekauft = Object.assign(std.gekauft, parsed.gekauft || {}); // Käufe übernehmen
-      return std; // Zusammengesetztes Objekt zurückgeben
-    } catch (e) { // Fehler beim Parsen
-      return this._standard(); // Standard als Fallback
+  _laden() {
+    try {
+      let json = localStorage.getItem(this.schluessel);
+      if (!json) return this._standard();
+      let parsed = JSON.parse(json);
+      let std = this._standard();
+      std.gesamtMuenzen = parsed.gesamtMuenzen || 0;
+      std.gekauft = Object.assign(std.gekauft, parsed.gekauft || {});
+      return std;
+    } catch (e) {
+      return this._standard();
     }
   }
 
-  _speichern() { // Upgrade-Daten in localStorage speichern
-    localStorage.setItem(this.schluessel, JSON.stringify(this.daten)); // Aktuellen Stand speichern
+  _speichern() {
+    try { localStorage.setItem(this.schluessel, JSON.stringify(this.daten)); } catch (e) {}
   }
 
-  gesamtMuenzenErhoehen(betrag) { // Erhöht den Gesamt-Münzen-Zähler (wird beim Verdienen aufgerufen)
-    this.daten.gesamtMuenzen += Math.floor(betrag); // Betrag hinzufügen (nur ganze Zahlen)
-    this._speichern(); // Sofort speichern
+  gesamtMuenzenErhoehen(betrag) {
+    this.daten.gesamtMuenzen += Math.floor(betrag);
+    this._speichern();
   }
 
-  _ausgegeben() { // Berechnet wie viele Münzen insgesamt für Upgrades ausgegeben wurden
-    let summe = 0; // Summenvariable
-    for (let kat in this.daten.gekauft) { // Alle Kategorien durchgehen
-      let stufe = this.daten.gekauft[kat]; // Gekaufte Stufe
-      let def = UPGRADE_DEFS[kat]; // Definition dieser Kategorie
-      if (!def) continue; // Unbekannte Kategorie überspringen
-      for (let i = 0; i < stufe; i++) { // Alle gekauften Stufen durchgehen
-        summe += def.stufen[i].kosten; // Kosten addieren
+  _ausgegeben() {
+    let summe = 0;
+    for (let kat in this.daten.gekauft) {
+      let stufe = this.daten.gekauft[kat];
+      let def = UPGRADE_DEFS[kat];
+      if (!def) continue;
+      for (let i = 0; i < stufe; i++) {
+        summe += def.stufen[i].kosten;
       }
     }
-    return summe; // Gesamtausgaben zurückgeben
+    return summe;
   }
 
-  verfuegbareMuenzen() { // Verfügbare Münzen = Gesamtmünzen minus Ausgaben
-    return Math.max(0, this.daten.gesamtMuenzen - this._ausgegeben()); // Nie negativ
+  verfuegbareMuenzen() {
+    return Math.max(0, this.daten.gesamtMuenzen - this._ausgegeben());
   }
 
-  naechsteKosten(kategorie) { // Kosten der nächsten Upgrade-Stufe für eine Kategorie
-    let stufe = this.daten.gekauft[kategorie]; // Aktuelle Stufe
-    let def = UPGRADE_DEFS[kategorie]; // Definition
-    if (!def || stufe >= def.stufen.length) return null; // Max-Stufe oder ungültig: null
-    return def.stufen[stufe].kosten; // Kosten der nächsten Stufe zurückgeben
+  naechsteKosten(kategorie) {
+    let stufe = this.daten.gekauft[kategorie];
+    let def = UPGRADE_DEFS[kategorie];
+    if (!def || stufe >= def.stufen.length) return null;
+    return def.stufen[stufe].kosten;
   }
 
-  kaufen(kategorie) { // Upgrade kaufen: gibt true zurück wenn erfolgreich
-    let stufe = this.daten.gekauft[kategorie]; // Aktuelle Stufe
-    let def = UPGRADE_DEFS[kategorie]; // Definition
-    if (!def || stufe >= def.stufen.length) return false; // Max-Stufe oder ungültig
-    let kosten = def.stufen[stufe].kosten; // Kosten der nächsten Stufe
-    if (this.verfuegbareMuenzen() < kosten) return false; // Nicht genug Münzen
-    this.daten.gekauft[kategorie]++; // Stufe erhöhen
-    this._speichern(); // Kauf speichern
-    this.kaufErfolgTimer = 80; // Erfolgs-Animation starten (80 Frames ≈ 1,3 Sekunden)
-    this.kaufErfolgKat = kategorie; // Kategorie für Animation merken
-    return true; // Erfolg melden
+  kaufen(kategorie) {
+    let stufe = this.daten.gekauft[kategorie];
+    let def = UPGRADE_DEFS[kategorie];
+    if (!def || stufe >= def.stufen.length) return false;
+    let kosten = def.stufen[stufe].kosten;
+    if (this.verfuegbareMuenzen() < kosten) return false;
+    this.daten.gekauft[kategorie]++;
+    this._speichern();
+    this.kaufErfolgTimer = 80;
+    this.kaufErfolgKat = kategorie;
+    return true;
   }
 
-  // ─── Getter für Spiel-Boni ────────────────────────────────────────────────
-
-  getStartMuenzen() { // Gibt die zusätzlichen Startmünzen zurück
-    const boni = [50, 150, 300]; // Boni pro Stufe
-    let stufe = this.daten.gekauft['startgeld']; // Aktuelle Stufe
-    return stufe > 0 ? boni[stufe - 1] : 0; // Bonus zurückgeben (0 wenn keine Stufe)
+  getStartMuenzen() {
+    const boni = [50, 150, 300];
+    let stufe = this.daten.gekauft['startgeld'];
+    return stufe > 0 ? boni[stufe - 1] : 0;
   }
 
-  getStartLeben() { // Gibt die zusätzlichen Startleben zurück
-    const boni = [2, 5, 10]; // Boni pro Stufe
-    let stufe = this.daten.gekauft['leben']; // Aktuelle Stufe
-    return stufe > 0 ? boni[stufe - 1] : 0; // Bonus zurückgeben
+  getStartLeben() {
+    const boni = [2, 5, 10];
+    let stufe = this.daten.gekauft['leben'];
+    return stufe > 0 ? boni[stufe - 1] : 0;
   }
 
-  getRabatt() { // Gibt den Turmkosten-Rabatt als Dezimalzahl zurück (0.0 bis 0.3)
-    const rabatte = [0.10, 0.20, 0.30]; // Rabatt pro Stufe
-    let stufe = this.daten.gekauft['rabatt']; // Aktuelle Stufe
-    return stufe > 0 ? rabatte[stufe - 1] : 0; // Rabatt zurückgeben
+  getRabatt() {
+    const rabatte = [0.10, 0.20, 0.30];
+    let stufe = this.daten.gekauft['rabatt'];
+    return stufe > 0 ? rabatte[stufe - 1] : 0;
   }
 
-  getMuenzFaktor() { // Gibt den Münz-Multiplikator zurück (1.0 = kein Bonus)
-    const faktoren = [1.10, 1.25, 1.50]; // Faktor pro Stufe
-    let stufe = this.daten.gekauft['muenzbonus']; // Aktuelle Stufe
-    return stufe > 0 ? faktoren[stufe - 1] : 1.0; // Faktor zurückgeben
+  getMuenzFaktor() {
+    const faktoren = [1.10, 1.25, 1.50];
+    let stufe = this.daten.gekauft['muenzbonus'];
+    return stufe > 0 ? faktoren[stufe - 1] : 1.0;
   }
 
-  // ─── UI-Logik (wird von menuScene genutzt) ───────────────────────────────
-
-  upgradeKlick(mx, my) { // Verarbeitet einen Klick im Upgrade-Bildschirm
-    // Wird von menuScene.js aufgerufen – hier wird der Bestätigungs-Dialog geöffnet
-    let kategorien = Object.keys(UPGRADE_DEFS); // Alle Kategorien
-    let karten = this._kartenPositionen(); // Positionen der Karten berechnen
-    for (let i = 0; i < kategorien.length; i++) { // Alle Karten prüfen
-      let kat = kategorien[i]; // Aktuelle Kategorie
-      let k = karten[i]; // Kartenposition
-      let stufe = this.daten.gekauft[kat]; // Aktuelle Stufe
-      let def = UPGRADE_DEFS[kat]; // Definition
-      if (stufe >= def.stufen.length) continue; // Max-Stufe: nicht klickbar
-      let kosten = def.stufen[stufe].kosten; // Nächste Kosten
-      // Kaufen-Button-Bereich prüfen
-      if (mx >= k.x + 10 && mx <= k.x + k.b - 10 && my >= k.y + k.h - 45 && my <= k.y + k.h - 10) { // Kauf-Button getroffen?
-        if (this.verfuegbareMuenzen() >= kosten) { // Genug Münzen?
-          this.bestaetigungsDialog = { kategorie: kat, kosten: kosten, name: def.name }; // Dialog öffnen
+  upgradeKlick(mx, my) {
+    let kategorien = Object.keys(UPGRADE_DEFS);
+    let karten = this._kartenPositionen();
+    for (let i = 0; i < kategorien.length; i++) {
+      let kat = kategorien[i];
+      let k = karten[i];
+      let stufe = this.daten.gekauft[kat];
+      let def = UPGRADE_DEFS[kat];
+      if (stufe >= def.stufen.length) continue;
+      let kosten = def.stufen[stufe].kosten;
+      if (mx >= k.x + 10 && mx <= k.x + k.b - 10 && my >= k.y + k.h - 45 && my <= k.y + k.h - 10) {
+        if (this.verfuegbareMuenzen() >= kosten) {
+          this.bestaetigungsDialog = { kategorie: kat, kosten: kosten, name: def.name };
         }
-        return; // Nichts weiteres
+        return;
       }
     }
-    // Bestätigungs-Dialog: Ja/Nein
-    if (this.bestaetigungsDialog) { // Dialog ist offen?
-      if (mx >= 340 && mx <= 480 && my >= 340 && my <= 378) { // "Ja, kaufen"-Button
-        if (this.kaufen(this.bestaetigungsDialog.kategorie)) { // Kauf versuchen
-          if (window.gs && window.gs.sound) gs.sound.upgradeGekauft(); // Kauf-Sound
+    if (this.bestaetigungsDialog) {
+      if (mx >= 340 && mx <= 480 && my >= 340 && my <= 378) {
+        if (this.kaufen(this.bestaetigungsDialog.kategorie)) {
+          if (window.gs && window.gs.sound) gs.sound.upgradeGekauft();
         }
-        this.bestaetigungsDialog = null; // Dialog schließen
-      } else if (mx >= 490 && mx <= 620 && my >= 340 && my <= 378) { // "Abbrechen"-Button
-        this.bestaetigungsDialog = null; // Dialog schließen
+        this.bestaetigungsDialog = null;
+      } else if (mx >= 490 && mx <= 620 && my >= 340 && my <= 378) {
+        this.bestaetigungsDialog = null;
       }
     }
   }
 
-  _kartenPositionen() { // Berechnet die Positionen aller Upgrade-Karten im 2x2-Raster
-    return [ // Array mit Kartenkoordinaten
-      { x: 100, y: 170, b: 350, h: 200 }, // Karte 1 (oben links)
-      { x: 510, y: 170, b: 350, h: 200 }, // Karte 2 (oben rechts)
-      { x: 100, y: 390, b: 350, h: 200 }, // Karte 3 (unten links)
-      { x: 510, y: 390, b: 350, h: 200 }  // Karte 4 (unten rechts)
+  _kartenPositionen() {
+    return [
+      { x: 100, y: 170, b: 350, h: 200 },
+      { x: 510, y: 170, b: 350, h: 200 },
+      { x: 100, y: 390, b: 350, h: 200 },
+      { x: 510, y: 390, b: 350, h: 200 }
     ];
   }
 
-  drawUpgradeScreen() { // Zeichnet den kompletten Upgrade-Bildschirm
-    let kategorien = Object.keys(UPGRADE_DEFS); // Alle Kategorien
-    let karten = this._kartenPositionen(); // Kartenposition berechnen
-    for (let i = 0; i < kategorien.length; i++) { // Alle Karten zeichnen
-      this._karteZeichnen(kategorien[i], karten[i]); // Einzelne Karte zeichnen
+  drawUpgradeScreen() {
+    let kategorien = Object.keys(UPGRADE_DEFS);
+    let karten = this._kartenPositionen();
+    for (let i = 0; i < kategorien.length; i++) {
+      this._karteZeichnen(kategorien[i], karten[i]);
     }
-    if (this.kaufErfolgTimer > 0) this.kaufErfolgTimer--; // Erfolgs-Timer herunterzählen
-    if (this.bestaetigungsDialog) this._dialogZeichnen(); // Bestätigungs-Dialog zeichnen
+    if (this.kaufErfolgTimer > 0) this.kaufErfolgTimer--;
+    if (this.bestaetigungsDialog) this._dialogZeichnen();
   }
 
-  _karteZeichnen(kategorie, k) { // Eine Upgrade-Karte zeichnen
-    let def = UPGRADE_DEFS[kategorie]; // Definition laden
-    let stufe = this.daten.gekauft[kategorie]; // Aktuelle Stufe
-    let maxStufe = def.stufen.length; // Maximale Stufe
-    let farbe = def.farbe; // Kartenfarbe
-    let hatMehr = stufe < maxStufe; // Gibt es weitere Stufen?
-    let naechsteKosten = hatMehr ? def.stufen[stufe].kosten : 0; // Kosten der nächsten Stufe
-    let kannKaufen = hatMehr && this.verfuegbareMuenzen() >= naechsteKosten; // Kaufbar?
-    let istErfolgKarte = this.kaufErfolgKat === kategorie && this.kaufErfolgTimer > 0; // Erfolgsanimation?
-    // Karten-Hintergrund
-    let helligkeit = istErfolgKarte ? 80 : 25; // Heller bei Erfolgsanimation
-    fill(helligkeit, helligkeit + 8, helligkeit + 15); // Dunkler Hintergrund
-    stroke(farbe[0] * 0.6, farbe[1] * 0.6, farbe[2] * 0.6); // Gedämpfte Konturfarbe
-    strokeWeight(istErfolgKarte ? 3 : 1.5); // Dickere Kontur bei Erfolg
-    rect(k.x, k.y, k.b, k.h, 10); // Karten-Rechteck
-    // Symbol und Name
-    noStroke(); // Keine Kontur
-    fill(farbe[0], farbe[1], farbe[2]); // Kategoriefarbe
-    textAlign(LEFT, TOP); // Links oben
-    textSize(22); // Große Schrift für Symbol
-    text(def.symbol, k.x + 14, k.y + 12); // Symbol anzeigen
-    textSize(16); // Name etwas kleiner
-    textStyle(BOLD); // Fett
-    text(def.name, k.x + 44, k.y + 14); // Name anzeigen
-    textStyle(NORMAL); // Normal zurücksetzen
-    // Stufen-Punkte anzeigen (3 Kreise)
-    for (let i = 0; i < maxStufe; i++) { // Alle Stufen-Indikatoren
-      let kreisX = k.x + k.b - 20 - (maxStufe - 1 - i) * 22; // X-Position von rechts
-      let kreisY = k.y + 22; // Y-Position oben rechts
-      if (i < stufe) { // Gekaufte Stufe
-        fill(farbe[0], farbe[1], farbe[2]); // Volle Farbe für gekaufte Stufen
-      } else { // Noch nicht gekaufte Stufe
-        fill(50, 50, 65); // Dunkel für nicht gekaufte
+  _karteZeichnen(kategorie, k) {
+    let def = UPGRADE_DEFS[kategorie];
+    let stufe = this.daten.gekauft[kategorie];
+    let maxStufe = def.stufen.length;
+    let farbe = def.farbe;
+    let hatMehr = stufe < maxStufe;
+    let naechsteKosten = hatMehr ? def.stufen[stufe].kosten : 0;
+    let kannKaufen = hatMehr && this.verfuegbareMuenzen() >= naechsteKosten;
+    let istErfolgKarte = this.kaufErfolgKat === kategorie && this.kaufErfolgTimer > 0;
+    let helligkeit = istErfolgKarte ? 80 : 25;
+    fill(helligkeit, helligkeit + 8, helligkeit + 15);
+    stroke(farbe[0] * 0.6, farbe[1] * 0.6, farbe[2] * 0.6);
+    strokeWeight(istErfolgKarte ? 3 : 1.5);
+    rect(k.x, k.y, k.b, k.h, 10);
+    noStroke();
+    fill(farbe[0], farbe[1], farbe[2]);
+    textAlign(LEFT, TOP);
+    textSize(22);
+    text(def.symbol, k.x + 14, k.y + 12);
+    textSize(16);
+    textStyle(BOLD);
+    text(def.name, k.x + 44, k.y + 14);
+    textStyle(NORMAL);
+    for (let i = 0; i < maxStufe; i++) {
+      let kreisX = k.x + k.b - 20 - (maxStufe - 1 - i) * 22;
+      let kreisY = k.y + 22;
+      if (i < stufe) {
+        fill(farbe[0], farbe[1], farbe[2]);
+      } else {
+        fill(50, 50, 65);
       }
-      noStroke(); // Keine Kontur
-      ellipse(kreisX, kreisY, 14, 14); // Stufen-Kreis zeichnen
+      noStroke();
+      ellipse(kreisX, kreisY, 14, 14);
     }
-    // Aktuelle Stufen-Beschreibung
-    fill(160, 165, 185); // Helles Grau
-    textSize(12); // Kleine Schrift
-    textAlign(LEFT, TOP); // Links oben
-    if (stufe > 0) { // Mindestens eine Stufe gekauft?
-      let aktBeschr = def.stufen[stufe - 1].beschreibung; // Aktuelle Beschreibung
-      text('Aktiv: ' + aktBeschr, k.x + 14, k.y + 50); // Aktive Beschreibung anzeigen
-    } else { // Noch nichts gekauft
-      text('Noch nicht aktiviert', k.x + 14, k.y + 50); // Hinweis
+    fill(160, 165, 185);
+    textSize(12);
+    textAlign(LEFT, TOP);
+    if (stufe > 0) {
+      text('Aktiv: ' + def.stufen[stufe - 1].beschreibung, k.x + 14, k.y + 50);
+    } else {
+      text('Noch nicht aktiviert', k.x + 14, k.y + 50);
     }
-    // Nächste Stufe Beschreibung
-    if (hatMehr) { // Weitere Stufe verfügbar?
-      fill(140, 185, 140); // Hellgrün für nächste Stufe
-      text('Nächste Stufe: ' + def.stufen[stufe].beschreibung, k.x + 14, k.y + 70); // Nächste Beschreibung
+    if (hatMehr) {
+      fill(140, 185, 140);
+      text('Nächste Stufe: ' + def.stufen[stufe].beschreibung, k.x + 14, k.y + 70);
     }
-    // Kaufen-Button
-    if (hatMehr) { // Kaufen-Button nur wenn nicht Max-Stufe
-      let btnFarbe = kannKaufen ? farbe : [50, 50, 60]; // Farbe je nach Kaufbarkeit
-      fill(btnFarbe[0] * 0.7, btnFarbe[1] * 0.7, btnFarbe[2] * 0.7); // Gedämpfte Button-Farbe
-      stroke(btnFarbe[0], btnFarbe[1], btnFarbe[2]); // Kontur in voller Farbe
-      strokeWeight(1.5); // Konturstärke
-      rect(k.x + 10, k.y + k.h - 45, k.b - 20, 32, 6); // Kaufen-Button
-      noStroke(); // Keine Kontur für Text
-      fill(kannKaufen ? 255 : 120); // Weißer Text wenn kaufbar, grau wenn nicht
-      textAlign(CENTER, CENTER); // Zentriert
-      textSize(13); // Schriftgröße
-      textStyle(BOLD); // Fett
-      text(T('kaufen') + '  🪙' + naechsteKosten, k.x + k.b / 2, k.y + k.h - 29); // Button-Text mit Preis
-      textStyle(NORMAL); // Normal
-    } else { // Max-Stufe erreicht
-      noStroke(); // Keine Kontur
-      fill(farbe[0], farbe[1], farbe[2]); // Kategoriefarbe
-      textAlign(CENTER, CENTER); // Zentriert
-      textSize(13); // Schriftgröße
-      textStyle(BOLD); // Fett
-      text(T('maxStufe'), k.x + k.b / 2, k.y + k.h - 29); // "Max Stufe" anzeigen
-      textStyle(NORMAL); // Normal
+    if (hatMehr) {
+      let btnFarbe = kannKaufen ? farbe : [50, 50, 60];
+      fill(btnFarbe[0] * 0.7, btnFarbe[1] * 0.7, btnFarbe[2] * 0.7);
+      stroke(btnFarbe[0], btnFarbe[1], btnFarbe[2]);
+      strokeWeight(1.5);
+      rect(k.x + 10, k.y + k.h - 45, k.b - 20, 32, 6);
+      noStroke();
+      fill(kannKaufen ? 255 : 120);
+      textAlign(CENTER, CENTER);
+      textSize(13);
+      textStyle(BOLD);
+      text(T('kaufen') + '  🪙' + naechsteKosten, k.x + k.b / 2, k.y + k.h - 29);
+      textStyle(NORMAL);
+    } else {
+      noStroke();
+      fill(farbe[0], farbe[1], farbe[2]);
+      textAlign(CENTER, CENTER);
+      textSize(13);
+      textStyle(BOLD);
+      text(T('maxStufe'), k.x + k.b / 2, k.y + k.h - 29);
+      textStyle(NORMAL);
     }
-    // Erfolgsanimation (kurzes Aufleuchten der Karte)
-    if (istErfolgKarte) { // Karte leuchtet auf?
-      let alpha = map(this.kaufErfolgTimer, 0, 80, 0, 100); // Transparenz abnehmen
-      noStroke(); // Keine Kontur
-      fill(farbe[0], farbe[1], farbe[2], alpha); // Aufleuchten in Kategoriefarbe
-      rect(k.x, k.y, k.b, k.h, 10); // Leuchtendes Overlay
+    if (istErfolgKarte) {
+      let alpha = map(this.kaufErfolgTimer, 0, 80, 0, 100);
+      noStroke();
+      fill(farbe[0], farbe[1], farbe[2], alpha);
+      rect(k.x, k.y, k.b, k.h, 10);
     }
   }
 
-  _dialogZeichnen() { // Bestätigungs-Dialog zeichnen
-    let d = this.bestaetigungsDialog; // Dialog-Daten holen
-    // Halbtransparenter Overlay
-    noStroke(); // Keine Kontur
-    fill(0, 0, 0, 160); // Dunkler Overlay
-    rect(0, 0, 960, 640); // Gesamten Bildschirm abdunkeln
-    // Dialog-Box
-    fill(25, 25, 45); // Dunkles Blau
-    stroke(100, 100, 180); // Helle Kontur
-    strokeWeight(2); // Konturstärke
-    rect(300, 260, 360, 160, 12); // Dialog-Rechteck
-    // Dialog-Titel
-    noStroke(); // Keine Kontur
-    fill(200, 200, 255); // Hellblau
-    textAlign(CENTER, TOP); // Oben zentriert
-    textSize(18); // Schriftgröße
-    textStyle(BOLD); // Fett
-    text(T('bestaetigen'), 480, 276); // Dialog-Titel anzeigen
-    textStyle(NORMAL); // Normal
-    // Upgrade-Name und Kosten
-    fill(180, 180, 220); // Helles Grau
-    textSize(14); // Schrift
-    text(d.name + ' – 🪙' + d.kosten, 480, 304); // Name und Kosten anzeigen
-    // "Ja"-Button
-    let mausx = skMx(); // Skalierte Mausposition X
-    let mausy = skMy(); // Skalierte Mausposition Y
-    let jaHover = mausx >= 340 && mausx <= 480 && mausy >= 340 && mausy <= 378; // Hover prüfen
-    fill(jaHover ? color(80, 180, 80) : color(50, 140, 50)); // Grün bei Hover
-    stroke(100, 200, 100); // Grüne Kontur
-    strokeWeight(1.5); // Konturstärke
-    rect(340, 340, 140, 38, 8); // Ja-Button
-    noStroke(); // Keine Kontur
-    fill(255); // Weißer Text
-    textSize(13); // Schrift
-    textStyle(BOLD); // Fett
-    text(T('ja'), 410, 359); // Ja-Button-Text
-    textStyle(NORMAL); // Normal
-    // "Nein"-Button
-    let neinHover = mausx >= 490 && mausx <= 620 && mausy >= 340 && mausy <= 378; // Hover prüfen
-    fill(neinHover ? color(160, 60, 60) : color(120, 40, 40)); // Rot bei Hover
-    stroke(180, 80, 80); // Rote Kontur
-    strokeWeight(1.5); // Konturstärke
-    rect(490, 340, 130, 38, 8); // Nein-Button
-    noStroke(); // Keine Kontur
-    fill(255); // Weißer Text
-    textSize(13); // Schrift
-    textStyle(BOLD); // Fett
-    text(T('nein'), 555, 359); // Nein-Button-Text
-    textStyle(NORMAL); // Normal
+  _dialogZeichnen() {
+    let d = this.bestaetigungsDialog;
+    noStroke();
+    fill(0, 0, 0, 160);
+    rect(0, 0, 960, 640);
+    fill(25, 25, 45);
+    stroke(100, 100, 180);
+    strokeWeight(2);
+    rect(300, 260, 360, 160, 12);
+    noStroke();
+    fill(200, 200, 255);
+    textAlign(CENTER, TOP);
+    textSize(18);
+    textStyle(BOLD);
+    text(T('bestaetigen'), 480, 276);
+    textStyle(NORMAL);
+    fill(180, 180, 220);
+    textSize(14);
+    text(d.name + ' – 🪙' + d.kosten, 480, 304);
+    let mausx = skMx();
+    let mausy = skMy();
+    let jaHover = mausx >= 340 && mausx <= 480 && mausy >= 340 && mausy <= 378;
+    fill(jaHover ? color(80, 180, 80) : color(50, 140, 50));
+    stroke(100, 200, 100);
+    strokeWeight(1.5);
+    rect(340, 340, 140, 38, 8);
+    noStroke();
+    fill(255);
+    textSize(13);
+    textStyle(BOLD);
+    text(T('ja'), 410, 359);
+    textStyle(NORMAL);
+    let neinHover = mausx >= 490 && mausx <= 620 && mausy >= 340 && mausy <= 378;
+    fill(neinHover ? color(160, 60, 60) : color(120, 40, 40));
+    stroke(180, 80, 80);
+    strokeWeight(1.5);
+    rect(490, 340, 130, 38, 8);
+    noStroke();
+    fill(255);
+    textSize(13);
+    textStyle(BOLD);
+    text(T('nein'), 555, 359);
+    textStyle(NORMAL);
   }
 }
