@@ -22,7 +22,7 @@ class Pfingsten extends Turm { // Pfingsten-Klasse erbt von der Turm-Basisklasse
       if (!g || !g.aktiv) continue; // Inaktive oder fehlende Gegner überspringen
       if (anzahl >= maxN) break; // Maximale Anzahl erreicht, Schleife beenden
       if (dist(this.x, this.y, g.x, g.y) <= this.reichweite) { // Gegner im Wirkungsbereich prüfen
-        g.verlangsamen(this.verlangsamDauer); // Gegner für festgelegte Dauer verlangsamen
+        g.verlangsamen(this.verlangsamDauer, this.verlangsamStaerke); // Gegner verlangsamen
         if (this.machSchaden && Math.random() < 0.15) { // 15% Chance auf Langeweile-Schaden
           let ng = g.schadennehmen(1, 'normal'); // Einen Schadenspunkt verursachen
           if (ng) window._neueGegnerBuffer = (window._neueGegnerBuffer || []).concat(ng); // Neue Gegner in Puffer aufnehmen

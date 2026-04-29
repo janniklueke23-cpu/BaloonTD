@@ -374,8 +374,8 @@ class UIManager { // Klasse für alle Spieloberflächen-Elemente
   }
 
   _platzierungsVorschauZeichnen() { // Zeigt den ausgewählten Turm an der Mausposition (Vorschau)
-    let mx = mouseX; // Aktuelle Mausposition X
-    let my = mouseY; // Aktuelle Mausposition Y
+    let mx = skMx(); // Skalierte Mausposition X
+    let my = skMy(); // Skalierte Mausposition Y
     if (mx > this.panelX) return; // Maus im Panel: keine Vorschau
     if (my < this.hudHoehe) return; // Maus im HUD: keine Vorschau
     let gueltig = this.gs.platzierungGueltig(mx, my); // Ist diese Position gültig?

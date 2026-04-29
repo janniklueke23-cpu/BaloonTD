@@ -57,6 +57,7 @@ class Ballon { // Hauptklasse für alle Ballon-Gegner
     this.aktiv = true; // Ob der Ballon noch lebt und aktiv ist
     this.amZiel = false; // Ob der Ballon das Ende des Pfades erreicht hat
     this.verlangsamt = 0; // Timer für Verlangsamungseffekt (in Frames)
+    this.verlangsamFaktor = 0.5; // Geschwindigkeitsfaktor bei Verlangsamung (0.5 = 50%)
     this.betaeubt = 0; // Timer für Betäubungseffekt (in Frames)
     this.vergiftet = 0; // Timer für Gift-Schaden-über-Zeit
     this.giftSchaden = 0; // Wie viel Schaden Gift pro Tick macht
@@ -104,7 +105,7 @@ class Ballon { // Hauptklasse für alle Ballon-Gegner
       return; // Schritt beenden
     }
     let aktuellGeschwindigkeit = this.geschwindigkeit; // Aktuelle Geschwindigkeit holen
-    if (this.verlangsamt > 0) aktuellGeschwindigkeit *= 0.5; // Bei Verlangsamung halbe Geschwindigkeit
+    if (this.verlangsamt > 0) aktuellGeschwindigkeit *= this.verlangsamFaktor; // Bei Verlangsamung reduzierte Geschwindigkeit
     let bewegung = aktuellGeschwindigkeit; // Pixel die diesen Frame zurückgelegt werden
     let schrittFortschritt = bewegung / distanz; // Fortschritt als Anteil der Wegpunkt-Distanz
     this.fortschritt += schrittFortschritt; // Fortschritt addieren
@@ -175,8 +176,13 @@ class Ballon { // Hauptklasse für alle Ballon-Gegner
     this.giftStapel = Math.min(this.giftStapel + 1, 3); // Gift-Stapel erhöhen (max 3)
   }
 
-  verlangsamen(dauer) { // Verlangsamungseffekt anwenden
-    this.verlangsamt = Math.max(this.verlangsamt, dauer); // Längere Dauer behalten
+  verlangsamen(dauer, faktor = 0.5) { // Verlangsamungseffekt anwenden
+    if (dauer > this.verlangsamt) { // Nur stärkere/längere Verlangsamung übernehmen
+      this.verlangsamt = dauer;
+      this.verlangsamFaktor = faktor;
+    } else if (faktor < this.verlangsamFaktor) { // Stärkerer Effekt gewinnt auch bei gleicher Dauer
+      this.verlangsamFaktor = faktor;
+    }
   }
 
   betaeuben(dauer) { // Betäubungseffekt anwenden (Ballon stoppt kurz)
