@@ -65,22 +65,22 @@ class UpgradeManager { // Klasse für das permanente Upgrade-System
     };
   }
 
-  _laden() { // Upgrade-Daten aus localStorage laden
-    let json = localStorage.getItem(this.schluessel); // JSON-String aus localStorage
-    if (!json) return this._standard(); // Kein Eintrag: Standard zurückgeben
-    try { // Parsen versuchen
-      let parsed = JSON.parse(json); // JSON parsen
-      let std = this._standard(); // Standard-Objekt als Basis
-      std.gesamtMuenzen = parsed.gesamtMuenzen || 0; // Gesamtmünzen übernehmen
-      std.gekauft = Object.assign(std.gekauft, parsed.gekauft || {}); // Käufe übernehmen
-      return std; // Zusammengesetztes Objekt zurückgeben
-    } catch (e) { // Fehler beim Parsen
-      return this._standard(); // Standard als Fallback
+  _laden() {
+    try {
+      let json = localStorage.getItem(this.schluessel);
+      if (!json) return this._standard();
+      let parsed = JSON.parse(json);
+      let std = this._standard();
+      std.gesamtMuenzen = parsed.gesamtMuenzen || 0;
+      std.gekauft = Object.assign(std.gekauft, parsed.gekauft || {});
+      return std;
+    } catch (e) {
+      return this._standard();
     }
   }
 
-  _speichern() { // Upgrade-Daten in localStorage speichern
-    localStorage.setItem(this.schluessel, JSON.stringify(this.daten)); // Aktuellen Stand speichern
+  _speichern() {
+    try { localStorage.setItem(this.schluessel, JSON.stringify(this.daten)); } catch (e) {}
   }
 
   gesamtMuenzenErhoehen(betrag) { // Erhöht den Gesamt-Münzen-Zähler (wird beim Verdienen aufgerufen)

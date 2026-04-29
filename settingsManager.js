@@ -115,18 +115,18 @@ class EinstellungsManager { // Klasse für alle Spieleinstellungen
     };
   }
 
-  _laden() { // Einstellungen aus localStorage laden
-    let json = localStorage.getItem(this.schluessel); // Gespeicherten JSON-String holen
-    if (!json) return this._standard(); // Kein Eintrag: Standards zurückgeben
-    try { // Versuche JSON zu parsen
-      return Object.assign(this._standard(), JSON.parse(json)); // Standards mit gespeicherten überschreiben
-    } catch (e) { // Fehler beim Parsen
-      return this._standard(); // Standards als Fallback zurückgeben
+  _laden() {
+    try {
+      let json = localStorage.getItem(this.schluessel);
+      if (!json) return this._standard();
+      return Object.assign(this._standard(), JSON.parse(json));
+    } catch (e) {
+      return this._standard();
     }
   }
 
-  _speichern() { // Einstellungen in localStorage speichern
-    localStorage.setItem(this.schluessel, JSON.stringify(this.daten)); // Aktuellen Stand speichern
+  _speichern() {
+    try { localStorage.setItem(this.schluessel, JSON.stringify(this.daten)); } catch (e) {}
   }
 
   get(schluessel) { // Einen Einstellungswert abrufen

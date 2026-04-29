@@ -56,6 +56,8 @@ let _aktiverSlider = null; // Welcher Einstellungs-Slider gerade gezogen wird
 // ─────────────────────────────────────────────────────────────────────────────
 
 function setup() { // p5.js: wird einmal beim Programmstart aufgerufen
+  let ladetext = document.getElementById('ladetext');
+  if (ladetext) ladetext.style.display = 'none';
   let cnv = createCanvas(windowWidth, windowHeight); // Canvas auf Fenstergröße setzen
   cnv.parent(document.body); // Canvas zum Body hinzufügen
   frameRate(60); // Ziel-Framerate 60fps

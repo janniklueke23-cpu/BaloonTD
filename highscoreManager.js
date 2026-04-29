@@ -7,20 +7,18 @@ class HighscoreManager { // Klasse für die Verwaltung aller Highscores
     this.daten = this._laden(); // Gespeicherte Scores beim Programmstart einlesen
   }
 
-  _laden() { // Private Hilfsmethode: liest Daten aus dem localStorage
-    let json = localStorage.getItem(this.schluessel); // Gespeicherten JSON-String aus localStorage holen
-    if (!json) { // Falls noch keine Daten gespeichert wurden
-      return { 1: [], 2: [], 3: [] }; // Leere Arrays für alle drei Level zurückgeben
-    }
-    try { // Versuche den JSON-String sicher zu parsen
-      return JSON.parse(json); // JSON-String in ein JavaScript-Objekt umwandeln
-    } catch (e) { // Falls das Parsen fehlschlägt (z.B. beschädigte Daten)
-      return { 1: [], 2: [], 3: [] }; // Leere Datenstruktur als Fallback zurückgeben
+  _laden() {
+    try {
+      let json = localStorage.getItem(this.schluessel);
+      if (!json) return { 1: [], 2: [], 3: [] };
+      return JSON.parse(json);
+    } catch (e) {
+      return { 1: [], 2: [], 3: [] };
     }
   }
 
-  _speichern() { // Private Hilfsmethode: schreibt die aktuellen Daten in localStorage
-    localStorage.setItem(this.schluessel, JSON.stringify(this.daten)); // Objekt als JSON-String speichern
+  _speichern() {
+    try { localStorage.setItem(this.schluessel, JSON.stringify(this.daten)); } catch (e) {}
   }
 
   scoreEintragen(level, punkte, welleErreicht) { // Öffentliche Methode: trägt einen neuen Score ein
