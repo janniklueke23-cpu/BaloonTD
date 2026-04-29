@@ -71,7 +71,11 @@ class SoundManager {
       blech:    [480, 'square',   0.004, 0.07, 0.13],
       pfister:  [220, 'sine',     0.012, 0.20, 0.20],
       koch:     [160, 'sawtooth', 0.008, 0.28, 0.30],
-      pfingsten:[340, 'sine',     0.006, 0.15, 0.10]
+      pfingsten:[340, 'sine',     0.006, 0.15, 0.10],
+      motsious: [880, 'sawtooth', 0.002, 0.08, 0.12],
+      brust:    [1200,'square',   0.002, 0.10, 0.18],
+      fight:    [120, 'sawtooth', 0.005, 0.12, 0.15],
+      raum:     [660, 'sine',     0.005, 0.10, 0.10]
     };
     let c = configs[typ] || [440, 'sine', 0.01, 0.1, 0.15];
     this._spieleTon(c[0], c[1], c[2], c[3], c[4], 0);

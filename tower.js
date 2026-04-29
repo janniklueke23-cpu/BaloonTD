@@ -26,17 +26,37 @@ class Turm { // Abstrakte Basisklasse – alle Lehrertürme erben davon
   }
 
   update(gegner, spielGeschwindigkeit) { // Jeden Frame: Ziel suchen und schießen
+    this._raumBuffsAktualisieren(); // Schaden- und Tempo-Buffs von Hr. Raum übernehmen
     this.feuerTimer -= spielGeschwindigkeit; // Timer herunterzählen (schneller bei 2x)
     this.ziel = this._besteZielFinden(gegner); // Bestes Ziel in Reichweite suchen
     if (this.ziel && this.feuerTimer <= 0) { // Wenn Ziel vorhanden und Feuer-Timer abgelaufen
-      this._schiessen(); // Schuss abfeuern
-      if (this.typ !== 'pfingsten' && window.gs && window.gs.sound) window.gs.sound.turmSchiessen(this.typ); // Sound (außer Support-Türme)
-      this.feuerTimer = this.feuerRate; // Timer zurücksetzen
+      let originalSchaden = this.schaden; // Originalwert merken (Buff ist temporär)
+      if (this._raumSchadenBuff > 0) this.schaden = this.schaden * (1 + this._raumSchadenBuff); // Buff anwenden
+      this._schiessen(); // Schuss abfeuern (verwendet ggf. erhöhten Schaden)
+      this.schaden = originalSchaden; // Originalwert wiederherstellen
+      if (this.typ !== 'pfingsten' && this.typ !== 'raum' && window.gs && window.gs.sound) window.gs.sound.turmSchiessen(this.typ); // Sound (außer Support-Türme)
+      this.feuerTimer = this.feuerRate * (this._raumFeuerRateBuff || 1); // Timer mit Tempo-Buff zurücksetzen
     }
     for (let i = this.geschosse.length - 1; i >= 0; i--) { // Alle Geschosse rückwärts durchgehen
       this.geschosse[i].update(gegner, spielGeschwindigkeit); // Geschoss aktualisieren
       if (!this.geschosse[i].aktiv) { // Wenn Geschoss inaktiv (getroffen oder verfehlt)
         this.geschosse.splice(i, 1); // Geschoss aus der Liste entfernen
+      }
+    }
+  }
+
+  _raumBuffsAktualisieren() { // Aura-Buffs von Hr. Raum suchen und anwenden
+    this._raumSchadenBuff = 0; // Buff jeden Frame zurücksetzen
+    this._raumFeuerRateBuff = 1; // Tempo-Multiplikator (1 = normal, 0.8 = 20% schneller)
+    if (this.typ === 'raum') return; // Raum buffen sich nicht selbst
+    if (!window.gs || !window.gs.tuerme) return; // Sicherheitsprüfung
+    for (let t of window.gs.tuerme) { // Alle Türme nach Raum-Türmen durchsuchen
+      if (t.typ !== 'raum' || t === this) continue; // Nur Raum berücksichtigen
+      if (dist(this.x, this.y, t.x, t.y) > t.reichweite) continue; // Nicht in Reichweite
+      if (t.schadenBuff && t.schadenBuff > this._raumSchadenBuff) this._raumSchadenBuff = t.schadenBuff; // Stärksten Schaden-Buff übernehmen
+      if (t.feuerRateBuff && t.feuerRateBuff > 0) { // Tempo-Buff vorhanden?
+        let mult = 1 - t.feuerRateBuff; // Multiplikator berechnen
+        if (mult < this._raumFeuerRateBuff) this._raumFeuerRateBuff = mult; // Stärksten Tempo-Buff übernehmen
       }
     }
   }

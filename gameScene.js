@@ -395,6 +395,10 @@ class SpielSzene { // Klasse für die Haupt-Spielszene
       case 'pfingsten':return new Pfingsten(x, y); // Pfingsten: Verlangsamer erstellen
       case 'koch':     return new Koch(x, y);     // Koch: Verweis-Werfer erstellen
       case 'pfister':  return new Pfister(x, y);  // Pfister: Säure-Flasche erstellen
+      case 'raum':     return new Raum(x, y);     // Raum: Hacker – Geld + Buff
+      case 'fight':    return new Fight(x, y);    // Fight: Motorrad-Lehrer
+      case 'motsious': return new Motsious(x, y); // Motsious: Teilchenbeschleuniger
+      case 'brust':    return new Brust(x, y);    // Brust: Blitze
       default:         return null;               // Unbekannter Typ: null zurückgeben
     }
   }
