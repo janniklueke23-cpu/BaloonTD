@@ -5,14 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
   <title>Lehrer vs. Schüler – Tower Defense</title>
   <style>
-    /* Seiten-Reset: kein Rand, kein Abstand, schwarzer Hintergrund */
     *, *::before, *::after {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
 
-    /* Gesamte Seite: zentriert, dunkel */
     body {
       background: #0a0a1a;
       display: flex;
@@ -23,7 +21,6 @@
       font-family: monospace;
     }
 
-    /* Canvas: als Block anzeigen, mit Schatten */
     canvas {
       display: block;
       box-shadow: 0 0 60px rgba(100, 100, 255, 0.3),
@@ -31,7 +28,6 @@
       border: 1px solid rgba(100, 100, 200, 0.2);
     }
 
-    /* Ladetext (wird von p5.js ersetzt) */
     #ladetext {
       position: fixed;
       top: 50%;
@@ -49,45 +45,35 @@
 
   <div id="ladetext">Lehrer vs. Schüler wird geladen...</div>
 
-  <!-- p5.js Bibliothek via CDN laden -->
   <script src="p5.min.js"></script>
-  <!-- p5.sound Addon für programmatische Soundeffekte -->
-  <script src="p5.sound.min.js"></script>
 
-  <!-- Spiellogik-Dateien in der richtigen Reihenfolge laden -->
-  <!-- 1. Hilfsdateien ohne Abhängigkeiten -->
-  <script src="highscoreManager.js?v=4"></script>  <!-- Highscore-System -->
-  <script src="settingsManager.js?v=4"></script>   <!-- Einstellungen + Übersetzungen -->
-  <script src="soundManager.js?v=4"></script>      <!-- Programmatische Soundeffekte -->
-  <script src="upgradeManager.js?v=4"></script>    <!-- Permanente Spieler-Upgrades -->
-  <script src="economyManager.js?v=4"></script>    <!-- Wirtschafts-System -->
+  <script src="highscoreManager.js?v=4"></script>
+  <script src="settingsManager.js?v=4"></script>
+  <script src="soundManager.js?v=4"></script>
+  <script src="upgradeManager.js?v=4"></script>
+  <script src="economyManager.js?v=4"></script>
 
-  <!-- 2. Spielobjekte -->
-  <script src="enemy.js?v=4"></script>             <!-- Ballon-Gegner Basisklasse -->
-  <script src="tower.js?v=4"></script>             <!-- Turm Basisklasse + Geschoss -->
-  <script src="mathTeacher.js?v=4"></script>       <!-- Blech-Turm -->
-  <script src="peTeacher.js?v=4"></script>         <!-- Pfingsten-Turm -->
-  <script src="principal.js?v=4"></script>         <!-- Koch-Turm -->
-  <script src="bioTeacher.js?v=4"></script>        <!-- Pfister-Turm -->
+  <script src="enemy.js?v=4"></script>
+  <script src="tower.js?v=4"></script>
+  <script src="mathTeacher.js?v=4"></script>
+  <script src="peTeacher.js?v=4"></script>
+  <script src="principal.js?v=4"></script>
+  <script src="bioTeacher.js?v=4"></script>
 
-  <!-- 3. Spielverwaltung -->
-  <script src="waveManager.js?v=4"></script>       <!-- Wellen-Spawning -->
+  <script src="waveManager.js?v=4"></script>
 
-  <!-- 4. Benutzeroberfläche und Szenen -->
-  <script src="uiManager.js?v=4"></script>         <!-- HUD und Panels -->
-  <script src="menuScene.js?v=4"></script>         <!-- Menü-Bildschirme -->
-  <script src="gameScene.js?v=4"></script>         <!-- Haupt-Spiellogik -->
+  <script src="uiManager.js?v=4"></script>
+  <script src="menuScene.js?v=4"></script>
+  <script src="gameScene.js?v=4"></script>
 
-  <!-- 5. Hauptdatei (muss zuletzt geladen werden) -->
-  <script src="sketch.js?v=4"></script>            <!-- p5.js setup() und draw() -->
+  <script src="sketch.js?v=4"></script>
 
   <script>
-    // Ladetext entfernen sobald p5.js bereit ist
     window.addEventListener('load', function() {
       setTimeout(function() {
         let ladetext = document.getElementById('ladetext');
-        if (ladetext) ladetext.style.display = 'none'; // Ladetext verstecken
-      }, 500); // Kurze Verzögerung damit Canvas sichtbar ist
+        if (ladetext) ladetext.style.display = 'none';
+      }, 500);
     });
   </script>
 
