@@ -5,9 +5,9 @@ const TURMSHOP_EINTRAEGE = [ // Liste aller kaufbaren Türme im Shop
   { typ: 'pfingsten',name: 'Hr. Pfingsten',kosten: 130, farbe: [70, 100, 50]  }, // Pfingsten: Verlangsamer
   { typ: 'koch',     name: 'Hr. Koch',     kosten: 175, farbe: [160, 40, 40]  }, // Koch: Verweis-Werfer
   { typ: 'pfister',  name: 'Hr. Pfister',  kosten: 140, farbe: [120, 80, 30]  }, // Pfister: Säure-Flaschen
-  { typ: 'raum',     name: 'Hr. Raum',     kosten: 200, farbe: [40, 130, 180] }, // Raum: Support – Geld & Buff
-  { typ: 'motsious', name: 'Hr. Motsious', kosten: 220, farbe: [70, 70, 110]  }, // Motsious: Teilchenbeschleuniger
-  { typ: 'brust',    name: 'Hr. Brust',    kosten: 240, farbe: [220, 180, 30] }, // Brust: Blitze
+  { typ: 'raum',     name: 'Hr. Traum',     kosten: 200, farbe: [40, 130, 180] }, // Raum: Support – Geld & Buff
+  { typ: 'motsious', name: 'Hr. Mautsious', kosten: 220, farbe: [70, 70, 110]  }, // Motsious: Teilchenbeschleuniger
+  { typ: 'brust',    name: 'Hr. Arm',    kosten: 240, farbe: [220, 180, 30] }, // Brust: Blitze
   { typ: 'fight',    name: 'Hr. Fight',    kosten: 280, farbe: [40, 40, 50]   }  // Fight: Motorrad
 ];
 
