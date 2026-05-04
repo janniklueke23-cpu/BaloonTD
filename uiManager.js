@@ -4,7 +4,11 @@ const TURMSHOP_EINTRAEGE = [ // Liste aller kaufbaren Türme im Shop
   { typ: 'blech',    name: 'Hr. Blech',    kosten: 100, farbe: [55, 55, 75]   }, // Blech: Kreide-Werfer
   { typ: 'pfingsten',name: 'Hr. Pfingsten',kosten: 130, farbe: [70, 100, 50]  }, // Pfingsten: Verlangsamer
   { typ: 'koch',     name: 'Hr. Koch',     kosten: 175, farbe: [160, 40, 40]  }, // Koch: Verweis-Werfer
-  { typ: 'pfister',  name: 'Hr. Pfister',  kosten: 140, farbe: [120, 80, 30]  }  // Pfister: Säure-Flaschen
+  { typ: 'pfister',  name: 'Hr. Pfister',  kosten: 140, farbe: [120, 80, 30]  }, // Pfister: Säure-Flaschen
+  { typ: 'raum',     name: 'Hr. Raum',     kosten: 200, farbe: [40, 130, 180] }, // Raum: Support – Geld & Buff
+  { typ: 'motsious', name: 'Hr. Motsious', kosten: 220, farbe: [70, 70, 110]  }, // Motsious: Teilchenbeschleuniger
+  { typ: 'brust',    name: 'Hr. Brust',    kosten: 240, farbe: [220, 180, 30] }, // Brust: Blitze
+  { typ: 'fight',    name: 'Hr. Fight',    kosten: 280, farbe: [40, 40, 50]   }  // Fight: Motorrad
 ];
 
 class UIManager { // Klasse für alle Spieloberflächen-Elemente
@@ -171,10 +175,14 @@ class UIManager { // Klasse für alle Spieloberflächen-Elemente
 
   _turmBeschreibung(typ, x, y) { // Kurze Beschreibung des Turmtyps
     let beschreibungen = { // Tabelle mit Kurzfassungen
-      'blech':    'Kreide · Schnell · Bombe', // Blech: Kreide-Werfer
-      'pfingsten':'Support · Verlangsamt',    // Pfingsten: Verlangsamer
+      'blech':    'Kreide · Schnell · Bombe',   // Blech: Kreide-Werfer
+      'pfingsten':'Support · Verlangsamt',      // Pfingsten: Verlangsamer
       'koch':     'Verweise · Langsam · Stark', // Koch: hoher Schaden
-      'pfister':  'Bierflaschen · Säure'     // Pfister: Säureschaden
+      'pfister':  'Bierflaschen · Säure',       // Pfister: Säureschaden
+      'raum':     'Hacker · Geld · Buff',       // Raum: Support – Geld & Buff
+      'motsious': 'Strahl · Teilchen',          // Motsious: Teilchenbeschleuniger
+      'brust':    'Blitze · Kette',             // Brust: Lightning
+      'fight':    'Motorrad · Überfährt'        // Fight: Motorrad
     };
     text(beschreibungen[typ] || '', x, y); // Beschreibungstext anzeigen
   }
@@ -388,8 +396,11 @@ class UIManager { // Klasse für alle Spieloberflächen-Elemente
     ellipse(mx, my, 44, 44); // Äußerer Kreis
     // Reichweiten-Vorschau
     let turmDaten = TURMSHOP_EINTRAEGE.find(e => e.typ === this.gs.ausgewaehlteTurmTyp); // Turmtyp holen
-    // Reichweite je nach Typ
-    let vorschauReichweite = { mathe: 120, sport: 105, direktor: 160, bio: 110 }[this.gs.ausgewaehlteTurmTyp] || 100; // Reichweite
+    // Reichweite je nach Typ – passend zu den jeweiligen Klassen-Konstruktoren
+    let vorschauReichweite = { // Reichweite für jeden Turmtyp
+      blech: 120, pfingsten: 135, koch: 145, pfister: 115,
+      raum: 110, fight: 70, motsious: 200, brust: 130
+    }[this.gs.ausgewaehlteTurmTyp] || 100; // Reichweite
     noFill(); // Kein Füll
     stroke(gueltig ? color(100, 255, 100, 60) : color(255, 80, 80, 60)); // Kontur-Farbe
     strokeWeight(1); // Dünne Linie

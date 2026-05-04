@@ -25,7 +25,11 @@ class EconomyManager { // Klasse für die gesamte Spielwirtschaft
       'blech':    100, // Blech: 100 Münzen
       'pfingsten':130, // Pfingsten: 130 Münzen
       'koch':     175, // Koch: 175 Münzen
-      'pfister':  140  // Pfister: 140 Münzen
+      'pfister':  140, // Pfister: 140 Münzen
+      'raum':     200, // Raum: 200 Münzen (Support – Geld + Buff)
+      'fight':    280, // Fight: 280 Münzen (Motorrad)
+      'motsious': 220, // Motsious: 220 Münzen (Teilchenbeschleuniger)
+      'brust':    240  // Brust: 240 Münzen (Blitze)
     };
     let basis = kosten[typ] || 100; // Basispreis holen
     let rabatt = (this.gs.upgrades) ? this.gs.upgrades.getRabatt() : 0; // Rabatt aus Upgrades holen
@@ -37,7 +41,11 @@ class EconomyManager { // Klasse für die gesamte Spielwirtschaft
       'blech':    [50,  100, 200], // Upgrade-Kosten für Blech
       'pfingsten':[65,  130, 220], // Upgrade-Kosten für Pfingsten
       'koch':     [80,  160, 280], // Upgrade-Kosten für Koch
-      'pfister':  [60,  120, 210]  // Upgrade-Kosten für Pfister
+      'pfister':  [60,  120, 210], // Upgrade-Kosten für Pfister
+      'raum':     [80,  160, 280], // Upgrade-Kosten für Raum
+      'fight':    [90,  180, 320], // Upgrade-Kosten für Fight
+      'motsious': [80,  160, 290], // Upgrade-Kosten für Motsious
+      'brust':    [90,  175, 310]  // Upgrade-Kosten für Brust
     };
     let stufenListe = upgrades[turmTyp] || [50, 100, 200]; // Upgrade-Liste für Turmtyp holen
     return stufenListe[stufe - 1] || 0; // Kosten für die gewünschte Stufe zurückgeben (Index = stufe-1)
