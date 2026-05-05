@@ -95,6 +95,9 @@ function draw() {
     case 'bestenliste':
       gs.menuSzene.drawBestenliste();
       break;
+    case 'mobileApp':
+      gs.menuSzene.drawMobileApp();
+      break;
     case 'spiel':
       background(30, 30, 50);
       gs.spielSzene.update();
@@ -128,6 +131,7 @@ function mousePressed() {
     if (gs.menuSzene.isMenuEinstellungen(mx, my)) { gs.szene = 'einstellungen';  }
     if (gs.menuSzene.isMenuUpgrades(mx, my))      { gs.szene = 'upgrades';       }
     if (gs.menuSzene.isMenuBestenliste(mx, my))   { gs.szene = 'bestenliste';    }
+    if (gs.menuSzene.isMenuMobileApp(mx, my))     { gs.szene = 'mobileApp';      }
     return;
   }
 
@@ -164,6 +168,18 @@ function mousePressed() {
   }
 
   if (gs.szene === 'bestenliste') {
+    if (gs.menuSzene.isZurueckKlick(mx, my)) {
+      gs.sound.menuKlick();
+      gs.szene = 'menu';
+    }
+    return;
+  }
+
+  if (gs.szene === 'mobileApp') {
+    if (gs.menuSzene.mobileAppKlick(mx, my)) {
+      gs.sound.menuKlick();
+      return;
+    }
     if (gs.menuSzene.isZurueckKlick(mx, my)) {
       gs.sound.menuKlick();
       gs.szene = 'menu';
@@ -273,7 +289,7 @@ function keyPressed() {
       } else {
         gs.pausiert = !gs.pausiert;
       }
-    } else if (['levelSelect', 'einstellungen', 'upgrades', 'bestenliste'].includes(gs.szene)) {
+    } else if (['levelSelect', 'einstellungen', 'upgrades', 'bestenliste', 'mobileApp'].includes(gs.szene)) {
       if (gs.upgrades && gs.upgrades.bestaetigungsDialog) {
         gs.upgrades.bestaetigungsDialog = null;
       } else {
