@@ -5,9 +5,9 @@ const TURMSHOP_EINTRAEGE = [ // Liste aller kaufbaren Türme im Shop
   { typ: 'pfingsten',name: 'Hr. Pfingsten',kosten: 130, farbe: [70, 100, 50]  }, // Pfingsten: Verlangsamer
   { typ: 'koch',     name: 'Hr. Koch',     kosten: 175, farbe: [160, 40, 40]  }, // Koch: Verweis-Werfer
   { typ: 'pfister',  name: 'Hr. Pfister',  kosten: 140, farbe: [120, 80, 30]  }, // Pfister: Säure-Flaschen
-  { typ: 'raum',     name: 'Hr. Traum',     kosten: 200, farbe: [40, 130, 180] }, // Raum: Support – Geld & Buff
-  { typ: 'motsious', name: 'Hr. Mautsious', kosten: 220, farbe: [70, 70, 110]  }, // Motsious: Teilchenbeschleuniger
-  { typ: 'brust',    name: 'Hr. Arm',    kosten: 240, farbe: [220, 180, 30] }, // Brust: Blitze
+  { typ: 'raum',     name: 'Hr. Baum',     kosten: 200, farbe: [40, 130, 180] }, // Baum (intern: raum) – Support: Geld & Buff
+  { typ: 'motsious', name: 'Hr. Motsious', kosten: 220, farbe: [70, 70, 110]  }, // Motsious: Teilchenbeschleuniger
+  { typ: 'brust',    name: 'Hr. Schulter', kosten: 240, farbe: [220, 180, 30] }, // Schulter (intern: brust) – Blitze
   { typ: 'fight',    name: 'Hr. Fight',    kosten: 280, farbe: [40, 40, 50]   }  // Fight: Motorrad
 ];
 
@@ -102,7 +102,7 @@ class UIManager { // Klasse für alle Spieloberflächen-Elemente
     fill(180, 180, 220); // Hellblau-Weiß für Titel
     textSize(15); // Mittlere Schrift
     textAlign(CENTER, TOP); // Oben-Mitte
-    text('Türme platzieren', this.panelX + this.panelBreite / 2, 58); // Panel-Überschrift
+    text('Lehrer platzieren', this.panelX + this.panelBreite / 2, 58); // Panel-Überschrift
     stroke(60, 60, 100); // Trennlinie
     strokeWeight(1); // Dicke
     line(this.panelX + 10, 78, this.panelX + this.panelBreite - 10, 78); // Horizontale Linie
@@ -381,9 +381,9 @@ class UIManager { // Klasse für alle Spieloberflächen-Elemente
     return Math.floor(gesamt * 0.6); // 60% der Gesamtkosten zurückgeben
   }
 
-  _platzierungsVorschauZeichnen() { // Zeigt den ausgewählten Turm an der Mausposition (Vorschau)
-    let mx = mouseX; // Aktuelle Mausposition X
-    let my = mouseY; // Aktuelle Mausposition Y
+  _platzierungsVorschauZeichnen() { // Zeigt den ausgewählten Lehrer an der Mausposition (Vorschau)
+    let mx = (typeof skMx === 'function') ? skMx() : mouseX; // Mausposition in Spielkoordinaten (skaliert)
+    let my = (typeof skMy === 'function') ? skMy() : mouseY; // Mausposition in Spielkoordinaten (skaliert)
     if (mx > this.panelX) return; // Maus im Panel: keine Vorschau
     if (my < this.hudHoehe) return; // Maus im HUD: keine Vorschau
     let gueltig = this.gs.platzierungGueltig(mx, my); // Ist diese Position gültig?

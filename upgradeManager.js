@@ -26,9 +26,9 @@ const UPGRADE_DEFS = {
     symbol: '🏷️',
     farbe:  [60, 140, 200],
     stufen: [
-      { kosten: 100, beschreibung: '10% Rabatt auf alle Türme', kurztext: '-10% Kosten' },
-      { kosten: 250, beschreibung: '20% Rabatt auf alle Türme', kurztext: '-20% Kosten' },
-      { kosten: 500, beschreibung: '30% Rabatt auf alle Türme', kurztext: '-30% Kosten' }
+      { kosten: 100, beschreibung: '10% Rabatt auf alle Lehrer', kurztext: '-10% Kosten' },
+      { kosten: 250, beschreibung: '20% Rabatt auf alle Lehrer', kurztext: '-20% Kosten' },
+      { kosten: 500, beschreibung: '30% Rabatt auf alle Lehrer', kurztext: '-30% Kosten' }
     ]
   },
   muenzbonus: {

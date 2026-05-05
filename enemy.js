@@ -183,11 +183,11 @@ class Ballon { // Hauptklasse für alle Ballon-Gegner
     this.betaeubt = Math.max(this.betaeubt, dauer); // Längere Dauer behalten
   }
 
-  draw() { // Ballon zeichnen
-    if (!this.aktiv) return; // Inaktive Ballons nicht zeichnen
+  draw() { // Schüler-Figur zeichnen (animiert mit Geh-Bewegung)
+    if (!this.aktiv) return; // Inaktive Schüler nicht zeichnen
     push(); // p5.js Zustand sichern
-    translate(this.x, this.y); // Koordinatensystem zum Ballon verschieben
-    let farbe = BALLON_FARBEN[this.typ] || [200, 200, 200]; // Farbe für diesen Typ holen
+    translate(this.x, this.y); // Koordinatensystem zum Schüler verschieben
+    let farbe = BALLON_FARBEN[this.typ] || [200, 200, 200]; // Farbe (= Hemdfarbe und Haare) für diesen Typ
     let r = farbe[0]; // Rot-Anteil
     let g = farbe[1]; // Grün-Anteil
     let b = farbe[2]; // Blau-Anteil
@@ -196,38 +196,78 @@ class Ballon { // Hauptklasse für alle Ballon-Gegner
       g = min(255, g + 100); // Grün aufhellen
       b = min(255, b + 100); // Blau aufhellen
     }
-    let rad = this.radius; // Radius des Ballons
-    let wackel = sin(this.winkelAnimation) * 1.5; // Leichte Wackelbewegung berechnen
-    // Ballon-Schatten zeichnen
-    noStroke(); // Keine Konturlinie für den Schatten
-    fill(0, 0, 0, 40); // Halbdurchsichtiges Schwarz für Schatten
-    ellipse(3, 5, rad * 2 + 4, rad * 2 + 2); // Schatten leicht versetzt zeichnen
-    // Ballon-Körper (Kreis)
-    stroke(max(0, r - 60), max(0, g - 60), max(0, b - 60)); // Dunklere Konturlinie
-    strokeWeight(2); // Konturstärke setzen
-    fill(r, g, b); // Ballonfarbe setzen
-    ellipse(wackel, 0, rad * 2, rad * 2.1); // Ballon als leicht ovale Ellipse zeichnen
-    // Glanzlicht auf dem Ballon (macht ihn rund/plastisch)
-    noStroke(); // Keine Kontur für das Glanzlicht
-    fill(255, 255, 255, 80); // Halbdurchsichtiges Weiß
-    ellipse(wackel - rad * 0.25, -rad * 0.3, rad * 0.7, rad * 0.5); // Kleines Glanzlicht oben links
-    // Ballon-Knoten (kleines Dreieck unten)
-    fill(max(0, r - 40), max(0, g - 40), max(0, b - 40)); // Etwas dunklere Farbe für Knoten
-    noStroke(); // Keine Kontur
-    triangle(wackel - 4, rad - 2, wackel + 4, rad - 2, wackel, rad + 8); // Dreieck als Knoten
-    // Ballon-Faden (Linie vom Knoten nach unten)
-    stroke(max(0, r - 60), max(0, g - 60), max(0, b - 60)); // Fadenfarbe
-    strokeWeight(1); // Dünne Linie
-    line(wackel, rad + 8, wackel + sin(this.winkelAnimation * 0.7) * 5, rad + 18); // Gewundener Faden
-    // Gesicht zeichnen (Augen und Mund)
-    this._gesichtZeichnen(wackel, rad); // Gesicht auf dem Ballon zeichnen
-    // Krone für den Boss
-    if (this.typ === 'schwarz') this._kroneZeichnen(wackel, rad); // Krone des Klassensprechers
+    let rad = this.radius; // Schüler-Größe (Skalierungsfaktor)
+    let geh = sin(this.winkelAnimation * 3.0); // Geh-Phase für Beine/Arme
+    let huepf = abs(sin(this.winkelAnimation * 3.0)) * 1.5; // Hüpfen beim Laufen
+    // Schatten unter dem Schüler
+    noStroke(); // Kein Rand
+    fill(0, 0, 0, 50); // Halbtransparenter Schatten
+    ellipse(0, rad * 0.95, rad * 1.4, rad * 0.45); // Boden-Schatten
+    // Beine (zwei kleine Rechtecke, animiert)
+    let beinFarbe = [60, 60, 90]; // Dunkelblaue Hose
+    stroke(max(0, beinFarbe[0]-20), max(0, beinFarbe[1]-20), max(0, beinFarbe[2]-20)); // Dunklere Kontur
+    strokeWeight(1.2); // Dünne Kontur
+    fill(beinFarbe[0], beinFarbe[1], beinFarbe[2]); // Hose
+    let beinH = rad * 0.7; // Beinhöhe relativ zum Radius
+    rect(-rad * 0.32 - 1, rad * 0.25 - huepf, 4, beinH + geh * 2, 1); // Linkes Bein (mit Schwung)
+    rect(rad * 0.32 - 3, rad * 0.25 - huepf, 4, beinH - geh * 2, 1); // Rechtes Bein (gegenläufig)
+    // Schuhe
+    fill(30, 30, 40); // Dunkle Schuhe
+    noStroke(); // Kein Rand
+    ellipse(-rad * 0.32 + 1, rad * 0.95 + beinH * 0.4 - huepf + geh * 2, 6, 3); // Linker Schuh
+    ellipse(rad * 0.32 - 1, rad * 0.95 + beinH * 0.4 - huepf - geh * 2, 6, 3); // Rechter Schuh
+    push(); // Für Hüpf-Animation des Oberkörpers
+    translate(0, -huepf); // Oberkörper hüpft mit
+    // Körper (Hemd in Schüler-Farbe)
+    stroke(max(0, r - 60), max(0, g - 60), max(0, b - 60)); // Dunklere Kontur
+    strokeWeight(1.5); // Mittelkräftige Linie
+    fill(r, g, b); // Hemdfarbe
+    rect(-rad * 0.55, -rad * 0.1, rad * 1.1, rad * 0.7, 3); // Oberkörper als Rechteck
+    // Hemd-Detail: kleiner Kragen
+    fill(max(0, r - 30), max(0, g - 30), max(0, b - 30)); // Etwas dunkler
+    noStroke(); // Kein Rand
+    triangle(-3, -rad * 0.1, 3, -rad * 0.1, 0, -rad * 0.1 + 5); // Dreieckiger Kragen
+    // Arme (animiert: schwingen entgegen den Beinen)
+    stroke(max(0, r - 60), max(0, g - 60), max(0, b - 60)); // Arm-Konturfarbe
+    strokeWeight(3.2); // Dicke Arme
+    let armSchwung = geh * 4; // Arm-Schwung-Stärke
+    line(-rad * 0.55, 0, -rad * 0.7, rad * 0.35 - armSchwung); // Linker Arm
+    line(rad * 0.55, 0, rad * 0.7, rad * 0.35 + armSchwung); // Rechter Arm
+    // Hände
+    let kpf = [240, 210, 175]; // Hautfarbe
+    fill(kpf[0], kpf[1], kpf[2]); // Hände hautfarben
+    noStroke(); // Kein Rand
+    ellipse(-rad * 0.7, rad * 0.35 - armSchwung, 4, 4); // Linke Hand
+    ellipse(rad * 0.7, rad * 0.35 + armSchwung, 4, 4); // Rechte Hand
+    // Rucksack für Senior (gelb) und Junior (gruen)
+    if (this.typ === 'gelb' || this.typ === 'gruen') { // Schüler mit Rucksack
+      fill(this.typ === 'gelb' ? color(140, 80, 40) : color(60, 100, 50)); // Braun oder dunkelgrün
+      stroke(40, 30, 20); // Dunkle Kontur
+      strokeWeight(1); // Dünne Kontur
+      rect(-rad * 0.4, -rad * 0.05, rad * 0.8, rad * 0.55, 3); // Rucksack hinten (etwas seitlich)
+    }
+    // Kopf
+    let kopfR = rad * 0.85; // Kopfradius
+    stroke(max(0, kpf[0]-50), max(0, kpf[1]-50), max(0, kpf[2]-50)); // Dunklere Hautkontur
+    strokeWeight(1.5); // Konturstärke
+    fill(kpf[0], kpf[1], kpf[2]); // Hautfarbe
+    ellipse(0, -rad * 0.55, kopfR, kopfR); // Kopf-Ellipse
+    // Haare (in Schüler-Farbe als Käppchen)
+    noStroke(); // Kein Rand
+    fill(r, g, b); // Haarfarbe = Schüler-Typ-Farbe
+    arc(0, -rad * 0.55, kopfR, kopfR, PI + 0.2, TWO_PI - 0.2, OPEN); // Bogen oben als Frisur
+    fill(max(0, r - 40), max(0, g - 40), max(0, b - 40)); // Etwas dunklere Haarsträhne
+    arc(0, -rad * 0.55, kopfR, kopfR * 0.7, PI + 0.4, TWO_PI - 0.4, OPEN); // Akzentstreifen
+    // Gesicht zeichnen (Augen und Mund) auf dem Kopf
+    this._gesichtZeichnen(0, -rad * 0.55, kopfR); // Gesicht auf dem Kopf
+    // Krone für den Klassensprecher (Boss)
+    if (this.typ === 'schwarz') this._kroneZeichnen(0, -rad * 0.55, kopfR); // Krone des Klassensprechers
+    pop(); // Hüpfender Oberkörper-Stack schließen
     // Gift-Anzeige (grüne Wolke wenn vergiftet)
     if (this.vergiftet > 0) { // Nur anzeigen wenn vergiftet
       noStroke(); // Keine Kontur
       fill(80, 200, 80, 100); // Halbdurchsichtiges Grün
-      ellipse(wackel, 0, rad * 2.5, rad * 2.5); // Leuchtendes Gift-Aura
+      ellipse(0, 0, rad * 2.5, rad * 2.5); // Leuchtendes Gift-Aura
     }
     // Leben-Balken für den Boss
     if (this.typ === 'schwarz') { // Nur für den Boss
@@ -236,53 +276,54 @@ class Ballon { // Hauptklasse für alle Ballon-Gegner
     pop(); // p5.js Zustand wiederherstellen
   }
 
-  _gesichtZeichnen(wackel, rad) { // Gesichtsausdruck auf dem Ballon zeichnen
-    let augenY = -rad * 0.25; // Y-Position der Augen
-    let augenAbstand = rad * 0.35; // Abstand der Augen vom Zentrum
-    // Augen zeichnen
+  _gesichtZeichnen(cx, cy, kopfR) { // Gesichtsausdruck auf dem Schüler-Kopf
+    let augenY = cy - kopfR * 0.05; // Y-Position der Augen (leicht über Kopfmitte)
+    let augenAbstand = kopfR * 0.22; // Abstand der Augen vom Zentrum
+    // Augen-Weiß
     fill(255, 255, 255); // Weiß für Augäpfel
     noStroke(); // Keine Kontur
-    ellipse(wackel - augenAbstand, augenY, rad * 0.4, rad * 0.45); // Linker Augapfel
-    ellipse(wackel + augenAbstand, augenY, rad * 0.4, rad * 0.45); // Rechter Augapfel
+    ellipse(cx - augenAbstand, augenY, kopfR * 0.28, kopfR * 0.32); // Linker Augapfel
+    ellipse(cx + augenAbstand, augenY, kopfR * 0.28, kopfR * 0.32); // Rechter Augapfel
     fill(20, 20, 80); // Dunkelblaue Pupillen
-    ellipse(wackel - augenAbstand, augenY + 1, rad * 0.2, rad * 0.25); // Linke Pupille
-    ellipse(wackel + augenAbstand, augenY + 1, rad * 0.2, rad * 0.25); // Rechte Pupille
-    // Mund zeichnen (böser/frecher Ausdruck je nach Typ)
+    ellipse(cx - augenAbstand, augenY + 1, kopfR * 0.13, kopfR * 0.16); // Linke Pupille
+    ellipse(cx + augenAbstand, augenY + 1, kopfR * 0.13, kopfR * 0.16); // Rechte Pupille
+    // Mund zeichnen (Ausdruck je nach Typ)
     stroke(20, 20, 20); // Dunkel für den Mund
-    strokeWeight(1.5); // Linienstärke
+    strokeWeight(1.3); // Linienstärke
     noFill(); // Kein Füll für den Mund
-    if (this.typ === 'schwarz') { // Boss hat breites böses Grinsen
-      arc(wackel, rad * 0.15, rad * 0.9, rad * 0.6, 0, PI); // Breites Grinsen
-    } else if (this.typ === 'gelb') { // Senior hat entschlossenen Gesichtsausdruck
-      line(wackel - rad * 0.3, rad * 0.2, wackel + rad * 0.3, rad * 0.2); // Gerade Linie als Mund
-    } else { // Alle anderen haben normalen leichten Smile
-      arc(wackel, rad * 0.1, rad * 0.6, rad * 0.4, 0.1, PI - 0.1); // Leichtes Lächeln
+    let mundY = cy + kopfR * 0.22; // Y-Position des Mundes
+    if (this.typ === 'schwarz') { // Klassensprecher hat breites Grinsen
+      arc(cx, mundY, kopfR * 0.55, kopfR * 0.45, 0, PI); // Breites Grinsen
+    } else if (this.typ === 'gelb') { // Senior schaut entschlossen
+      line(cx - kopfR * 0.18, mundY, cx + kopfR * 0.18, mundY); // Gerade Linie
+    } else { // Alle anderen lächeln leicht
+      arc(cx, mundY, kopfR * 0.4, kopfR * 0.3, 0.1, PI - 0.1); // Leichtes Lächeln
     }
   }
 
-  _kroneZeichnen(wackel, rad) { // Krone auf dem Boss-Ballon zeichnen
+  _kroneZeichnen(cx, cy, kopfR) { // Krone für den Klassensprecher auf dem Kopf
     fill(255, 215, 0); // Goldfarbe für die Krone
     stroke(180, 130, 0); // Dunkelgold für die Kontur
     strokeWeight(1.5); // Linienstärke
-    let kronenY = -rad - 4; // Y-Position der Krone (über dem Ballon)
-    let kronenB = rad * 1.2; // Breite der Krone
-    // Krone als Polygon zeichnen (4 Zacken)
+    let kronenY = cy - kopfR * 0.55; // Y-Position der Krone (über dem Kopf)
+    let kronenB = kopfR * 0.9; // Breite der Krone
+    // Krone als Polygon zeichnen
     beginShape(); // Polygon starten
-    vertex(wackel - kronenB / 2, kronenY); // Linke untere Ecke
-    vertex(wackel - kronenB / 2, kronenY - 8); // Linke obere Ecke
-    vertex(wackel - kronenB / 4, kronenY - 4); // Erster Einzug
-    vertex(wackel, kronenY - 12); // Mittlere Spitze
-    vertex(wackel + kronenB / 4, kronenY - 4); // Zweiter Einzug
-    vertex(wackel + kronenB / 2, kronenY - 8); // Rechte obere Ecke
-    vertex(wackel + kronenB / 2, kronenY); // Rechte untere Ecke
+    vertex(cx - kronenB / 2, kronenY); // Linke untere Ecke
+    vertex(cx - kronenB / 2, kronenY - 7); // Linke obere Ecke
+    vertex(cx - kronenB / 4, kronenY - 3); // Erster Einzug
+    vertex(cx, kronenY - 10); // Mittlere Spitze
+    vertex(cx + kronenB / 4, kronenY - 3); // Zweiter Einzug
+    vertex(cx + kronenB / 2, kronenY - 7); // Rechte obere Ecke
+    vertex(cx + kronenB / 2, kronenY); // Rechte untere Ecke
     endShape(CLOSE); // Polygon schließen und füllen
     // Edelsteine auf der Krone
     fill(200, 50, 50); // Rot für den mittleren Edelstein
     noStroke(); // Keine Kontur
-    ellipse(wackel, kronenY - 12, 5, 5); // Mittlerer Edelstein oben
+    ellipse(cx, kronenY - 10, 4, 4); // Mittlerer Edelstein oben
     fill(100, 200, 255); // Blau für die seitlichen Edelsteine
-    ellipse(wackel - kronenB / 2, kronenY - 4, 4, 4); // Linker Edelstein
-    ellipse(wackel + kronenB / 2, kronenY - 4, 4, 4); // Rechter Edelstein
+    ellipse(cx - kronenB / 2, kronenY - 3, 3, 3); // Linker Edelstein
+    ellipse(cx + kronenB / 2, kronenY - 3, 3, 3); // Rechter Edelstein
   }
 
   _lebensBalkneZeichnen(rad) { // Lebensanzeige über dem Boss zeichnen
