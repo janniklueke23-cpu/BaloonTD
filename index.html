@@ -39,11 +39,30 @@
       z-index: 10;
       pointer-events: none;
     }
+
+    #versionSwitch {
+      position: fixed;
+      top: 6px;
+      right: 6px;
+      z-index: 50;
+      background: rgba(30, 30, 60, 0.7);
+      color: #ccd;
+      border: 1px solid rgba(120, 120, 200, 0.45);
+      padding: 5px 9px;
+      font-size: 11px;
+      font-family: monospace;
+      text-decoration: none;
+      border-radius: 6px;
+    }
+    #versionSwitch:hover {
+      background: rgba(60, 60, 120, 0.85);
+    }
   </style>
 </head>
 <body>
 
   <div id="ladetext">Lehrer vs. Schüler wird geladen...</div>
+  <a id="versionSwitch" href="mobile.html">📱 Mobile</a>
 
   <script src="p5.min.js"></script>
 
