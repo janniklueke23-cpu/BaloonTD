@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="theme-color" content="#0a0a1a" />
+  <title>Lehrer vs. Schüler – Mobile</title>
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      background: #0a0a1a;
+      overflow: hidden;
+      font-family: monospace;
+      touch-action: none;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      overscroll-behavior: none;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    canvas {
+      display: block;
+      touch-action: none;
+    }
+
+    #ladetext {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #8080ff;
+      font-size: 1rem;
+      font-family: monospace;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    #rotateOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(8, 8, 26, 0.97);
+      color: #fff;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 200;
+      text-align: center;
+      padding: 24px;
+    }
+    #rotateOverlay .icon {
+      font-size: 5rem;
+      animation: rotateHint 2.4s ease-in-out infinite;
+      transform-origin: 50% 50%;
+    }
+    @keyframes rotateHint {
+      0%, 25%   { transform: rotate(0deg); }
+      50%, 75%  { transform: rotate(90deg); }
+      100%      { transform: rotate(0deg); }
+    }
+    #rotateOverlay h1 {
+      font-size: 1.4rem;
+      margin: 24px 0 10px;
+      color: #ffd54a;
+    }
+    #rotateOverlay p {
+      font-size: 0.95rem;
+      color: #aab;
+      max-width: 320px;
+      line-height: 1.45;
+    }
+
+    @media (orientation: portrait) {
+      #rotateOverlay { display: flex; }
+    }
+
+    #versionSwitch {
+      position: fixed;
+      top: 6px;
+      right: 6px;
+      z-index: 60;
+      background: rgba(30, 30, 60, 0.78);
+      color: #ccd;
+      border: 1px solid rgba(120, 120, 200, 0.55);
+      padding: 6px 10px;
+      font-size: 11px;
+      font-family: monospace;
+      text-decoration: none;
+      border-radius: 6px;
+      backdrop-filter: blur(4px);
+    }
+    #versionSwitch:active {
+      background: rgba(60, 60, 120, 0.9);
+    }
+
+    #fullscreenBtn {
+      position: fixed;
+      top: 6px;
+      left: 6px;
+      z-index: 60;
+      background: rgba(30, 30, 60, 0.78);
+      color: #ccd;
+      border: 1px solid rgba(120, 120, 200, 0.55);
+      padding: 6px 10px;
+      font-size: 11px;
+      font-family: monospace;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    #fullscreenBtn:active {
+      background: rgba(60, 60, 120, 0.9);
+    }
+  </style>
+</head>
+<body>
+
+  <div id="ladetext">Lehrer vs. Schüler wird geladen...</div>
+
+  <div id="rotateOverlay">
+    <div class="icon">📱</div>
+    <h1>Bitte Gerät drehen</h1>
+    <p>Spiele im Querformat (Landschaft) für die beste Erfahrung. Drehe dein Gerät um 90°.</p>
+  </div>
+
+  <a id="versionSwitch" href="index.html">🖥️ Desktop</a>
+  <button id="fullscreenBtn" type="button">⛶ Vollbild</button>
+
+  <script src="p5.min.js"></script>
+
+  <script src="highscoreManager.js?v=5"></script>
+  <script src="settingsManager.js?v=5"></script>
+  <script src="soundManager.js?v=5"></script>
+  <script src="upgradeManager.js?v=5"></script>
+  <script src="economyManager.js?v=5"></script>
+
+  <script src="enemy.js?v=5"></script>
+  <script src="tower.js?v=5"></script>
+  <script src="mathTeacher.js?v=5"></script>
+  <script src="peTeacher.js?v=5"></script>
+  <script src="principal.js?v=5"></script>
+  <script src="bioTeacher.js?v=5"></script>
+  <script src="roomTeacher.js?v=5"></script>
+  <script src="motorcycleTeacher.js?v=5"></script>
+  <script src="physicsTeacher.js?v=5"></script>
+  <script src="electroTeacher.js?v=5"></script>
+
+  <script src="waveManager.js?v=5"></script>
+
+  <script src="uiManager.js?v=5"></script>
+  <script src="menuScene.js?v=5"></script>
+  <script src="gameScene.js?v=5"></script>
+
+  <script src="sketch.js?v=5"></script>
+
+  <script>
+    // Mobile-Modus: globales Flag, falls Spiel-Code es lesen will
+    window.MOBILE_MODE = true;
+
+    // Lade-Text ausblenden sobald Spiel initialisiert ist
+    window.addEventListener('load', function () {
+      setTimeout(function () {
+        var t = document.getElementById('ladetext');
+        if (t) t.style.display = 'none';
+      }, 500);
+    });
+
+    // Pinch-Zoom und Doppeltipp-Zoom unterbinden
+    document.addEventListener('touchstart', function (e) {
+      if (e.touches.length > 1) e.preventDefault();
+    }, { passive: false });
+    document.addEventListener('gesturestart',  function (e) { e.preventDefault(); });
+    document.addEventListener('gesturechange', function (e) { e.preventDefault(); });
+    document.addEventListener('gestureend',    function (e) { e.preventDefault(); });
+
+    // Versuch, das Gerät auf Querformat zu sperren (klappt nur in einigen Browsern)
+    function tryLockLandscape() {
+      try {
+        if (screen.orientation && screen.orientation.lock) {
+          screen.orientation.lock('landscape').catch(function () {});
+        }
+      } catch (e) { /* ignorieren */ }
+    }
+
+    // Vollbild aktivieren – verbessert Spielfläche und ermöglicht Orientierungs-Sperre
+    var fsBtn = document.getElementById('fullscreenBtn');
+    fsBtn.addEventListener('click', function () {
+      var el = document.documentElement;
+      var p = (el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen);
+      if (p) {
+        p.call(el).then(tryLockLandscape).catch(function () {});
+      }
+    });
+
+    // Verhindert iOS-Bouncing
+    document.addEventListener('touchmove', function (e) {
+      if (e.touches.length > 1) e.preventDefault();
+    }, { passive: false });
+  </script>
+
+</body>
+</html>
