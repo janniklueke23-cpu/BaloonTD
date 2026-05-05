@@ -27,41 +27,73 @@ class MenuSzene { // Klasse für alle Menü-Bildschirme
     this.einstellungenGespeichertTimer = 0; // Timer für "Gespeichert"-Feedback
   }
 
-  // ─── Hintergrundballons ────────────────────────────────────────────────────
+  // ─── Hintergrund-Schüler ───────────────────────────────────────────────────
 
-  _hintergrundBallonsErstellen() { // 15 animierte Deko-Ballons erstellen
-    for (let i = 0; i < 15; i++) { // 15 Ballons
-      this.ballons.push({ // Ballon-Objekt
+  _hintergrundBallonsErstellen() { // Animierte Deko-Schüler im Hintergrund
+    for (let i = 0; i < 12; i++) { // 12 Schüler reichen für gute Optik
+      let richtung = random() < 0.5 ? 1 : -1; // Laufrichtung links oder rechts
+      this.ballons.push({ // Schüler-Objekt
         x: random(960), // Zufällige X-Startposition
-        y: random(640) + 640, // Startet unter dem Bildschirm
-        farbe: random(['rot', 'blau', 'gruen', 'gelb']), // Zufällige Farbe
-        geschwindigkeit: random(0.5, 2.0), // Driftgeschwindigkeit
-        wackel: random(TWO_PI), // Start-Wackelwinkel
-        wackelGeschw: random(0.01, 0.04), // Wackelgeschwindigkeit
-        groesse: random(20, 45) // Zufällige Größe
+        y: random(120, 600), // Y-Position im sichtbaren Bereich
+        farbe: random(['rot', 'blau', 'gruen', 'gelb']), // Zufällige Farbe (= Hemd/Haare)
+        geschwindigkeit: random(0.5, 1.4) * richtung, // Horizontale Laufgeschwindigkeit
+        gehPhase: random(TWO_PI), // Phase der Lauf-Animation
+        gehGeschw: random(0.10, 0.20), // Geschwindigkeit der Lauf-Animation
+        groesse: random(14, 26) // Zufällige Größe
       });
     }
   }
 
-  _hintergrundBallonsUpdaten() { // Deko-Ballons animieren
-    for (let b of this.ballons) { // Jeden Ballon
-      b.y -= b.geschwindigkeit; // Nach oben driften
-      b.wackel += b.wackelGeschw; // Wackelwinkel erhöhen
-      b.x += sin(b.wackel) * 0.8; // Seitlich wackeln
-      if (b.y < -60) { b.y = 700; b.x = random(960); } // Von unten wieder starten
+  _hintergrundBallonsUpdaten() { // Deko-Schüler animieren
+    for (let b of this.ballons) { // Jeden Schüler
+      b.x += b.geschwindigkeit; // Horizontal laufen
+      b.gehPhase += b.gehGeschw; // Lauf-Animation weiterlaufen lassen
+      if (b.x < -40) b.x = 1000; // Links rausgelaufen → rechts respawnen
+      else if (b.x > 1000) b.x = -40; // Rechts rausgelaufen → links respawnen
     }
   }
 
-  _hintergrundBallonsZeichnen() { // Deko-Ballons zeichnen
-    for (let b of this.ballons) { // Jeden Ballon zeichnen
-      let f = BALLON_FARBEN[b.farbe]; // Farbe holen
+  _hintergrundBallonsZeichnen() { // Deko-Schüler zeichnen
+    for (let b of this.ballons) { // Jeden Schüler zeichnen
+      let f = BALLON_FARBEN[b.farbe]; // Farbe für Hemd & Haare
+      let rad = b.groesse * 0.5; // Skalierungs-Radius
+      let geh = sin(b.gehPhase); // Geh-Phase
+      let huepf = abs(geh) * 1.0; // Leichtes Hüpfen
       push(); // Zustand sichern
-      translate(b.x, b.y); // Zur Ballon-Position
-      noStroke(); fill(f[0], f[1], f[2], 110); ellipse(0, 0, b.groesse, b.groesse * 1.1); // Ballon-Körper
-      fill(255, 255, 255, 35); ellipse(-b.groesse * 0.15, -b.groesse * 0.2, b.groesse * 0.35, b.groesse * 0.25); // Glanzpunkt
-      stroke(max(0,f[0]-50), max(0,f[1]-50), max(0,f[2]-50), 110); strokeWeight(1.5); // Kontur
-      line(0, b.groesse * 0.55, 0, b.groesse * 0.55 + 14); // Faden
-      pop(); // Zustand wiederherstellen
+      translate(b.x, b.y); // Zur Schüler-Position
+      // Schatten
+      noStroke(); // Kein Rand
+      fill(0, 0, 0, 50); // Halbtransparenter Schatten
+      ellipse(0, rad * 0.95, rad * 1.4, rad * 0.4); // Schatten am Boden
+      // Beine (animiert)
+      stroke(50, 50, 80, 180); strokeWeight(1); // Hose-Kontur
+      fill(60, 60, 90, 200); // Hose
+      rect(-rad * 0.3 - 1, rad * 0.25 - huepf, 3, rad * 0.6 + geh * 1.2, 1); // Linkes Bein
+      rect(rad * 0.3 - 2, rad * 0.25 - huepf, 3, rad * 0.6 - geh * 1.2, 1); // Rechtes Bein
+      // Schuhe
+      fill(30, 30, 40, 200); noStroke(); // Dunkle Schuhe
+      ellipse(-rad * 0.3 + 0.5, rad * 0.85 - huepf + geh * 1.2, 4, 2); // Linker Schuh
+      ellipse(rad * 0.3 - 0.5, rad * 0.85 - huepf - geh * 1.2, 4, 2); // Rechter Schuh
+      push(); // Oberkörper hüpft
+      translate(0, -huepf); // Hüpf-Versatz
+      // Hemd
+      noStroke(); // Kein Rand
+      fill(f[0], f[1], f[2], 200); // Hemdfarbe halbtransparent
+      rect(-rad * 0.5, -rad * 0.1, rad, rad * 0.6, 2); // Oberkörper
+      // Arme
+      stroke(max(0,f[0]-50), max(0,f[1]-50), max(0,f[2]-50), 200); strokeWeight(2.2); // Arm-Kontur
+      let arm = geh * 3; // Arm-Schwung
+      line(-rad * 0.5, 0, -rad * 0.65, rad * 0.3 - arm); // Linker Arm
+      line(rad * 0.5, 0, rad * 0.65, rad * 0.3 + arm); // Rechter Arm
+      // Kopf
+      noStroke(); // Kein Rand
+      fill(240, 210, 175, 220); // Hautfarbe
+      ellipse(0, -rad * 0.5, rad * 0.7, rad * 0.7); // Kopf
+      // Haare
+      fill(f[0], f[1], f[2], 220); // Haare in Schüler-Farbe
+      arc(0, -rad * 0.5, rad * 0.7, rad * 0.7, PI + 0.2, TWO_PI - 0.2, OPEN); // Haarbogen
+      pop(); // Hüpf-Stack schließen
+      pop(); // Hauptzustand
     }
   }
 

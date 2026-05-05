@@ -1,7 +1,7 @@
 class Brust extends Turm { // Hr. Brust – schießt Blitze die zwischen mehreren Schülern springen
   constructor(x, y) { // Konstruktor mit Positions-Parametern
     super(x, y, 'brust', 240); // Basisklasse mit Typ und Kosten initialisieren
-    this.name = 'Hr. Brust'; // Anzeigename des Lehrers
+    this.name = 'Hr. Schulter'; // Anzeigename des Lehrers
     this.reichweite = 130; // Wirkungsbereich in Pixeln
     this.feuerRate = 50; // Frames zwischen Blitzen
     this.schaden = 2; // Schaden pro Blitz
