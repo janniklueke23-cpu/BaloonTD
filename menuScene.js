@@ -7,13 +7,14 @@ class MenuSzene { // Klasse für alle Menü-Bildschirme
     this.ballons = []; // Hintergrund-Dekorationsballons
     this._hintergrundBallonsErstellen(); // Ballons erstellen
     this.animationsTimer = 0; // Timer für Animationen
-    // Hauptmenü-Buttons (4 Stück, vertikal angeordnet)
+    // Hauptmenü-Buttons (5 Stück, vertikal angeordnet)
     this.menuBtns = { // Alle Hauptmenü-Buttons
-      spielen:       { x: 340, y: 265, b: 280, h: 52 }, // Spielen-Button
-      levelWaehlen:  { x: 340, y: 327, b: 280, h: 52 }, // Level-Auswahl
-      einstellungen: { x: 340, y: 389, b: 280, h: 52 }, // Einstellungen-Button
-      upgrades:      { x: 340, y: 451, b: 280, h: 52 }, // Upgrades-Button
-      bestenliste:   { x: 340, y: 513, b: 280, h: 52 }  // Bestenliste-Button
+      spielen:       { x: 340, y: 245, b: 280, h: 52 }, // Spielen-Button
+      levelWaehlen:  { x: 340, y: 245, b: 280, h: 52 }, // Level-Auswahl (alias auf Spielen für Klick-Helper)
+      einstellungen: { x: 340, y: 305, b: 280, h: 52 }, // Einstellungen-Button
+      upgrades:      { x: 340, y: 365, b: 280, h: 52 }, // Upgrades-Button
+      bestenliste:   { x: 340, y: 425, b: 280, h: 52 }, // Bestenliste-Button
+      mobileApp:     { x: 340, y: 485, b: 280, h: 52 }  // Mobile-App-Anleitung
     };
     // Level-Auswahl-Buttons
     this.levelBtns = [ // Level 1, 2, 3
@@ -152,11 +153,12 @@ class MenuSzene { // Klasse für alle Menü-Bildschirme
     // Gesamtmünzen-Anzeige (persistenter Counter)
     noStroke(); fill(255, 215, 0); textAlign(RIGHT, TOP); textSize(15); // Gold
     text('🪙 Gesamt: ' + (gs.upgrades ? gs.upgrades.daten.gesamtMuenzen : 0), 950, 10); // Anzeige
-    // 4 Hauptmenü-Buttons
+    // 5 Hauptmenü-Buttons
     this._menuButton('spielen',       '▶ ' + T('spielen'),        [45, 165, 65]); // Grüner Spielen-Button
     this._menuButton('einstellungen', '⚙ ' + T('einstellungen'),  [55, 85, 160]); // Blauer Einstellungen-Button
     this._menuButton('upgrades',      '⬆ ' + T('upgrades'),       [155, 100, 40]); // Oranger Upgrades-Button
     this._menuButton('bestenliste',   '🏆 ' + T('bestenliste'),   [80, 55, 130]); // Violetter Bestenliste-Button
+    this._menuButton('mobileApp',     '📱 Mobile App (iOS / Android)', [40, 130, 180]); // Türkisblauer Mobile-Button
     // Kleine Steuerungs-Hilfe
     noStroke(); fill(110, 110, 155); textSize(11); textAlign(CENTER, BOTTOM); // Grau, klein
     text('[Space] Welle  |  [Esc] Pause  |  [R] Neustart', 480, 636); // Hinweis
@@ -448,6 +450,118 @@ class MenuSzene { // Klasse für alle Menü-Bildschirme
     let nl = this.gs.level + 1; // Nächstes Level
     if (nl <= 3) this._grosserButton(480, 435, 230, 44, T('naechstesLevel') + nl, [48,128,215]); // Weiter
     this._grosserButton(480, nl <= 3 ? 490 : 435, 230, 44, T('levelAuswahl'), [58,58,88]); // Auswahl
+  }
+
+  // ─── Mobile App Anleitung ─────────────────────────────────────────────────
+
+  _mobileUrlBerechnen() { // Vollständige URL zur mobile.html für Anzeige & Kopieren
+    try { // Aus aktueller Adresse ableiten
+      return new URL('mobile.html', window.location.href).href; // Absoluter Link
+    } catch (e) { // Fallback wenn URL-Konstruktor fehlt
+      return 'mobile.html'; // Relativer Pfad als Notlösung
+    }
+  }
+
+  drawMobileApp() { // Anleitung "Zum Home-Bildschirm hinzufügen" zeichnen
+    this._menuHintergrundZeichnen(); // Gemeinsamer Hintergrund mit Schülern
+    this._submenüTitel('📱 Mobile App'); // Überschrift
+    let url = this._mobileUrlBerechnen(); // URL zur Mobile-Version
+    // Kurze Beschreibung
+    noStroke(); fill(195, 200, 230); textAlign(CENTER, TOP); textSize(14); // Hellblau
+    text('Spiele Lehrer vs. Schüler unterwegs auf deinem Handy als App.', 480, 130); // Beschreibungstext
+    // URL-Box
+    fill(20, 22, 50); stroke(80, 110, 200); strokeWeight(1.5); // Dunkles Panel mit blauer Kontur
+    rect(140, 158, 680, 56, 8); // URL-Box
+    noStroke(); fill(255, 215, 80); textAlign(LEFT, CENTER); textSize(13); // Goldene URL
+    text(url, 160, 186); // URL-Anzeige
+    // Action-Buttons in der URL-Box rechts
+    this._mobileBtnOpen     = { x: 590, y: 168, b: 110, h: 36 }; // "Direkt öffnen"
+    this._mobileBtnCopy     = { x: 705, y: 168, b: 100, h: 36 }; // "Kopieren"
+    this._mobileButtonZeichnen(this._mobileBtnOpen, '↗ Öffnen', [50, 150, 220]); // Öffnen-Button
+    this._mobileButtonZeichnen(this._mobileBtnCopy, '⧉ Kopieren', [80, 90, 130]); // Kopieren-Button
+    if (this._kopiertTimer && this._kopiertTimer > 0) { // Feedback "Kopiert!"
+      this._kopiertTimer--; // Timer herunterzählen
+      let alpha = min(255, this._kopiertTimer * 8); // Transparenz
+      fill(120, 230, 140, alpha); textSize(12); textAlign(RIGHT, TOP); // Grün
+      text('Kopiert!', 800, 220); // Feedback-Text
+    }
+    // iOS-Anleitung (links)
+    this._anleitungsBox(60, 250, 410, 280, '🍎 iPhone (Safari)', [
+      '1. Diese Adresse oben öffnen.',
+      '2. Tippe unten auf das "Teilen"-',
+      '   Symbol  ⬆️  in der Leiste.',
+      '3. Scrolle und wähle "Zum',
+      '   Home-Bildschirm".',
+      '4. Tippe oben rechts auf',
+      '   "Hinzufügen". Fertig!',
+      '',
+      'Das Spiel läuft danach im Vollbild,',
+      'ohne Browser-Leiste, mit App-Icon.'
+    ]);
+    // Android-Anleitung (rechts)
+    this._anleitungsBox(490, 250, 410, 280, '🤖 Android (Chrome)', [
+      '1. Diese Adresse oben öffnen.',
+      '2. Chrome zeigt oft schon einen',
+      '   Hinweis "App installieren".',
+      '3. Sonst: Menü ⋮ oben rechts →',
+      '   "App installieren" oder',
+      '   "Zum Startbildschirm".',
+      '4. Bestätigen – fertig!',
+      '',
+      'Die App startet im Querformat',
+      'und funktioniert offline.'
+    ]);
+    this._zurueckButton(); // Zurück-Button
+  }
+
+  _anleitungsBox(x, y, b, h, titel, zeilen) { // Eine Anleitungs-Karte zeichnen
+    fill(15, 18, 40, 230); stroke(70, 90, 160); strokeWeight(2); // Dunkler Karton
+    rect(x, y, b, h, 12); // Box-Rechteck
+    noStroke(); fill(255, 215, 80); textAlign(LEFT, TOP); textSize(18); textStyle(BOLD); // Goldener Titel
+    text(titel, x + 18, y + 14); textStyle(NORMAL); // Titel anzeigen
+    fill(220, 225, 245); textSize(13); // Heller Text
+    let zy = y + 50; // Start-Y für Zeilen
+    for (let z of zeilen) { // Jede Zeile
+      text(z, x + 18, zy); // Zeile zeichnen
+      zy += 21; // Nächste Zeile
+    }
+  }
+
+  _mobileButtonZeichnen(btn, label, farbe) { // Kleinen Aktionsbutton in der Mobile-Anleitung
+    let mx = skMx(), my = skMy(); // Mausposition
+    let hover = mx >= btn.x && mx <= btn.x + btn.b && my >= btn.y && my <= btn.y + btn.h; // Hover
+    fill(hover ? color(farbe[0]+25, farbe[1]+25, farbe[2]+25) : color(farbe[0], farbe[1], farbe[2])); // Farbe
+    stroke(farbe[0]+50, farbe[1]+50, farbe[2]+50); strokeWeight(1.5); // Kontur
+    rect(btn.x, btn.y, btn.b, btn.h, 6); // Button
+    noStroke(); fill(255); textAlign(CENTER, CENTER); textSize(12); textStyle(BOLD); // Text
+    text(label, btn.x + btn.b/2, btn.y + btn.h/2); textStyle(NORMAL); // Beschriftung
+  }
+
+  mobileAppKlick(mx, my) { // Klicks auf der Mobile-App-Anleitung verarbeiten
+    let url = this._mobileUrlBerechnen(); // URL berechnen
+    if (this._mobileBtnOpen && mx >= this._mobileBtnOpen.x && mx <= this._mobileBtnOpen.x + this._mobileBtnOpen.b
+        && my >= this._mobileBtnOpen.y && my <= this._mobileBtnOpen.y + this._mobileBtnOpen.h) { // "Öffnen"?
+      try { window.location.href = 'mobile.html'; } catch (e) {} // Direkt zur Mobile-Version
+      return true; // Klick verarbeitet
+    }
+    if (this._mobileBtnCopy && mx >= this._mobileBtnCopy.x && mx <= this._mobileBtnCopy.x + this._mobileBtnCopy.b
+        && my >= this._mobileBtnCopy.y && my <= this._mobileBtnCopy.y + this._mobileBtnCopy.h) { // "Kopieren"?
+      try { // Modernes API zuerst probieren
+        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url); // Kopieren
+        else { // Fallback über versteckte Textarea
+          let ta = document.createElement('textarea'); // Hilfs-Textarea
+          ta.value = url; document.body.appendChild(ta); ta.select(); // Selektieren
+          document.execCommand('copy'); document.body.removeChild(ta); // Kopieren und entfernen
+        }
+        this._kopiertTimer = 60; // Feedback für 1 Sekunde anzeigen
+      } catch (e) { /* Kopieren nicht möglich – ignorieren */ }
+      return true; // Klick verarbeitet
+    }
+    return false; // Kein relevanter Klick
+  }
+
+  isMenuMobileApp(mx, my) { // "Mobile App"-Button im Hauptmenü geklickt?
+    let b = this.menuBtns.mobileApp; return mx>=b.x && mx<=b.x+b.b && my>=b.y && my<=b.y+b.h;
   }
 
   // ─── Hilfsmethoden ────────────────────────────────────────────────────────
