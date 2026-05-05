@@ -7,6 +7,10 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="theme-color" content="#0a0a1a" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png" />
   <title>Lehrer vs. Schüler – Mobile</title>
   <style>
     *, *::before, *::after {
@@ -212,6 +216,15 @@
     document.addEventListener('touchmove', function (e) {
       if (e.touches.length > 1) e.preventDefault();
     }, { passive: false });
+
+    // Service Worker registrieren – ermöglicht Offline-Spiel + "Zum Home-Bildschirm"
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('service-worker.js').catch(function () {
+          /* Registration fehlgeschlagen – PWA-Funktion einfach ohne Cache aktiv */
+        });
+      });
+    }
   </script>
 
 </body>
