@@ -124,28 +124,20 @@ class Fight extends Turm { // Hr. Fight – fährt mit dem Motorrad und überfä
 
   _schiessen() { /* Fight schießt nicht – Schaden durch Bike-Kontakt */ }
 
-  draw() { // Überschriebene Zeichenmethode: Lehrer auf Sockel + Bike auf Kreisbahn
-    push(); // Zustand sichern
-    translate(this.x, this.y); // Zum Turm verschieben
-    if (this.ausgewaehlt) { // Reichweiten-Kreis (Fahrkreis) zeigen
-      noFill(); stroke(255, 255, 255, 60); strokeWeight(1.5); // Halbtransparente Linie
-      ellipse(0, 0, this.fahrRadius * 2, this.fahrRadius * 2); // Fahr-Kreis
+  _istUnterMaus(mx, my) { // Klick-Trefferprüfung: Bike-Position UND Orbit-Mitte zählen
+    return dist(mx, my, this.bikeX, this.bikeY) <= 26 // Klick aufs Bike
+        || dist(mx, my, this.x, this.y) <= this.radius + 8; // Klick auf Orbit-Mitte
+  }
+
+  draw() { // Lehrer sitzt selbst auf dem Bike – Bike + Lehrer fahren zusammen
+    // Reichweiten-/Fahrkreis-Anzeige beim Auswählen
+    if (this.ausgewaehlt) { // Auswahl-Indikator
+      push(); translate(this.x, this.y); // Orbit-Mittelpunkt
+      noFill(); stroke(255, 255, 255, 70); strokeWeight(1.5); // Halbtransparente Linie
+      ellipse(0, 0, this.fahrRadius * 2, this.fahrRadius * 2); // Fahrkreis
+      fill(255, 255, 255, 30); noStroke(); ellipse(0, 0, 8, 8); // Mittelpunkt-Punkt
+      pop(); // Zustand zurück
     }
-    fill(120, 120, 120); stroke(60, 60, 60); strokeWeight(1); // Sockel-Stil
-    rect(-18, -5, 36, 16, 4); // Sockel-Rechteck
-    let kf = this.koerperFarbe; // Körperfarbe
-    fill(kf[0], kf[1], kf[2]); stroke(max(0,kf[0]-60), max(0,kf[1]-60), max(0,kf[2]-60)); strokeWeight(1.5); // Körper
-    rect(-11, -28, 22, 24, 3); // Körper
-    stroke(max(0,kf[0]-40), max(0,kf[1]-40), max(0,kf[2]-40)); strokeWeight(3); // Arme
-    line(-11, -22, -20, -12); line(11, -22, 20, -12); // Arme schräg
-    let kpf = this.kopfFarbe; fill(kpf[0], kpf[1], kpf[2]); stroke(max(0,kpf[0]-50), max(0,kpf[1]-50), max(0,kpf[2]-50)); strokeWeight(1.5); // Kopf
-    ellipse(0, -38, 20, 20); // Kopf
-    if (this.upgradeStufe > 0) { // Upgrade-Abzeichen
-      let af = this.upgradePfad === 0 ? [80, 150, 255] : [80, 220, 100]; // Pfad-Farbe
-      fill(af[0], af[1], af[2]); noStroke(); ellipse(12, -48, 14, 14); // Abzeichen
-      fill(255); textAlign(CENTER, CENTER); textSize(9); text(this.upgradeStufe, 12, -48); // Stufe
-    }
-    pop(); // Zustand wiederherstellen
     // Feuerspur zeichnen (unter dem Bike)
     for (let p of this.feuerSpurPunkte) { // Jeden Spur-Punkt
       let alpha = map(p.leben, 0, 90, 0, 200); // Transparenz basierend auf Alter
@@ -154,25 +146,75 @@ class Fight extends Turm { // Hr. Fight – fährt mit dem Motorrad und überfä
       fill(255, 220, 60, alpha * 0.6); // Heller Kern
       ellipse(p.x, p.y, 10, 10); // Innerer Kern
     }
-    // Bike zeichnen
+    // Bike + Lehrer als Einheit zeichnen
     push(); // Zustand sichern
-    translate(this.bikeX, this.bikeY); // Zur Bike-Position
+    translate(this.bikeX, this.bikeY); // Zur aktuellen Position
     rotate(this.fahrWinkel + HALF_PI); // In Fahrtrichtung drehen
-    if (this.stachel) { // Stachel-Aufsatz
-      stroke(150, 150, 150); strokeWeight(1.5); // Silberne Stacheln
-      for (let i = 0; i < 6; i++) { // 6 Stacheln rund um das Rad
-        let w = (TWO_PI / 6) * i; // Winkel
-        line(0, 0, cos(w) * 14, sin(w) * 14); // Stachel-Linie
+    // Bodenschatten unter Bike
+    noStroke(); fill(0, 0, 0, 70); // Halbtransparenter Schatten
+    ellipse(2, 2, 30, 18); // Schatten leicht versetzt
+    // Stachelräder (Pfad-0-Stufe-3)
+    if (this.stachel) { // Optionaler Stachel-Aufsatz
+      stroke(170, 170, 175); strokeWeight(1.5); // Silberne Stacheln
+      for (let wheelY of [-10, 10]) { // Beide Räder bestachelt
+        for (let i = 0; i < 8; i++) { // 8 Stacheln pro Rad
+          let w = (TWO_PI / 8) * i + this.fahrWinkel * 2; // Drehender Winkel
+          line(0, wheelY, cos(w) * 12, wheelY + sin(w) * 12); // Stachel-Linie
+        }
       }
     }
-    fill(40, 40, 50); stroke(20, 20, 30); strokeWeight(1.5); // Bike-Rahmen
-    rect(-5, -10, 10, 20, 3); // Rahmen
-    fill(70, 70, 80); ellipse(0, -10, 12, 12); // Vorderrad
-    ellipse(0, 10, 12, 12); // Hinterrad
-    fill(180, 50, 50); noStroke(); rect(-3, -3, 6, 6); // Roter Tank
-    pop(); // Zustand wiederherstellen
-    // Bombe(n) zeichnen
-    for (let g of this.geschosse) g.draw(); // Bomben zeichnen
+    // Räder
+    fill(35, 35, 40); stroke(15, 15, 20); strokeWeight(1.5); // Reifen-Stil
+    ellipse(0, -10, 14, 14); // Vorderrad
+    ellipse(0, 10, 14, 14); // Hinterrad
+    fill(120, 120, 130); noStroke(); // Felgen-Stil
+    ellipse(0, -10, 6, 6); // Vorderfelge
+    ellipse(0, 10, 6, 6); // Hinterfelge
+    // Bike-Rahmen unter dem Lehrer
+    fill(180, 40, 40); stroke(100, 20, 20); strokeWeight(1.5); // Roter Rahmen
+    rect(-4, -8, 8, 16, 2); // Rahmen-Mittelteil
+    // Lenker (vorne)
+    stroke(40, 40, 50); strokeWeight(2.2); // Dunkler Lenker
+    line(-7, -12, 7, -12); // Lenkerstange
+    // Sitz hinten
+    fill(30, 30, 35); noStroke(); // Schwarzer Sitz
+    rect(-3, 0, 6, 8, 1); // Sattel
+    // ── Lehrer auf dem Bike ──────────────────────────────────────────────
+    let kf = this.koerperFarbe; // Körperfarbe (Lederjacke)
+    let kpf = this.kopfFarbe; // Hautfarbe
+    // Beine seitlich
+    fill(40, 40, 60); stroke(20, 20, 30); strokeWeight(1.2); // Hose
+    rect(-7, 0, 4, 8, 1); // Linkes Bein angewinkelt
+    rect(3, 0, 4, 8, 1); // Rechtes Bein angewinkelt
+    // Oberkörper (vorgebeugte Haltung)
+    fill(kf[0], kf[1], kf[2]); stroke(max(0,kf[0]-60), max(0,kf[1]-60), max(0,kf[2]-60)); strokeWeight(1.5);
+    rect(-7, -7, 14, 12, 3); // Oberkörper
+    // Arme greifen den Lenker (nach vorne)
+    stroke(max(0,kf[0]-40), max(0,kf[1]-40), max(0,kf[2]-40)); strokeWeight(3); // Arm-Stil
+    line(-5, -5, -7, -12); // Linker Arm zum Lenker
+    line(5, -5, 7, -12); // Rechter Arm zum Lenker
+    // Helm (statt Kopf – schützt den Lehrer)
+    fill(180, 40, 40); stroke(100, 20, 20); strokeWeight(1.5); // Roter Helm passend zum Bike
+    ellipse(0, -14, 16, 16); // Helm-Kuppel
+    // Helm-Visier (dunkles Glas)
+    fill(30, 40, 60, 220); noStroke(); // Dunkles Visier
+    arc(0, -13, 14, 8, PI + 0.2, TWO_PI - 0.2, CHORD); // Visier-Halbbogen
+    // Hautfarbenes Kinn unter dem Helm
+    fill(kpf[0], kpf[1], kpf[2]); noStroke(); // Hautfarbe
+    rect(-3, -10, 6, 3); // Kinn
+    pop(); // Bike+Lehrer-Stack schließen (Rotation wiederherstellen)
+    // Upgrade-Abzeichen ohne Rotation über dem Helm zeichnen, damit der Text
+    // immer aufrecht steht (sonst dreht es sich mit dem Bike mit)
+    if (this.upgradeStufe > 0) { // Nur wenn Upgrades vorhanden
+      let af = this.upgradePfad === 0 ? [80, 150, 255] : [80, 220, 100]; // Pfad-Farbe
+      fill(af[0], af[1], af[2]); stroke(255); strokeWeight(1); // Abzeichen mit weißem Rand
+      ellipse(this.bikeX + 14, this.bikeY - 14, 13, 13); // Abzeichen rechts oben am Helm
+      noStroke(); fill(255); textAlign(CENTER, CENTER); textSize(9); textStyle(BOLD); // Stufe
+      text(this.upgradeStufe, this.bikeX + 14, this.bikeY - 14); // Stufenzahl
+      textStyle(NORMAL); // Normal
+    }
+    // Bomben/Geschenke zeichnen
+    for (let g of this.geschosse) g.draw(); // Aktive Geschosse
   }
 }
 

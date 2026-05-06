@@ -39,6 +39,11 @@ let gs = {
   }
 };
 
+// gs explizit am Window-Objekt verfügbar machen, damit Module wie peTeacher.js,
+// motorcycleTeacher.js etc. über window.gs auf den Spielzustand zugreifen können.
+// (let-Deklarationen auf Top-Level werden NICHT automatisch zu window-Properties.)
+window.gs = gs;
+
 let _aktiverSlider = null;
 
 function setup() {
