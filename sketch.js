@@ -318,7 +318,48 @@ function mouseWheel(event) {
   }
 }
 
+// ── Touch-Handling für Mobile (Shop-Scroll per Wisch) ─────────────────────
+let _shopTouchStartY = null;   // Letzte Touch-Y-Position (zum Scroll-Berechnen)
+let _shopTouchInitialY = null; // Touch-Y-Position beim Anfang (zum Tap/Swipe-Unterschied)
+let _shopTouchAlsSwipe = false; // Wurde so weit gewischt, dass es kein Tap mehr ist?
+
 function touchStarted() {
-  mousePressed();
-  return false;
+  let mx = skMx(); // Skalierte Maus-X
+  let my = skMy(); // Skalierte Maus-Y
+  // Im Shop-Bereich auf dem Handy: erst tracken, NICHT sofort als Klick werten
+  if (gs.szene === 'spiel' && mx > 740 && my >= 80 && my <= 425) {
+    _shopTouchStartY = my; // Aktuelle Position für Delta-Berechnung
+    _shopTouchInitialY = my; // Ausgangsposition für Swipe-Erkennung
+    _shopTouchAlsSwipe = false; // Erst mal als Tap behandeln
+    return false; // Default-Browser-Scroll unterdrücken
+  }
+  // Sonst: normales Klick-Verhalten
+  mousePressed(); // Maus-Klick auslösen
+  return false; // Default verhindern (kein Bouncing)
+}
+
+function touchMoved() {
+  // Im Shop-Bereich: Bewegung in vertikaler Richtung scrollt den Shop
+  if (_shopTouchStartY !== null) {
+    let my = skMy(); // Aktuelle Y-Position
+    let delta = _shopTouchStartY - my; // Wie weit ist der Finger seit letztem Frame gewandert?
+    if (Math.abs(my - _shopTouchInitialY) > 8) _shopTouchAlsSwipe = true; // Mehr als 8 px = Swipe
+    if (gs.ui) gs.ui.shopScroll(delta * 2.5); // Shop entsprechend scrollen (Faktor verstärkt)
+    _shopTouchStartY = my; // Position für nächstes Frame merken
+    return false; // Browser-Default unterbinden
+  }
+  return false; // Auch sonst kein Scrollen der Seite
+}
+
+function touchEnded() {
+  // Wenn der Touch im Shop begonnen hat
+  if (_shopTouchStartY !== null) {
+    let warTap = !_shopTouchAlsSwipe; // Wurde nicht weit gewischt → Tap
+    _shopTouchStartY = null; // Tracking zurücksetzen
+    _shopTouchInitialY = null; // ...
+    _shopTouchAlsSwipe = false; // ...
+    if (warTap) mousePressed(); // Reiner Tap: jetzt als Klick verarbeiten
+    return false; // Default verhindern
+  }
+  return false; // Default verhindern
 }
