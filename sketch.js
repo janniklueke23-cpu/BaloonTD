@@ -75,9 +75,18 @@ function windowResized() {
 }
 
 function _berechneSkalierung() {
-  SKF = min(windowWidth / 960, windowHeight / 640);
-  SKX = (windowWidth  - 960 * SKF) / 2;
-  SKY = (windowHeight - 640 * SKF) / 2;
+  let containSKF = Math.min(windowWidth / 960, windowHeight / 640); // Klassisches "passt komplett rein"
+  if (window.MOBILE_MODE) { // Auf dem Handy mehr Bildschirm ausfüllen
+    let coverSKF = Math.max(windowWidth / 960, windowHeight / 640); // "deckt komplett ab" (oben/unten ggf. weg)
+    SKF = containSKF + (coverSKF - containSKF) * 0.55; // Mittelweg – füllt deutlich besser, schneidet kaum was ab
+  } else { // Desktop: alles sichtbar
+    SKF = containSKF;
+  }
+  SKX = (windowWidth  - 960 * SKF) / 2; // Horizontal zentriert
+  SKY = (windowHeight - 640 * SKF) / 2; // Vertikal zentriert
+  if (window.MOBILE_MODE) { // Auf dem Handy: oben anliegen lassen, Überstand unten ist akzeptabel
+    if (SKY < 0) SKY = 0; // Verhindert dass die HUD oben abgeschnitten wird
+  }
 }
 
 function draw() {

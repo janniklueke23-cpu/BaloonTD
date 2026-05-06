@@ -17,7 +17,7 @@ class UIManager { // Klasse für alle Spieloberflächen-Elemente
     this.panelX = 740; // X-Position des rechten UI-Panels
     this.panelBreite = 220; // Breite des UI-Panels
     this.hudHoehe = 50; // Höhe des oberen Info-Balkens (HUD)
-    this.shopEintragHoehe = 90; // Höhe jedes Eintrags im Turmshop
+    this.shopEintragHoehe = 112; // Höhe jedes Eintrags im Lehrer-Shop (mit langer Beschreibung)
     this.welleAbschlussTimer = 0; // Timer für die Wellen-Abschluss-Nachricht
     this.welleAbschlussBonus = 0; // Wieviel Bonus beim Abschluss vergeben wurde
     this.nesteWelleBtn = { x: 748, y: 430, b: 204, h: 40 }; // Button "Nächste Welle" (Position und Größe)
@@ -145,27 +145,32 @@ class UIManager { // Klasse für alle Spieloberflächen-Elemente
     stroke(istAusgewaehlt ? color(100, 150, 255) : color(50, 50, 80)); // Kontur je nach Status
     strokeWeight(1.5); // Konturstärke
     rect(x, y, breite, this.shopEintragHoehe - 4, 6); // Eintrag-Rechteck mit abgerundeten Ecken
-    // Kleines Turm-Vorschau-Bild (farbiger Kreis mit Buchstabe)
-    let farbe = eintrag.farbe; // Turmfarbe holen
+    // Kleines Lehrer-Vorschau-Bild (farbiger Kreis mit Buchstabe)
+    let farbe = eintrag.farbe; // Lehrer-Farbe holen
     fill(farbe[0], farbe[1], farbe[2]); // Farbe setzen
     noStroke(); // Keine Kontur
-    ellipse(x + 25, y + 35, 28, 28); // Farbiger Kreis als Vorschau
-    // Buchstabe des Turmtyps auf dem Kreis
+    ellipse(x + 22, y + 22, 28, 28); // Avatar oben links (Platz für Beschreibung darunter)
+    // Buchstabe des Lehrer-Typs auf dem Kreis
     fill(255); // Weißer Text
     textAlign(CENTER, CENTER); // Zentriert
     textSize(11); // Kleine Schrift
-    text(eintrag.name.charAt(0), x + 25, y + 35); // Ersten Buchstaben des Namens anzeigen
-    // Name des Turms
+    text(eintrag.name.charAt(0), x + 22, y + 22); // Ersten Buchstaben des Namens anzeigen
+    // Name des Lehrers
     fill(kannKaufen ? color(220, 220, 255) : color(100, 100, 120)); // Farbe je nach Kaufbarkeit
     textAlign(LEFT, TOP); // Links oben
     textSize(13); // Mittlere Schrift
     textStyle(BOLD); // Fett
-    text(eintrag.name, x + 42, y + 10); // Turmname
+    text(eintrag.name, x + 42, y + 8); // Lehrer-Name
     textStyle(NORMAL); // Normal
-    // Beschreibung des Turms (kurz)
-    fill(kannKaufen ? color(160, 160, 200) : color(80, 80, 100)); // Grauer Text
-    textSize(10); // Kleine Schrift
-    this._turmBeschreibung(eintrag.typ, x + 42, y + 27); // Beschreibungstext
+    // Kurz-Tags (3 Schlagworte)
+    fill(kannKaufen ? color(140, 200, 250) : color(70, 80, 100)); // Hellblauer Tag-Text
+    textSize(9); // Sehr kleine Schrift
+    text(this._turmTags(eintrag.typ), x + 42, y + 25); // Schlagwort-Liste
+    // Lange Beschreibung mit Wrap (genau wie aus dem Designdoc)
+    fill(kannKaufen ? color(170, 175, 210) : color(75, 75, 95)); // Grauer Beschreibungstext
+    textSize(10); // Lesbare Schrift
+    textAlign(LEFT, TOP); // Links oben verankern
+    text(this._turmLangBeschreibung(eintrag.typ), x + 8, y + 42, breite - 16, 50); // Wrap im Rechteck
     // Preis-Anzeige
     fill(kannKaufen ? color(255, 215, 0) : color(150, 100, 50)); // Gold wenn kaufbar, braun wenn nicht
     textSize(13); // Mittlere Schrift
@@ -173,7 +178,35 @@ class UIManager { // Klasse für alle Spieloberflächen-Elemente
     text('🪙 ' + eintrag.kosten, x + breite - 8, y + this.shopEintragHoehe - 8); // Preis anzeigen
   }
 
-  _turmBeschreibung(typ, x, y) { // Kurze Beschreibung des Turmtyps
+  _turmTags(typ) { // Drei Schlagworte zur schnellen Charakterisierung
+    let tags = { // Schlagworte je Lehrer
+      'blech':    'Standard · Schnell · Kreide',
+      'pfingsten':'Support · Verlangsamt',
+      'pfister':  'Range · Säure · Splash',
+      'koch':     'Range · Langsam · Stark',
+      'raum':     'Support · Geld · Buff',
+      'fight':    'Mobil · Anlauf · Bomben',
+      'motsious': 'Range · Strahl · Spread',
+      'brust':    'Schaden · Kettenblitz'
+    };
+    return tags[typ] || ''; // Schlagworte zurückgeben
+  }
+
+  _turmLangBeschreibung(typ) { // Lange Beschreibung gemäß Designdoc Blesch.docx
+    let beschreibungen = { // Volltext aus dem Designdokument
+      'blech':    'Wirft Kreide auf vorbei­laufende Schüler. Standard-Lehrer für jede Strategie.',
+      'pfingsten':'Erzählt Geschichten und verlangsamt Schüler in Reichweite. Support-Lehrer.',
+      'pfister':  'Wirft Bier­flaschen mit Säure-Splash – langsam, aber Flächen­schaden über Zeit.',
+      'koch':     'Wirft Verweise – sehr langsam, aber starker Einzel­schaden.',
+      'raum':     'Hacker am Laptop – produziert Geld und verstärkt umliegende Lehrer.',
+      'motsious': 'Sitzt am Teilchen­beschleuniger und streut Teilchen in eine Richtung.',
+      'brust':    'Schießt Blitze, die zwischen mehreren Schülern hin und her springen.',
+      'fight':    'Fährt mit dem Motorrad zwischen Grill und Zigarre. Anlauf = Schaden.'
+    };
+    return beschreibungen[typ] || '';
+  }
+
+  _turmBeschreibung(typ, x, y) { // Kompatibilitäts-Wrapper (alte Aufrufe)
     let beschreibungen = { // Tabelle mit Kurzfassungen
       'blech':    'Kreide · Schnell · Bombe',   // Blech: Kreide-Werfer
       'pfingsten':'Support · Verlangsamt',      // Pfingsten: Verlangsamer
