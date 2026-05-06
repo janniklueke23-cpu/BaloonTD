@@ -1,14 +1,14 @@
 // uiManager.js – Zeichnet alle UI-Elemente: HUD, Shop-Panel, Upgrade-Panel, Buttons
 
-const TURMSHOP_EINTRAEGE = [ // Liste aller kaufbaren Türme im Shop
-  { typ: 'blech',    name: 'Hr. Blech',    kosten: 100, farbe: [55, 55, 75]   }, // Blech: Kreide-Werfer
-  { typ: 'pfingsten',name: 'Hr. Pfingsten',kosten: 130, farbe: [70, 100, 50]  }, // Pfingsten: Verlangsamer
-  { typ: 'koch',     name: 'Hr. Koch',     kosten: 175, farbe: [160, 40, 40]  }, // Koch: Verweis-Werfer
-  { typ: 'pfister',  name: 'Hr. Pfister',  kosten: 140, farbe: [120, 80, 30]  }, // Pfister: Säure-Flaschen
-  { typ: 'raum',     name: 'Hr. Zimmer',   kosten: 200, farbe: [40, 130, 180] }, // Baum (intern: raum) – Support: Geld & Buff
-  { typ: 'motsious', name: 'Hr. Motsious', kosten: 220, farbe: [70, 70, 110]  }, // Motsious: Teilchenbeschleuniger
-  { typ: 'brust',    name: 'Hr. Schulter', kosten: 240, farbe: [220, 180, 30] }, // Schulter (intern: brust) – Blitze
-  { typ: 'fight',    name: 'Hr. Fight',    kosten: 280, farbe: [40, 40, 50]   }  // Fight: Motorrad
+const TURMSHOP_EINTRAEGE = [ // Liste aller kaufbaren Lehrer im Shop (preislich aufsteigend)
+  { typ: 'blech',    name: 'Hr. Blech',    kosten: 110, farbe: [55, 55, 75]   }, // Standard-Kreidewerfer
+  { typ: 'pfingsten',name: 'Hr. Pfingsten',kosten: 150, farbe: [70, 100, 50]  }, // Verlangsamer (Support)
+  { typ: 'pfister',  name: 'Hr. Pfister',  kosten: 170, farbe: [120, 80, 30]  }, // Säure-Flaschen
+  { typ: 'koch',     name: 'Hr. Koch',     kosten: 220, farbe: [160, 40, 40]  }, // Verweis-Werfer (Stark)
+  { typ: 'raum',     name: 'Hr. Zimmer',   kosten: 260, farbe: [40, 130, 180] }, // Geld + Buff
+  { typ: 'motsious', name: 'Hr. Motsious', kosten: 300, farbe: [70, 70, 110]  }, // Teilchenbeschleuniger
+  { typ: 'brust',    name: 'Hr. Schulter', kosten: 340, farbe: [220, 180, 30] }, // Kettenblitze
+  { typ: 'fight',    name: 'Hr. Fight',    kosten: 520, farbe: [40, 40, 50]   }  // Motorrad mit Anlauf
 ];
 
 class UIManager { // Klasse für alle Spieloberflächen-Elemente

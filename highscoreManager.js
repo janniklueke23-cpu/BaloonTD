@@ -8,12 +8,14 @@ class HighscoreManager {
   }
 
   _laden() {
+    let leer = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: [] }; // 8 Level
     try {
       let json = localStorage.getItem(this.schluessel);
-      if (!json) return { 1: [], 2: [], 3: [] };
-      return JSON.parse(json);
+      if (!json) return leer; // Keine Daten: leer zurück
+      let geladen = JSON.parse(json); // JSON laden
+      return Object.assign(leer, geladen); // Neue Level-Slots dazu mergen falls Speicherstand älter ist
     } catch (e) {
-      return { 1: [], 2: [], 3: [] };
+      return leer; // Bei Fehler: leer zurück
     }
   }
 
@@ -39,9 +41,9 @@ class HighscoreManager {
   }
 
   levelFreigeschaltet(level) {
-    if (level === 1) return true;
-    if (level === 2) return (this.daten[1] && this.daten[1].length > 0);
-    if (level === 3) return (this.daten[2] && this.daten[2].length > 0);
-    return false;
+    if (level === 1) return true; // Level 1 ist immer freigeschaltet
+    if (level < 1 || level > 8) return false; // Nur 8 Level definiert
+    let prev = this.daten[level - 1]; // Vorheriges Level
+    return !!(prev && prev.length > 0); // Erst freischalten wenn das vorherige bestanden wurde
   }
 }

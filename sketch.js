@@ -207,7 +207,7 @@ function mousePressed() {
   }
 
   if (gs.szene === 'sieg') {
-    if (gs.menuSzene.isNaechstesLevelKlick(mx, my) && gs.level < 3) {
+    if (gs.menuSzene.isNaechstesLevelKlick(mx, my) && gs.level < 8) {
       gs.sound.menuKlick();
       gs.spielSzene.levelStarten(gs.level + 1);
       gs.szene = 'spiel';
