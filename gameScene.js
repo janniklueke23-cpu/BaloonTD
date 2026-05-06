@@ -375,18 +375,40 @@ class SpielSzene { // Klasse für die Haupt-Spielszene
     }
   }
 
-  turmPlatzieren(mx, my) { // Versucht einen Turm an der Mausposition zu platzieren
-    if (!this.gs.ausgewaehlteTurmTyp) return; // Kein Turmtyp ausgewählt: abbrechen
+  turmPlatzieren(mx, my) { // Versucht einen Lehrer an der Mausposition zu platzieren
+    if (!this.gs.ausgewaehlteTurmTyp) return; // Kein Lehrer-Typ ausgewählt: abbrechen
     if (mx > 740 || my < 50) return; // Im Panel oder HUD: abbrechen
     if (!this.gs.platzierungGueltig(mx, my)) return; // Ungültige Position: abbrechen
+    // ── Sonderfall Hr. Fight: 2-Klick-Platzierung ────────────────────────
+    if (this.gs.ausgewaehlteTurmTyp === 'fight') { // Hr. Fight braucht zwei Punkte
+      if (!this.gs.fightPunkt1) { // Erster Klick: Grill-Position merken
+        this.gs.fightPunkt1 = { x: mx, y: my }; // Punkt 1 speichern
+        if (this.gs.sound) this.gs.sound.menuKlick(); // Klick-Sound
+        return; // Auf zweiten Klick warten
+      }
+      // Zweiter Klick: prüfen dass die Punkte nicht zu nah aneinander liegen
+      if (dist(mx, my, this.gs.fightPunkt1.x, this.gs.fightPunkt1.y) < 60) return; // Zu nah – ignorieren
+      let kosten = this.gs.wirtschaft.turmKosten('fight'); // Kosten holen
+      if (!this.gs.wirtschaft.muenzenAbziehen(kosten)) { // Nicht genug Münzen?
+        this.gs.fightPunkt1 = null; // Vorgang abbrechen
+        return; // Beenden
+      }
+      let neuerTurm = new Fight(this.gs.fightPunkt1.x, this.gs.fightPunkt1.y, { x: mx, y: my }); // Mit beiden Punkten
+      this.gs.tuerme.push(neuerTurm); // Lehrer hinzufügen
+      if (this.gs.sound) this.gs.sound.turmPlatziert(); // Sound: gesetzt
+      this.gs.fightPunkt1 = null; // Zurücksetzen
+      this.gs.ausgewaehlteTurmTyp = null; // Auswahl beenden
+      return; // Fertig
+    }
+    // ── Standard-Platzierung (alle anderen Lehrer) ──────────────────────
     let kosten = this.gs.wirtschaft.turmKosten(this.gs.ausgewaehlteTurmTyp); // Kosten holen
     if (!this.gs.wirtschaft.muenzenAbziehen(kosten)) return; // Nicht genug Münzen: abbrechen
-    let neuerTurm = this._turmErstellen(this.gs.ausgewaehlteTurmTyp, mx, my); // Turm erstellen
-    if (neuerTurm) { // Turm erfolgreich erstellt?
-      this.gs.tuerme.push(neuerTurm); // Turm zur Liste hinzufügen
-      if (this.gs.sound) this.gs.sound.turmPlatziert(); // Sound: Turm gesetzt
+    let neuerTurm = this._turmErstellen(this.gs.ausgewaehlteTurmTyp, mx, my); // Lehrer erstellen
+    if (neuerTurm) { // Lehrer erfolgreich erstellt?
+      this.gs.tuerme.push(neuerTurm); // Lehrer zur Liste hinzufügen
+      if (this.gs.sound) this.gs.sound.turmPlatziert(); // Sound: Lehrer gesetzt
     }
-    this.gs.ausgewaehlteTurmTyp = null; // Turmtyp-Auswahl zurücksetzen (nach Platzierung)
+    this.gs.ausgewaehlteTurmTyp = null; // Auswahl zurücksetzen
   }
 
   _turmErstellen(typ, x, y) { // Erstellt einen Turm des angegebenen Typs

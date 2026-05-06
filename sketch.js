@@ -19,6 +19,7 @@ let gs = {
   pausiert:            false,
   ausgewaehlteTurmTyp: null,
   angeklickterTurm:    null,
+  fightPunkt1:         null,
   tuerme:              [],
   gegner:              [],
   punkte:              0,
@@ -232,6 +233,7 @@ function mousePressed() {
     }
     let shopTyp = gs.ui.getShopKlick(mx, my);
     if (shopTyp) {
+      gs.fightPunkt1 = null; // Beim Wechsel des Lehrer-Typs Fight-Vorgang abbrechen
       if (gs.ausgewaehlteTurmTyp === shopTyp) {
         gs.ausgewaehlteTurmTyp = null;
       } else {
@@ -288,6 +290,7 @@ function keyPressed() {
     if (gs.szene === 'spiel') {
       if (gs.ausgewaehlteTurmTyp) {
         gs.ausgewaehlteTurmTyp = null;
+        gs.fightPunkt1 = null; // Auch laufende Fight-Platzierung abbrechen
       } else if (gs.angeklickterTurm) {
         gs.angeklickterTurm = null;
         gs.tuerme.forEach(t => t.ausgewaehlt = false);
