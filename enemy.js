@@ -76,7 +76,10 @@ class Ballon { // Hauptklasse für alle Ballon-Gegner
       this._bewegungSchritt(); // Einen Bewegungsschritt ausführen
     }
     this.winkelAnimation += 0.05; // Animations-Winkel für wackeln erhöhen
-    if (this.verlangsamt > 0) this.verlangsamt--; // Verlangsamungs-Timer herunterzählen
+    if (this.verlangsamt > 0) { // Verlangsamungs-Timer herunterzählen
+      this.verlangsamt--; // Eine Frame weniger
+      if (this.verlangsamt <= 0) this.verlangsamStaerke = undefined; // Effekt-Stärke zurücksetzen
+    }
     if (this.betaeubt > 0) this.betaeubt--; // Betäubungs-Timer herunterzählen
     if (this.blinkTimer > 0) this.blinkTimer--; // Blink-Timer herunterzählen
     if (this.vergiftet > 0) { // Falls Ballon vergiftet ist
@@ -104,7 +107,10 @@ class Ballon { // Hauptklasse für alle Ballon-Gegner
       return; // Schritt beenden
     }
     let aktuellGeschwindigkeit = this.geschwindigkeit; // Aktuelle Geschwindigkeit holen
-    if (this.verlangsamt > 0) aktuellGeschwindigkeit *= 0.5; // Bei Verlangsamung halbe Geschwindigkeit
+    if (this.verlangsamt > 0) { // Bei aktiver Verlangsamung
+      let staerke = (typeof this.verlangsamStaerke === 'number') ? this.verlangsamStaerke : 0.5; // Verlangsamungs-Faktor
+      aktuellGeschwindigkeit *= staerke; // Geschwindigkeit reduzieren (z.B. 0.5 = halbe Speed)
+    }
     let bewegung = aktuellGeschwindigkeit; // Pixel die diesen Frame zurückgelegt werden
     let schrittFortschritt = bewegung / distanz; // Fortschritt als Anteil der Wegpunkt-Distanz
     this.fortschritt += schrittFortschritt; // Fortschritt addieren
@@ -175,8 +181,11 @@ class Ballon { // Hauptklasse für alle Ballon-Gegner
     this.giftStapel = Math.min(this.giftStapel + 1, 3); // Gift-Stapel erhöhen (max 3)
   }
 
-  verlangsamen(dauer) { // Verlangsamungseffekt anwenden
+  verlangsamen(dauer, staerke) { // Verlangsamungseffekt anwenden (staerke optional, default 0.5)
     this.verlangsamt = Math.max(this.verlangsamt, dauer); // Längere Dauer behalten
+    let s = (typeof staerke === 'number') ? staerke : 0.5; // Standard 50% Verlangsamung
+    if (typeof this.verlangsamStaerke !== 'number') this.verlangsamStaerke = s; // Erste Anwendung
+    else this.verlangsamStaerke = Math.min(this.verlangsamStaerke, s); // Stärkster Effekt gewinnt
   }
 
   betaeuben(dauer) { // Betäubungseffekt anwenden (Ballon stoppt kurz)
@@ -268,6 +277,19 @@ class Ballon { // Hauptklasse für alle Ballon-Gegner
       noStroke(); // Keine Kontur
       fill(80, 200, 80, 100); // Halbdurchsichtiges Grün
       ellipse(0, 0, rad * 2.5, rad * 2.5); // Leuchtendes Gift-Aura
+    }
+    // Verlangsamungs-Anzeige (blaues Aura + Schneeflocken-Symbol)
+    if (this.verlangsamt > 0) { // Nur anzeigen wenn verlangsamt
+      noStroke(); // Keine Kontur
+      fill(120, 200, 255, 80); // Halbtransparentes Eisblau
+      ellipse(0, 0, rad * 2.4, rad * 2.4); // Eis-Aura um den Schüler
+      stroke(220, 240, 255, 220); // Helle Schneeflocken-Linien
+      strokeWeight(1.4); // Dünne Strichstärke
+      let sx = rad * 0.95, sy = -rad * 1.1; // Position oben rechts
+      for (let i = 0; i < 3; i++) { // Drei Strahlen für die Schneeflocke
+        let w = (PI / 3) * i; // Winkel
+        line(sx + cos(w) * 4, sy + sin(w) * 4, sx - cos(w) * 4, sy - sin(w) * 4); // Strahl
+      }
     }
     // Leben-Balken für den Boss
     if (this.typ === 'schwarz') { // Nur für den Boss

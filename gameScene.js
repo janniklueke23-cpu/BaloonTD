@@ -403,16 +403,20 @@ class SpielSzene { // Klasse für die Haupt-Spielszene
     }
   }
 
-  turmAnklicken(mx, my) { // Prüft ob ein platzierter Turm angeklickt wurde
-    this.gs.tuerme.forEach(t => t.ausgewaehlt = false); // Alle Türme deselektieren
-    for (let t of this.gs.tuerme) { // Alle platzierten Türme prüfen
-      if (dist(mx, my, t.x, t.y) <= t.radius + 8) { // Maus auf dem Turm?
-        t.ausgewaehlt = true; // Turm als ausgewählt markieren
+  turmAnklicken(mx, my) { // Prüft ob ein platzierter Lehrer angeklickt wurde
+    this.gs.tuerme.forEach(t => t.ausgewaehlt = false); // Alle Lehrer deselektieren
+    for (let t of this.gs.tuerme) { // Alle platzierten Lehrer prüfen
+      // Türme können _istUnterMaus überschreiben (z.B. Hr. Fight prüft das Bike)
+      let getroffen = (typeof t._istUnterMaus === 'function')
+        ? t._istUnterMaus(mx, my) // Eigene Trefferprüfung verwenden
+        : dist(mx, my, t.x, t.y) <= t.radius + 8; // Standard: kreisförmiger Bereich
+      if (getroffen) { // Maus auf dem Lehrer?
+        t.ausgewaehlt = true; // Lehrer als ausgewählt markieren
         this.gs.angeklickterTurm = t; // Im Spielzustand speichern
         return true; // Treffer zurückgeben
       }
     }
-    return false; // Keinen Turm getroffen
+    return false; // Keinen Lehrer getroffen
   }
 
   turmUpgraden(turm, pfadIndex) { // Versucht einen Turm upzugraden; pfadIndex nötig beim ersten Kauf
