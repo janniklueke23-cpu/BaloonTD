@@ -387,6 +387,37 @@ class UIManager { // Klasse für alle Spieloberflächen-Elemente
     if (mx > this.panelX) return; // Maus im Panel: keine Vorschau
     if (my < this.hudHoehe) return; // Maus im HUD: keine Vorschau
     let gueltig = this.gs.platzierungGueltig(mx, my); // Ist diese Position gültig?
+    // ── Spezialfall Hr. Fight: bereits gesetzten ersten Punkt + Linie zur Maus zeigen ──
+    if (this.gs.ausgewaehlteTurmTyp === 'fight') { // Im Fight-Modus
+      if (this.gs.fightPunkt1) { // Erster Punkt schon gesetzt
+        let abstand = dist(mx, my, this.gs.fightPunkt1.x, this.gs.fightPunkt1.y); // Distanz prüfen
+        let zweitGueltig = gueltig && abstand >= 60; // Zweiter Punkt darf nicht zu nah sein
+        // Fest-Punkt (Grill) zeichnen
+        noStroke(); fill(255, 200, 60, 220); // Goldgelb für gesetzten Punkt
+        ellipse(this.gs.fightPunkt1.x, this.gs.fightPunkt1.y, 20, 20); // Punkt 1
+        // Verbindungslinie
+        stroke(zweitGueltig ? color(120, 220, 120, 200) : color(255, 100, 100, 180)); // Grün/Rot
+        strokeWeight(3); // Dicke Linie
+        drawingContext.setLineDash([8, 6]); // Gestrichelt
+        line(this.gs.fightPunkt1.x, this.gs.fightPunkt1.y, mx, my); // Verbindung
+        drawingContext.setLineDash([]); // Strich-Muster zurücksetzen
+        // Vorschau-Punkt für Zigarre an der Maus
+        noStroke(); fill(zweitGueltig ? color(120, 220, 120, 200) : color(255, 100, 100, 200)); // Status-Farbe
+        ellipse(mx, my, 22, 22); // Punkt 2
+        // Hinweistext
+        fill(255, 255, 255, 220); textAlign(CENTER, CENTER); textSize(13); textStyle(BOLD);
+        text(zweitGueltig ? '🚬 Klick: Zigarre setzen' : '⚠ Mindestabstand 60 Pixel', mx, my - 28);
+        textStyle(NORMAL); // Normal
+        return; // Standard-Vorschau überspringen
+      } else { // Noch kein Punkt gesetzt: Hinweis "Grill platzieren"
+        noStroke(); fill(gueltig ? color(255, 200, 60, 200) : color(255, 100, 100, 200)); // Status
+        ellipse(mx, my, 24, 24); // Vorschau-Punkt
+        fill(255, 255, 255, 220); textAlign(CENTER, CENTER); textSize(13); textStyle(BOLD);
+        text('🍖 Klick: Grill setzen', mx, my - 28); // Hinweis
+        textStyle(NORMAL); // Normal
+        return; // Standard-Vorschau überspringen
+      }
+    }
     noStroke(); // Keine Kontur
     fill(gueltig ? color(100, 255, 100, 60) : color(255, 80, 80, 60)); // Grün wenn gültig, Rot wenn nicht
     ellipse(mx, my, 50, 50); // Vorschau-Kreis
