@@ -4,23 +4,23 @@
 // 'verzoegerung' = Frames zwischen dem Spawnen einzelner Ballons in der Gruppe
 
 const LEVEL_WELLEN = { // Wellen-Definitionen für alle Level
-  1: [ // Level 1: Der Flur (8 Wellen)
-    // Welle 1
-    [{ typ: 'rot', anzahl: 8, verzoegerung: 30 }], // 8 rote Ballons mit 0,5 Sek. Abstand
-    // Welle 2
-    [{ typ: 'rot', anzahl: 14, verzoegerung: 25 }], // 14 rote Ballons, etwas schneller
-    // Welle 3
-    [{ typ: 'rot', anzahl: 10, verzoegerung: 25 }, { typ: 'blau', anzahl: 4, verzoegerung: 35 }], // Rot + erste Blaue
-    // Welle 4
-    [{ typ: 'rot', anzahl: 6, verzoegerung: 20 }, { typ: 'blau', anzahl: 8, verzoegerung: 30 }], // Mehr Blaue
-    // Welle 5
-    [{ typ: 'blau', anzahl: 12, verzoegerung: 28 }], // Nur Blaue
-    // Welle 6
-    [{ typ: 'blau', anzahl: 10, verzoegerung: 25 }, { typ: 'gruen', anzahl: 3, verzoegerung: 40 }], // + erste Grüne
-    // Welle 7
-    [{ typ: 'rot', anzahl: 8, verzoegerung: 15 }, { typ: 'blau', anzahl: 8, verzoegerung: 25 }, { typ: 'gruen', anzahl: 5, verzoegerung: 35 }], // Mix
+  1: [ // Level 1: Der Flur (8 Wellen) – Tutorial-freundlich
+    // Welle 1: nur 5 Rote, sehr langsam zum Üben
+    [{ typ: 'rot', anzahl: 5, verzoegerung: 40 }],
+    // Welle 2: 8 Rote
+    [{ typ: 'rot', anzahl: 8, verzoegerung: 32 }],
+    // Welle 3: Rot + erste Blaue
+    [{ typ: 'rot', anzahl: 8, verzoegerung: 28 }, { typ: 'blau', anzahl: 3, verzoegerung: 35 }],
+    // Welle 4: mehr Blaue
+    [{ typ: 'rot', anzahl: 6, verzoegerung: 22 }, { typ: 'blau', anzahl: 8, verzoegerung: 30 }],
+    // Welle 5: nur Blaue
+    [{ typ: 'blau', anzahl: 12, verzoegerung: 28 }],
+    // Welle 6: erste Grüne
+    [{ typ: 'blau', anzahl: 10, verzoegerung: 25 }, { typ: 'gruen', anzahl: 3, verzoegerung: 40 }],
+    // Welle 7: Mix
+    [{ typ: 'rot', anzahl: 8, verzoegerung: 15 }, { typ: 'blau', anzahl: 8, verzoegerung: 25 }, { typ: 'gruen', anzahl: 5, verzoegerung: 35 }],
     // Welle 8 (Boss-Welle Level 1)
-    [{ typ: 'gruen', anzahl: 8, verzoegerung: 25 }, { typ: 'gelb', anzahl: 2, verzoegerung: 60 }] // Grüne + erste Gelbe
+    [{ typ: 'gruen', anzahl: 8, verzoegerung: 25 }, { typ: 'gelb', anzahl: 2, verzoegerung: 60 }]
   ],
 
   2: [ // Level 2: Die Mensa (12 Wellen)
@@ -81,6 +81,136 @@ const LEVEL_WELLEN = { // Wellen-Definitionen für alle Level
     [{ typ: 'gruen', anzahl: 25, verzoegerung: 10 }, { typ: 'gelb', anzahl: 20, verzoegerung: 20 }, { typ: 'schwarz', anzahl: 2, verzoegerung: 60 }], // Fast alles
     // Welle 15 (Finale!)
     [{ typ: 'gelb', anzahl: 20, verzoegerung: 18 }, { typ: 'schwarz', anzahl: 4, verzoegerung: 55 }] // Episches Finale
+  ],
+
+  4: [ // Level 4: Sporthalle (18 Wellen) – mehr Druck, erste Zwischen-Bosse
+    [{ typ: 'gruen', anzahl: 14, verzoegerung: 22 }],
+    [{ typ: 'gruen', anzahl: 12, verzoegerung: 18 }, { typ: 'gelb', anzahl: 4, verzoegerung: 45 }],
+    [{ typ: 'gelb', anzahl: 8, verzoegerung: 35 }],
+    [{ typ: 'gruen', anzahl: 18, verzoegerung: 14 }, { typ: 'gelb', anzahl: 6, verzoegerung: 35 }],
+    [{ typ: 'gelb', anzahl: 12, verzoegerung: 30 }, { typ: 'schwarz', anzahl: 1, verzoegerung: 90 }], // Erster Boss
+    [{ typ: 'gruen', anzahl: 22, verzoegerung: 13 }, { typ: 'gelb', anzahl: 8, verzoegerung: 30 }],
+    [{ typ: 'gelb', anzahl: 14, verzoegerung: 26 }, { typ: 'schwarz', anzahl: 1, verzoegerung: 80 }],
+    [{ typ: 'gelb', anzahl: 16, verzoegerung: 25 }, { typ: 'schwarz', anzahl: 2, verzoegerung: 70 }],
+    [{ typ: 'gruen', anzahl: 24, verzoegerung: 12 }, { typ: 'gelb', anzahl: 12, verzoegerung: 24 }],
+    [{ typ: 'gelb', anzahl: 18, verzoegerung: 22 }, { typ: 'schwarz', anzahl: 2, verzoegerung: 65 }],
+    [{ typ: 'gruen', anzahl: 26, verzoegerung: 11 }, { typ: 'gelb', anzahl: 14, verzoegerung: 22 }, { typ: 'schwarz', anzahl: 1, verzoegerung: 60 }],
+    [{ typ: 'gelb', anzahl: 20, verzoegerung: 20 }, { typ: 'schwarz', anzahl: 3, verzoegerung: 60 }],
+    [{ typ: 'gelb', anzahl: 24, verzoegerung: 18 }, { typ: 'schwarz', anzahl: 3, verzoegerung: 55 }],
+    [{ typ: 'gruen', anzahl: 30, verzoegerung: 10 }, { typ: 'gelb', anzahl: 18, verzoegerung: 18 }],
+    [{ typ: 'gelb', anzahl: 22, verzoegerung: 18 }, { typ: 'schwarz', anzahl: 4, verzoegerung: 55 }],
+    [{ typ: 'gelb', anzahl: 26, verzoegerung: 16 }, { typ: 'schwarz', anzahl: 4, verzoegerung: 50 }],
+    [{ typ: 'gruen', anzahl: 35, verzoegerung: 9 }, { typ: 'gelb', anzahl: 22, verzoegerung: 16 }, { typ: 'schwarz', anzahl: 3, verzoegerung: 50 }],
+    [{ typ: 'gelb', anzahl: 30, verzoegerung: 14 }, { typ: 'schwarz', anzahl: 6, verzoegerung: 45 }] // Boss-Welle
+  ],
+
+  5: [ // Level 5: Aula (20 Wellen) – Streber (rosa) treten erstmals auf
+    [{ typ: 'gelb', anzahl: 10, verzoegerung: 30 }],
+    [{ typ: 'gelb', anzahl: 14, verzoegerung: 26 }, { typ: 'schwarz', anzahl: 1, verzoegerung: 80 }],
+    [{ typ: 'gruen', anzahl: 20, verzoegerung: 14 }, { typ: 'gelb', anzahl: 10, verzoegerung: 26 }],
+    [{ typ: 'gelb', anzahl: 18, verzoegerung: 22 }, { typ: 'schwarz', anzahl: 2, verzoegerung: 65 }],
+    [{ typ: 'rosa', anzahl: 1, verzoegerung: 0 }], // Erster Streber!
+    [{ typ: 'gelb', anzahl: 22, verzoegerung: 18 }, { typ: 'schwarz', anzahl: 2, verzoegerung: 60 }],
+    [{ typ: 'rosa', anzahl: 1, verzoegerung: 0 }, { typ: 'gelb', anzahl: 16, verzoegerung: 22 }],
+    [{ typ: 'gelb', anzahl: 20, verzoegerung: 18 }, { typ: 'schwarz', anzahl: 4, verzoegerung: 55 }],
+    [{ typ: 'rosa', anzahl: 2, verzoegerung: 90 }],
+    [{ typ: 'gelb', anzahl: 26, verzoegerung: 16 }, { typ: 'schwarz', anzahl: 3, verzoegerung: 55 }],
+    [{ typ: 'rosa', anzahl: 2, verzoegerung: 75 }, { typ: 'gelb', anzahl: 18, verzoegerung: 20 }],
+    [{ typ: 'gruen', anzahl: 30, verzoegerung: 10 }, { typ: 'gelb', anzahl: 20, verzoegerung: 18 }, { typ: 'schwarz', anzahl: 3, verzoegerung: 55 }],
+    [{ typ: 'rosa', anzahl: 3, verzoegerung: 65 }, { typ: 'schwarz', anzahl: 2, verzoegerung: 60 }],
+    [{ typ: 'gelb', anzahl: 30, verzoegerung: 14 }, { typ: 'schwarz', anzahl: 5, verzoegerung: 50 }],
+    [{ typ: 'rosa', anzahl: 3, verzoegerung: 60 }, { typ: 'gelb', anzahl: 24, verzoegerung: 16 }],
+    [{ typ: 'gelb', anzahl: 28, verzoegerung: 14 }, { typ: 'schwarz', anzahl: 5, verzoegerung: 45 }],
+    [{ typ: 'rosa', anzahl: 4, verzoegerung: 55 }, { typ: 'schwarz', anzahl: 4, verzoegerung: 50 }],
+    [{ typ: 'gruen', anzahl: 40, verzoegerung: 8 }, { typ: 'gelb', anzahl: 25, verzoegerung: 14 }, { typ: 'schwarz', anzahl: 5, verzoegerung: 50 }],
+    [{ typ: 'rosa', anzahl: 5, verzoegerung: 50 }, { typ: 'gelb', anzahl: 22, verzoegerung: 16 }],
+    [{ typ: 'rosa', anzahl: 6, verzoegerung: 50 }, { typ: 'schwarz', anzahl: 6, verzoegerung: 45 }] // Boss-Welle
+  ],
+
+  6: [ // Level 6: Bibliothek (22 Wellen) – Streber-Massen
+    [{ typ: 'gelb', anzahl: 14, verzoegerung: 24 }, { typ: 'schwarz', anzahl: 1, verzoegerung: 70 }],
+    [{ typ: 'rosa', anzahl: 2, verzoegerung: 70 }, { typ: 'gelb', anzahl: 14, verzoegerung: 22 }],
+    [{ typ: 'gelb', anzahl: 22, verzoegerung: 18 }, { typ: 'schwarz', anzahl: 3, verzoegerung: 55 }],
+    [{ typ: 'rosa', anzahl: 3, verzoegerung: 60 }],
+    [{ typ: 'gelb', anzahl: 24, verzoegerung: 16 }, { typ: 'schwarz', anzahl: 4, verzoegerung: 55 }],
+    [{ typ: 'rosa', anzahl: 4, verzoegerung: 55 }, { typ: 'gelb', anzahl: 18, verzoegerung: 20 }],
+    [{ typ: 'gelb', anzahl: 28, verzoegerung: 14 }, { typ: 'schwarz', anzahl: 5, verzoegerung: 50 }],
+    [{ typ: 'rosa', anzahl: 5, verzoegerung: 50 }, { typ: 'schwarz', anzahl: 3, verzoegerung: 55 }],
+    [{ typ: 'gelb', anzahl: 30, verzoegerung: 13 }, { typ: 'schwarz', anzahl: 6, verzoegerung: 48 }],
+    [{ typ: 'rosa', anzahl: 6, verzoegerung: 45 }, { typ: 'gelb', anzahl: 22, verzoegerung: 18 }],
+    [{ typ: 'rosa', anzahl: 4, verzoegerung: 50 }, { typ: 'schwarz', anzahl: 5, verzoegerung: 45 }],
+    [{ typ: 'gelb', anzahl: 35, verzoegerung: 12 }, { typ: 'schwarz', anzahl: 8, verzoegerung: 42 }],
+    [{ typ: 'rosa', anzahl: 6, verzoegerung: 45 }, { typ: 'schwarz', anzahl: 6, verzoegerung: 42 }],
+    [{ typ: 'gruen', anzahl: 50, verzoegerung: 8 }, { typ: 'gelb', anzahl: 30, verzoegerung: 13 }, { typ: 'schwarz', anzahl: 5, verzoegerung: 45 }],
+    [{ typ: 'rosa', anzahl: 8, verzoegerung: 40 }],
+    [{ typ: 'rosa', anzahl: 7, verzoegerung: 42 }, { typ: 'gelb', anzahl: 25, verzoegerung: 14 }],
+    [{ typ: 'gelb', anzahl: 40, verzoegerung: 10 }, { typ: 'schwarz', anzahl: 10, verzoegerung: 40 }],
+    [{ typ: 'rosa', anzahl: 9, verzoegerung: 40 }, { typ: 'schwarz', anzahl: 6, verzoegerung: 42 }],
+    [{ typ: 'gruen', anzahl: 55, verzoegerung: 7 }, { typ: 'gelb', anzahl: 35, verzoegerung: 12 }, { typ: 'rosa', anzahl: 4, verzoegerung: 50 }],
+    [{ typ: 'rosa', anzahl: 10, verzoegerung: 38 }, { typ: 'schwarz', anzahl: 8, verzoegerung: 40 }],
+    [{ typ: 'gelb', anzahl: 45, verzoegerung: 9 }, { typ: 'schwarz', anzahl: 12, verzoegerung: 38 }],
+    [{ typ: 'rosa', anzahl: 12, verzoegerung: 35 }, { typ: 'schwarz', anzahl: 10, verzoegerung: 38 }] // Boss-Welle
+  ],
+
+  7: [ // Level 7: Lehrerzimmer (25 Wellen) – Schulsprecher (weiss) erscheint
+    [{ typ: 'rosa', anzahl: 3, verzoegerung: 60 }, { typ: 'gelb', anzahl: 16, verzoegerung: 22 }],
+    [{ typ: 'gelb', anzahl: 25, verzoegerung: 16 }, { typ: 'schwarz', anzahl: 4, verzoegerung: 50 }],
+    [{ typ: 'rosa', anzahl: 5, verzoegerung: 50 }],
+    [{ typ: 'gelb', anzahl: 30, verzoegerung: 14 }, { typ: 'schwarz', anzahl: 6, verzoegerung: 45 }],
+    [{ typ: 'rosa', anzahl: 6, verzoegerung: 45 }, { typ: 'schwarz', anzahl: 4, verzoegerung: 50 }],
+    [{ typ: 'weiss', anzahl: 1, verzoegerung: 0 }], // Erster Schulsprecher!
+    [{ typ: 'gelb', anzahl: 35, verzoegerung: 12 }, { typ: 'schwarz', anzahl: 8, verzoegerung: 42 }],
+    [{ typ: 'rosa', anzahl: 7, verzoegerung: 42 }, { typ: 'weiss', anzahl: 1, verzoegerung: 120 }],
+    [{ typ: 'rosa', anzahl: 9, verzoegerung: 40 }, { typ: 'schwarz', anzahl: 6, verzoegerung: 45 }],
+    [{ typ: 'weiss', anzahl: 1, verzoegerung: 0 }, { typ: 'gelb', anzahl: 30, verzoegerung: 14 }],
+    [{ typ: 'rosa', anzahl: 10, verzoegerung: 38 }, { typ: 'schwarz', anzahl: 8, verzoegerung: 40 }],
+    [{ typ: 'weiss', anzahl: 2, verzoegerung: 100 }],
+    [{ typ: 'gelb', anzahl: 40, verzoegerung: 11 }, { typ: 'rosa', anzahl: 5, verzoegerung: 45 }, { typ: 'schwarz', anzahl: 6, verzoegerung: 42 }],
+    [{ typ: 'rosa', anzahl: 12, verzoegerung: 35 }, { typ: 'weiss', anzahl: 1, verzoegerung: 90 }],
+    [{ typ: 'gelb', anzahl: 45, verzoegerung: 10 }, { typ: 'schwarz', anzahl: 10, verzoegerung: 38 }],
+    [{ typ: 'weiss', anzahl: 2, verzoegerung: 90 }, { typ: 'rosa', anzahl: 6, verzoegerung: 42 }],
+    [{ typ: 'rosa', anzahl: 14, verzoegerung: 32 }, { typ: 'schwarz', anzahl: 8, verzoegerung: 40 }],
+    [{ typ: 'gruen', anzahl: 60, verzoegerung: 7 }, { typ: 'gelb', anzahl: 35, verzoegerung: 12 }, { typ: 'rosa', anzahl: 6, verzoegerung: 42 }],
+    [{ typ: 'weiss', anzahl: 2, verzoegerung: 80 }, { typ: 'schwarz', anzahl: 8, verzoegerung: 40 }],
+    [{ typ: 'rosa', anzahl: 14, verzoegerung: 30 }, { typ: 'weiss', anzahl: 2, verzoegerung: 80 }],
+    [{ typ: 'gelb', anzahl: 50, verzoegerung: 9 }, { typ: 'schwarz', anzahl: 14, verzoegerung: 36 }],
+    [{ typ: 'weiss', anzahl: 3, verzoegerung: 75 }, { typ: 'rosa', anzahl: 8, verzoegerung: 40 }],
+    [{ typ: 'rosa', anzahl: 18, verzoegerung: 28 }, { typ: 'schwarz', anzahl: 10, verzoegerung: 38 }],
+    [{ typ: 'gruen', anzahl: 70, verzoegerung: 6 }, { typ: 'gelb', anzahl: 45, verzoegerung: 10 }, { typ: 'rosa', anzahl: 8, verzoegerung: 40 }, { typ: 'weiss', anzahl: 1, verzoegerung: 80 }],
+    [{ typ: 'weiss', anzahl: 4, verzoegerung: 70 }, { typ: 'rosa', anzahl: 10, verzoegerung: 36 }, { typ: 'schwarz', anzahl: 6, verzoegerung: 42 }] // Boss-Welle
+  ],
+
+  8: [ // Level 8: Klassenausflug (30 Wellen) – das ultimative Finale
+    [{ typ: 'rosa', anzahl: 5, verzoegerung: 50 }, { typ: 'gelb', anzahl: 20, verzoegerung: 18 }],
+    [{ typ: 'gelb', anzahl: 30, verzoegerung: 14 }, { typ: 'schwarz', anzahl: 6, verzoegerung: 45 }],
+    [{ typ: 'rosa', anzahl: 8, verzoegerung: 42 }, { typ: 'schwarz', anzahl: 4, verzoegerung: 50 }],
+    [{ typ: 'weiss', anzahl: 1, verzoegerung: 0 }, { typ: 'gelb', anzahl: 25, verzoegerung: 16 }],
+    [{ typ: 'rosa', anzahl: 10, verzoegerung: 38 }, { typ: 'schwarz', anzahl: 6, verzoegerung: 45 }],
+    [{ typ: 'weiss', anzahl: 2, verzoegerung: 90 }, { typ: 'rosa', anzahl: 5, verzoegerung: 45 }],
+    [{ typ: 'gelb', anzahl: 40, verzoegerung: 11 }, { typ: 'schwarz', anzahl: 10, verzoegerung: 40 }],
+    [{ typ: 'rosa', anzahl: 12, verzoegerung: 35 }, { typ: 'weiss', anzahl: 2, verzoegerung: 85 }],
+    [{ typ: 'weiss', anzahl: 3, verzoegerung: 80 }, { typ: 'schwarz', anzahl: 6, verzoegerung: 42 }],
+    [{ typ: 'rosa', anzahl: 14, verzoegerung: 32 }, { typ: 'schwarz', anzahl: 8, verzoegerung: 40 }],
+    [{ typ: 'gruen', anzahl: 60, verzoegerung: 7 }, { typ: 'gelb', anzahl: 40, verzoegerung: 11 }, { typ: 'rosa', anzahl: 6, verzoegerung: 42 }],
+    [{ typ: 'weiss', anzahl: 3, verzoegerung: 75 }, { typ: 'rosa', anzahl: 10, verzoegerung: 38 }],
+    [{ typ: 'rosa', anzahl: 16, verzoegerung: 30 }, { typ: 'weiss', anzahl: 2, verzoegerung: 80 }],
+    [{ typ: 'gelb', anzahl: 50, verzoegerung: 9 }, { typ: 'schwarz', anzahl: 14, verzoegerung: 36 }],
+    [{ typ: 'weiss', anzahl: 4, verzoegerung: 70 }, { typ: 'schwarz', anzahl: 6, verzoegerung: 42 }],
+    [{ typ: 'rosa', anzahl: 18, verzoegerung: 28 }, { typ: 'weiss', anzahl: 3, verzoegerung: 75 }],
+    [{ typ: 'gelb', anzahl: 55, verzoegerung: 8 }, { typ: 'rosa', anzahl: 8, verzoegerung: 40 }, { typ: 'schwarz', anzahl: 8, verzoegerung: 40 }],
+    [{ typ: 'weiss', anzahl: 5, verzoegerung: 65 }, { typ: 'rosa', anzahl: 10, verzoegerung: 38 }],
+    [{ typ: 'rosa', anzahl: 22, verzoegerung: 25 }, { typ: 'schwarz', anzahl: 12, verzoegerung: 36 }],
+    [{ typ: 'weiss', anzahl: 5, verzoegerung: 65 }, { typ: 'schwarz', anzahl: 10, verzoegerung: 38 }],
+    [{ typ: 'gruen', anzahl: 80, verzoegerung: 6 }, { typ: 'gelb', anzahl: 50, verzoegerung: 9 }, { typ: 'rosa', anzahl: 8, verzoegerung: 40 }],
+    [{ typ: 'weiss', anzahl: 6, verzoegerung: 60 }, { typ: 'rosa', anzahl: 14, verzoegerung: 32 }],
+    [{ typ: 'rosa', anzahl: 25, verzoegerung: 22 }, { typ: 'weiss', anzahl: 4, verzoegerung: 65 }],
+    [{ typ: 'gelb', anzahl: 60, verzoegerung: 8 }, { typ: 'schwarz', anzahl: 18, verzoegerung: 32 }],
+    [{ typ: 'weiss', anzahl: 7, verzoegerung: 55 }, { typ: 'schwarz', anzahl: 10, verzoegerung: 38 }],
+    [{ typ: 'rosa', anzahl: 28, verzoegerung: 20 }, { typ: 'weiss', anzahl: 5, verzoegerung: 60 }],
+    [{ typ: 'weiss', anzahl: 8, verzoegerung: 50 }, { typ: 'rosa', anzahl: 16, verzoegerung: 28 }],
+    [{ typ: 'gelb', anzahl: 70, verzoegerung: 7 }, { typ: 'rosa', anzahl: 12, verzoegerung: 32 }, { typ: 'schwarz', anzahl: 12, verzoegerung: 36 }, { typ: 'weiss', anzahl: 3, verzoegerung: 70 }],
+    [{ typ: 'weiss', anzahl: 10, verzoegerung: 45 }, { typ: 'rosa', anzahl: 20, verzoegerung: 25 }, { typ: 'schwarz', anzahl: 10, verzoegerung: 38 }],
+    [{ typ: 'weiss', anzahl: 12, verzoegerung: 40 }, { typ: 'rosa', anzahl: 25, verzoegerung: 22 }, { typ: 'schwarz', anzahl: 15, verzoegerung: 32 }] // ULTIMATIVES FINALE
   ]
 };
 

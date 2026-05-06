@@ -16,12 +16,24 @@ class MenuSzene { // Klasse für alle Menü-Bildschirme
       bestenliste:   { x: 340, y: 425, b: 280, h: 52 }, // Bestenliste-Button
       mobileApp:     { x: 340, y: 485, b: 280, h: 52 }  // Mobile-App-Anleitung
     };
-    // Level-Auswahl-Buttons
-    this.levelBtns = [ // Level 1, 2, 3
-      { x: 130, y: 200, b: 200, h: 260, level: 1 }, // Level 1
-      { x: 380, y: 200, b: 200, h: 260, level: 2 }, // Level 2
-      { x: 630, y: 200, b: 200, h: 260, level: 3 }  // Level 3
-    ];
+    // Level-Auswahl-Buttons (4 × 2 Raster für 8 Level)
+    this.levelBtns = []; // Wird unten dynamisch befüllt
+    let cols = 4, rows = 2; // Raster-Aufteilung
+    let bw = 200, bh = 175; // Breite/Höhe pro Button
+    let gap = 16; // Abstand zwischen Buttons
+    let totalW = cols * bw + (cols - 1) * gap; // Gesamte Raster-Breite
+    let startX = (960 - totalW) / 2; // Zentriert
+    let startY = 145; // Erste Reihe Y
+    for (let r = 0; r < rows; r++) { // Über alle Reihen
+      for (let c = 0; c < cols; c++) { // Über alle Spalten
+        let level = r * cols + c + 1; // Level-Nummer (1-8)
+        this.levelBtns.push({
+          x: startX + c * (bw + gap), // X-Position
+          y: startY + r * (bh + gap), // Y-Position
+          b: bw, h: bh, level: level // Größe + Level-Nummer
+        });
+      }
+    }
     this.zurueckBtn = { x: 380, y: 555, b: 200, h: 45 }; // Zurück-Button für alle Submenüs
     // Einstellungen-Slider-Zustand
     this.sliderAktiv = false; // Wird gerade ein Slider gezogen?
@@ -173,7 +185,7 @@ class MenuSzene { // Klasse für alle Menü-Bildschirme
     this._zurueckButton(); // Zurück-Button
   }
 
-  _levelButtonZeichnen(btn) { // Einen Level-Button zeichnen
+  _levelButtonZeichnen(btn) { // Einen Level-Button zeichnen (kompakt für 4×2-Raster)
     let frei = this.gs.highscoreManager.levelFreigeschaltet(btn.level); // Freigeschaltet?
     let mx = skMx(), my = skMy(); // Mausposition
     let hover = frei && mx >= btn.x && mx <= btn.x+btn.b && my >= btn.y && my <= btn.y+btn.h; // Hover
@@ -185,40 +197,44 @@ class MenuSzene { // Klasse für alle Menü-Bildschirme
     noStroke(); // Kein Strich für Text
     // Level-Nummer
     fill(frei ? color(255,230,80) : color(75,75,95)); // Gold oder Grau
-    textAlign(CENTER, TOP); textSize(36); textStyle(BOLD); // Schrift
-    text(frei ? btn.level : '🔒', btn.x+btn.b/2, btn.y+16); textStyle(NORMAL); // Zahl oder Schloss
-    // Level-Name und Infos
-    let namen = ['Der Flur', 'Die Mensa', 'Der Schulhof']; // Level-Namen
-    let schwierigkeit = ['Einfach', 'Mittel', 'Schwer']; // Schwierigkeiten
-    let wellen = [8, 12, 15]; // Wellen je Level
-    let schwFarben = [[80,210,90],[240,190,40],[210,70,70]]; // Farben je Schwierigkeit
-    let sf = schwFarben[btn.level-1]; // Farbe für dieses Level
-    fill(frei ? color(195,215,255) : color(65,65,85)); textSize(15); textAlign(CENTER, TOP);
-    text(namen[btn.level-1], btn.x+btn.b/2, btn.y+68); // Level-Name
-    fill(frei ? color(sf[0],sf[1],sf[2]) : color(55,55,75)); textSize(12);
-    text(schwierigkeit[btn.level-1], btn.x+btn.b/2, btn.y+92); // Schwierigkeit
-    fill(frei ? color(145,165,215) : color(55,55,75));
-    text(wellen[btn.level-1] + ' Wellen', btn.x+btn.b/2, btn.y+112); // Wellenanzahl
-    // Upgrade-Boni anzeigen (Startmünzen/Leben aus permanenten Upgrades)
-    if (frei && gs.upgrades) { // Upgrades vorhanden und Level freigeschaltet?
-      let boniText = []; // Bonus-Texte sammeln
-      let sm = gs.upgrades.getStartMuenzen(); // Extra-Startmünzen
-      let sl = gs.upgrades.getStartLeben(); // Extra-Startleben
-      if (sm > 0) boniText.push('+🪙' + sm); // Münzen-Bonus hinzufügen
-      if (sl > 0) boniText.push('+❤️' + sl); // Leben-Bonus hinzufügen
-      if (boniText.length > 0) { // Boni vorhanden?
-        fill(80, 200, 120); textSize(11); // Grüne Schrift für Boni
-        text(boniText.join(' '), btn.x+btn.b/2, btn.y+135); // Boni anzeigen
-      }
-    }
+    textAlign(CENTER, TOP); textSize(28); textStyle(BOLD); // Schrift
+    text(frei ? btn.level : '🔒', btn.x+btn.b/2, btn.y+10); textStyle(NORMAL); // Zahl oder Schloss
+    // Level-Name und Infos (für 8 Level)
+    let namen = ['Der Flur', 'Die Mensa', 'Der Schulhof', 'Sporthalle', 'Aula', 'Bibliothek', 'Lehrerzimmer', 'Klassenausflug']; // Level-Namen
+    let schwierigkeit = ['Einfach', 'Mittel', 'Schwer', 'Schwer+', 'Hart', 'Sehr hart', 'Brutal', 'Episch']; // Schwierigkeit
+    let wellen = [8, 12, 15, 18, 20, 22, 25, 30]; // Wellen je Level
+    let schwFarben = [
+      [80,210,90], [240,190,40], [210,70,70], [255,140,40],
+      [255,80,80], [200,60,180], [150,50,210], [255,40,40]
+    ]; // Farben je Schwierigkeit (hell → dunkel/intensiv)
+    let idx = btn.level - 1; // Array-Index (Level 1 → 0)
+    let sf = schwFarben[idx]; // Farbe für dieses Level
+    fill(frei ? color(195,215,255) : color(65,65,85)); textSize(13); textAlign(CENTER, TOP);
+    text(namen[idx], btn.x+btn.b/2, btn.y+50); // Level-Name
+    fill(frei ? color(sf[0],sf[1],sf[2]) : color(55,55,75)); textSize(11);
+    text(schwierigkeit[idx], btn.x+btn.b/2, btn.y+70); // Schwierigkeit
+    fill(frei ? color(145,165,215) : color(55,55,75)); textSize(11);
+    text(wellen[idx] + ' Wellen', btn.x+btn.b/2, btn.y+88); // Wellenanzahl
     // Bester Score
     if (frei && scores.length > 0) { // Score vorhanden?
       fill(255, 215, 0); textSize(11); // Gold
-      text('Best: ' + scores[0].punkte + ' ' + T('pkt'), btn.x+btn.b/2, btn.y+155); // Bestpunktzahl
+      text('Best: ' + scores[0].punkte, btn.x+btn.b/2, btn.y+108); // Bestpunktzahl
+    }
+    // Upgrade-Boni nur am ersten Level zeigen, sonst überfüllt
+    if (idx === 0 && frei && gs.upgrades) { // Nur Level 1: Boni anzeigen
+      let boniText = []; // Bonus-Texte sammeln
+      let sm = gs.upgrades.getStartMuenzen(); // Extra-Startmünzen
+      let sl = gs.upgrades.getStartLeben(); // Extra-Startleben
+      if (sm > 0) boniText.push('+🪙' + sm); // Münzen-Bonus
+      if (sl > 0) boniText.push('+❤️' + sl); // Leben-Bonus
+      if (boniText.length > 0) { // Boni vorhanden?
+        fill(80, 200, 120); textSize(10); // Grüne Schrift für Boni
+        text(boniText.join(' '), btn.x+btn.b/2, btn.y+128); // Boni anzeigen
+      }
     }
     // Abschluss-Checkmark
     if (frei && scores.length > 0) { // Abgeschlossen?
-      fill(80, 220, 100); noStroke(); textSize(16); textAlign(LEFT, TOP); // Grün
+      fill(80, 220, 100); noStroke(); textSize(15); textAlign(LEFT, TOP); // Grün
       text('✓', btn.x+8, btn.y+8); // Häkchen
     }
   }
@@ -385,37 +401,46 @@ class MenuSzene { // Klasse für alle Menü-Bildschirme
 
   // ─── Bestenliste ──────────────────────────────────────────────────────────
 
-  drawBestenliste() { // Bestenlisten-Bildschirm zeichnen
+  drawBestenliste() { // Bestenlisten-Bildschirm zeichnen (4×2 Karten für 8 Level)
     this._menuHintergrundZeichnen(); // Hintergrund
     this._submenüTitel(T('bestenliste')); // Überschrift
-    let levelNamen = ['Der Flur', 'Die Mensa', 'Der Schulhof']; // Level-Namen
-    let levelFarben = [[80,210,90],[240,190,40],[210,70,70]]; // Farben je Level
-    for (let level = 1; level <= 3; level++) { // Alle 3 Level
+    let levelNamen = ['Flur', 'Mensa', 'Schulhof', 'Sporthalle', 'Aula', 'Bibliothek', 'Lehrerzimmer', 'Klassenausflug']; // Level-Namen
+    let levelFarben = [[80,210,90],[240,190,40],[210,70,70],[255,140,40],[255,80,80],[200,60,180],[150,50,210],[255,40,40]]; // Farben
+    let cols = 4, rows = 2; // Raster
+    let cw = 200, ch = 175; // Karten-Maße
+    let gap = 16; // Abstand
+    let totalW = cols * cw + (cols - 1) * gap; // Gesamtbreite
+    let startX = (960 - totalW) / 2; // Zentriert
+    let startY = 130; // Erste Reihe Y
+    for (let level = 1; level <= 8; level++) { // Alle 8 Level
       let scores = this.gs.highscoreManager.getScores(level); // Scores für Level
-      let lx = 85 + (level - 1) * 270; // X-Position der Spalte
-      let lf = levelFarben[level-1]; // Spalten-Farbe
-      // Spalten-Hintergrund
-      fill(20, 20, 40, 200); noStroke(); rect(lx, 130, 250, 370, 10); // Panel
-      stroke(lf[0]*0.6, lf[1]*0.6, lf[2]*0.6); strokeWeight(2); rect(lx, 130, 250, 370, 10); // Kontur
+      let r = Math.floor((level - 1) / cols); // Reihe
+      let c = (level - 1) % cols; // Spalte
+      let lx = startX + c * (cw + gap); // X-Position
+      let ly = startY + r * (ch + gap); // Y-Position
+      let lf = levelFarben[level - 1]; // Spalten-Farbe
+      // Karten-Hintergrund
+      fill(20, 20, 40, 220); noStroke(); rect(lx, ly, cw, ch, 10); // Panel
+      stroke(lf[0]*0.6, lf[1]*0.6, lf[2]*0.6); strokeWeight(2); noFill(); rect(lx, ly, cw, ch, 10); // Kontur
       // Level-Titel
-      noStroke(); fill(lf[0], lf[1], lf[2]); textAlign(CENTER, TOP); textSize(20); textStyle(BOLD); // Farbe
-      text('Level ' + level, lx+125, 145); textStyle(NORMAL); // Level-Nummer
-      fill(175, 195, 230); textSize(14); text(levelNamen[level-1], lx+125, 173); // Level-Name
-      stroke(lf[0]*0.4, lf[1]*0.4, lf[2]*0.4); strokeWeight(1); line(lx+20, 198, lx+230, 198); // Trennlinie
+      noStroke(); fill(lf[0], lf[1], lf[2]); textAlign(CENTER, TOP); textSize(15); textStyle(BOLD);
+      text('Level ' + level + ' – ' + levelNamen[level - 1], lx + cw/2, ly + 8); textStyle(NORMAL);
+      stroke(lf[0]*0.4, lf[1]*0.4, lf[2]*0.4); strokeWeight(1); line(lx + 12, ly + 30, lx + cw - 12, ly + 30); // Trennlinie
       // Scores anzeigen
       if (scores.length === 0) { // Keine Scores
-        noStroke(); fill(80, 85, 110); textAlign(CENTER, TOP); textSize(13); // Grau
-        text(T('nochNichtGespielt'), lx+125, 225); // Hinweis
+        noStroke(); fill(80, 85, 110); textAlign(CENTER, CENTER); textSize(11); // Grau
+        text(T('nochNichtGespielt'), lx + cw/2, ly + ch/2 + 5); // Hinweis
       } else { // Scores vorhanden
-        for (let i = 0; i < scores.length; i++) { // Alle Scores
+        for (let i = 0; i < Math.min(scores.length, 3); i++) { // Top 3
           let s = scores[i]; // Score-Objekt
-          let medalFarbe = [[255,215,0],[192,192,192],[180,110,50]][i]; // Gold, Silber, Bronze
-          noStroke(); fill(medalFarbe[0], medalFarbe[1], medalFarbe[2]); // Medaillen-Farbe
-          textAlign(LEFT, TOP); textSize(22); text(['🥇','🥈','🥉'][i], lx+20, 210+i*95); // Medaille
-          fill(medalFarbe[0], medalFarbe[1], medalFarbe[2]); textSize(14); textStyle(BOLD); // Schrift
-          text('#' + (i+1) + ' ' + s.punkte + ' ' + T('pkt'), lx+55, 213+i*95); textStyle(NORMAL); // Punkte
-          fill(155, 160, 195); textSize(12); // Grau für Details
-          text(T('welle') + ' ' + s.welle + ' · ' + s.datum, lx+55, 234+i*95); // Welle und Datum
+          let medalFarbe = [[255,215,0],[192,192,192],[180,110,50]][i]; // Gold/Silber/Bronze
+          let yy = ly + 40 + i * 38; // Y für diese Zeile
+          noStroke(); fill(medalFarbe[0], medalFarbe[1], medalFarbe[2]); // Farbe
+          textAlign(LEFT, TOP); textSize(15); text(['🥇','🥈','🥉'][i], lx + 12, yy); // Medaille
+          fill(medalFarbe[0], medalFarbe[1], medalFarbe[2]); textSize(12); textStyle(BOLD);
+          text(s.punkte + ' ' + T('pkt'), lx + 38, yy + 1); textStyle(NORMAL); // Punkte
+          fill(155, 160, 195); textSize(10);
+          text(T('welle') + ' ' + s.welle + ' · ' + s.datum, lx + 38, yy + 18); // Details
         }
       }
     }
@@ -448,8 +473,8 @@ class MenuSzene { // Klasse für alle Menü-Bildschirme
     text(T('ballonsGeknallt') + ' ' + this.gs.ballonsGeknallt, 480, 365); // Ballons
     text(T('level') + ' ' + this.gs.level + ' ' + T('levelAbgeschl'), 480, 390); // Level
     let nl = this.gs.level + 1; // Nächstes Level
-    if (nl <= 3) this._grosserButton(480, 435, 230, 44, T('naechstesLevel') + nl, [48,128,215]); // Weiter
-    this._grosserButton(480, nl <= 3 ? 490 : 435, 230, 44, T('levelAuswahl'), [58,58,88]); // Auswahl
+    if (nl <= 8) this._grosserButton(480, 435, 230, 44, T('naechstesLevel') + nl, [48,128,215]); // Weiter
+    this._grosserButton(480, nl <= 8 ? 490 : 435, 230, 44, T('levelAuswahl'), [58,58,88]); // Auswahl
   }
 
   // ─── Mobile App Anleitung ─────────────────────────────────────────────────
@@ -604,7 +629,7 @@ class MenuSzene { // Klasse für alle Menü-Bildschirme
   isMenuBtnGameOver(mx, my)     { return mx>=380 && mx<=580 && my>=455 && my<=495; } // Menü im Game-Over?
   isNaechstesLevelKlick(mx, my) { return mx>=365 && mx<=595 && my>=413 && my<=457; } // Nächstes Level?
   isLevelAuswahlSiegKlick(mx, my) { // Level-Auswahl im Sieg-Screen?
-    let y = (this.gs.level+1 <= 3) ? 490 : 435; // Y-Position je nach ob weiteres Level
+    let y = (this.gs.level+1 <= 8) ? 490 : 435; // Y-Position je nach ob weiteres Level
     return mx>=365 && mx<=595 && my>=y-22 && my<=y+22;
   }
 }

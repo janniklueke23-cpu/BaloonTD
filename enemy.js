@@ -6,7 +6,9 @@ const BALLON_FARBEN = { // Objekt mit Farben pro Typ
   'blau':   [50,  100, 220], // Sophomore: Blaues Ballon
   'gruen':  [50,  180, 70],  // Junior: Grünes Ballon
   'gelb':   [230, 200, 40],  // Senior: Gelbes Ballon (gepanzert)
-  'schwarz':[40,  40,  40]   // Klassenprecher: Schwarzes Ballon (Boss)
+  'schwarz':[40,  40,  40],  // Klassenprecher: Schwarzes Ballon (Boss)
+  'rosa':   [255, 130, 200], // Streber: Pinkes Ballon (langsam aber zäh)
+  'weiss':  [240, 240, 245]  // Schulsprecher: weißer Tank (extrem zäh)
 };
 
 // Geschwindigkeiten für alle Ballontypen (Pixel pro Frame bei 60fps)
@@ -15,7 +17,9 @@ const BALLON_GESCHWINDIGKEIT = { // Objekt mit Geschwindigkeit pro Typ
   'blau':   2.0,  // Sophomore: mittel
   'gruen':  2.5,  // Junior: schnell
   'gelb':   1.5,  // Senior: langsam (aber gepanzert)
-  'schwarz':1.2   // Klassenprecher: sehr langsam aber stark
+  'schwarz':1.2,  // Klassenprecher: sehr langsam aber stark
+  'rosa':   0.85, // Streber: sehr langsam, viele HP
+  'weiss':  0.65  // Schulsprecher: schleicht, gigantische HP
 };
 
 // Maximale HP (Schichten) pro Ballontyp
@@ -24,7 +28,9 @@ const BALLON_HP = { // Objekt mit HP pro Typ
   'blau':   1,  // Blue Schicht hat auch 1 HP (aber wird aus einem roten geboren)
   'gruen':  1,  // Junior: 1 HP in dieser Schicht
   'gelb':   1,  // Senior: 1 HP (aber gepanzert – nimmt halben Schaden)
-  'schwarz':10  // Boss: 10 HP
+  'schwarz':10, // Boss: 10 HP
+  'rosa':   25, // Streber: 25 HP (langsam aber zäh)
+  'weiss':  60  // Schulsprecher: 60 HP (Tank-Boss)
 };
 
 // Größen (Radius) der Ballons pro Typ
@@ -33,11 +39,13 @@ const BALLON_RADIUS = { // Objekt mit Radius in Pixel pro Typ
   'blau':   14, // Sophomore: etwas größer
   'gruen':  15, // Junior: mittelgroß
   'gelb':   17, // Senior: größer (gepanzert)
-  'schwarz':22  // Klassenprecher: großer Boss-Ballon
+  'schwarz':22, // Klassenprecher: großer Boss-Ballon
+  'rosa':   26, // Streber: deutlich größer
+  'weiss':  32  // Schulsprecher: gigantisch
 };
 
 // Reihenfolge der Schichten (von stark nach schwach)
-const SCHICHTEN_REIHENFOLGE = ['schwarz', 'gelb', 'gruen', 'blau', 'rot']; // Von Boss zu Erstklässler
+const SCHICHTEN_REIHENFOLGE = ['weiss', 'rosa', 'schwarz', 'gelb', 'gruen', 'blau', 'rot']; // Vom Schulsprecher zum Erstklässler
 
 class Ballon { // Hauptklasse für alle Ballon-Gegner
   constructor(typ, pfad, versatz) { // Konstruktor: erstellt einen neuen Ballon
@@ -63,8 +71,10 @@ class Ballon { // Hauptklasse für alle Ballon-Gegner
     this.giftStapel = 0; // Anzahl der Gift-Stapel (mehrere Biologielehrer)
     this.blinkTimer = 0; // Timer für Blink-Effekt wenn getroffen
     this.gesamtDistanz = 0; // Zurückgelegte Gesamtdistanz (für Sortierung/Priorisierung)
-    this.boostRadius = (typ === 'schwarz') ? 120 : 0; // Boss beschleunigt Ballons in diesem Radius
-    this.boostFaktor = (typ === 'schwarz') ? 1.3 : 1.0; // Um diesen Faktor werden nahe Ballons schneller
+    // Boss-Aura: Klassensprecher (schwarz) und Streber (rosa) beschleunigen nahe Ballons,
+    // Schulsprecher (weiss) noch stärker.
+    this.boostRadius = (typ === 'schwarz' || typ === 'rosa' || typ === 'weiss') ? 120 : 0; // Aura-Radius
+    this.boostFaktor = (typ === 'weiss') ? 1.5 : (typ === 'rosa' || typ === 'schwarz') ? 1.3 : 1.0; // Boost-Faktor
     this.winkelAnimation = 0; // Animations-Winkel für wackelnde Bewegung
     if (versatz !== undefined) this.fortschritt = versatz; // Startversatz auf dem Pfad setzen (für gestaffelte Spawn)
   }
@@ -153,9 +163,14 @@ class Ballon { // Hauptklasse für alle Ballon-Gegner
         neuerBallon.x = this.x; // X-Position übernehmen
         neuerBallon.y = this.y; // Y-Position übernehmen
         neueGegner.push(neuerBallon); // Neuen Ballon zur Rückgabeliste hinzufügen
-        if (this.typ === 'schwarz') { // Wenn der Boss platzt
-          for (let i = 0; i < 2; i++) { // Spawnt er 3 gelbe Ballons (Boss-Spezialfähigkeit)
-            let extra = new Ballon('gelb', this.pfad, 0); // Extra-Ballon erstellen
+        // Boss-Mechaniken: zusätzliche schwächere Ballons spawnen
+        let extras = []; // Konfiguration für extra Spawns
+        if (this.typ === 'weiss')   extras = [{ typ: 'rosa', anzahl: 2 }]; // Schulsprecher → 2 Streber
+        else if (this.typ === 'rosa')   extras = [{ typ: 'schwarz', anzahl: 1 }]; // Streber → 1 Klassensprecher
+        else if (this.typ === 'schwarz') extras = [{ typ: 'gelb', anzahl: 2 }]; // Klassensprecher → 2 Senioren
+        for (let cfg of extras) { // Alle Extra-Spawns ausführen
+          for (let i = 0; i < cfg.anzahl; i++) { // Je nach konfigurierter Anzahl
+            let extra = new Ballon(cfg.typ, this.pfad, 0); // Extra-Ballon erstellen
             extra.pfadIndex = this.pfadIndex; // Position übernehmen
             extra.fortschritt = this.fortschritt + i * 0.05; // Leicht versetzt spawnen
             extra.gesamtDistanz = this.gesamtDistanz; // Distanz übernehmen
@@ -270,7 +285,7 @@ class Ballon { // Hauptklasse für alle Ballon-Gegner
     // Gesicht zeichnen (Augen und Mund) auf dem Kopf
     this._gesichtZeichnen(0, -rad * 0.55, kopfR); // Gesicht auf dem Kopf
     // Krone für den Klassensprecher (Boss)
-    if (this.typ === 'schwarz') this._kroneZeichnen(0, -rad * 0.55, kopfR); // Krone des Klassensprechers
+    if (this.typ === 'schwarz' || this.typ === 'rosa' || this.typ === 'weiss') this._kroneZeichnen(0, -rad * 0.55, kopfR); // Krone für alle Boss-Typen
     pop(); // Hüpfender Oberkörper-Stack schließen
     // Gift-Anzeige (grüne Wolke wenn vergiftet)
     if (this.vergiftet > 0) { // Nur anzeigen wenn vergiftet
@@ -292,8 +307,8 @@ class Ballon { // Hauptklasse für alle Ballon-Gegner
       }
     }
     // Leben-Balken für den Boss
-    if (this.typ === 'schwarz') { // Nur für den Boss
-      this._lebensBalkneZeichnen(rad); // Lebensanzeige über dem Boss zeichnen
+    if (this.typ === 'schwarz' || this.typ === 'rosa' || this.typ === 'weiss') { // Lebensanzeige für alle Bosse
+      this._lebensBalkneZeichnen(rad); // Lebensanzeige zeichnen
     }
     pop(); // p5.js Zustand wiederherstellen
   }

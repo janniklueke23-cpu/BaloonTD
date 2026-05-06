@@ -2,20 +2,56 @@
 
 // Feste Pfade pro Level
 const LEVEL_PFADE = [
-  [ // Level 1: L-Korridor
+  [ // Level 1: L-Korridor (Der Flur)
     { x: -40, y: 300 }, { x: 220, y: 300 },
     { x: 220, y: 470 }, { x: 780, y: 470 }
   ],
-  [ // Level 2: S-Kurve
+  [ // Level 2: S-Kurve (Die Mensa)
     { x: -40, y: 160 }, { x: 200, y: 160 },
     { x: 200, y: 350 }, { x: 500, y: 350 },
     { x: 500, y: 160 }, { x: 780, y: 160 }
   ],
-  [ // Level 3: Zickzack
+  [ // Level 3: Zickzack (Der Schulhof)
     { x: -40, y: 260 }, { x: 150, y: 260 },
     { x: 150, y: 130 }, { x: 360, y: 130 },
     { x: 360, y: 390 }, { x: 570, y: 390 },
     { x: 570, y: 200 }, { x: 780, y: 200 }
+  ],
+  [ // Level 4: Doppelschleife (Sporthalle)
+    { x: -40, y: 200 }, { x: 200, y: 200 },
+    { x: 200, y: 360 }, { x: 100, y: 360 },
+    { x: 100, y: 510 }, { x: 400, y: 510 },
+    { x: 400, y: 250 }, { x: 600, y: 250 },
+    { x: 600, y: 510 }, { x: 780, y: 510 }
+  ],
+  [ // Level 5: U-Förmig (Die Aula)
+    { x: -40, y: 110 }, { x: 600, y: 110 },
+    { x: 600, y: 250 }, { x: 200, y: 250 },
+    { x: 200, y: 400 }, { x: 600, y: 400 },
+    { x: 600, y: 540 }, { x: 780, y: 540 }
+  ],
+  [ // Level 6: Verschachtelt (Die Bibliothek)
+    { x: -40, y: 300 }, { x: 100, y: 300 },
+    { x: 100, y: 130 }, { x: 260, y: 130 },
+    { x: 260, y: 460 }, { x: 410, y: 460 },
+    { x: 410, y: 200 }, { x: 560, y: 200 },
+    { x: 560, y: 510 }, { x: 780, y: 510 }
+  ],
+  [ // Level 7: Lange Schleife (Lehrerzimmer)
+    { x: -40, y: 110 }, { x: 200, y: 110 },
+    { x: 200, y: 260 }, { x: 80, y: 260 },
+    { x: 80, y: 410 }, { x: 310, y: 410 },
+    { x: 310, y: 540 }, { x: 510, y: 540 },
+    { x: 510, y: 320 }, { x: 660, y: 320 },
+    { x: 660, y: 130 }, { x: 780, y: 130 }
+  ],
+  [ // Level 8: Mega-Spirale (Klassenausflug)
+    { x: -40, y: 300 }, { x: 80, y: 300 },
+    { x: 80, y: 110 }, { x: 290, y: 110 },
+    { x: 290, y: 290 }, { x: 180, y: 290 },
+    { x: 180, y: 510 }, { x: 410, y: 510 },
+    { x: 410, y: 200 }, { x: 560, y: 200 },
+    { x: 560, y: 540 }, { x: 780, y: 540 }
   ]
 ];
 
@@ -51,8 +87,8 @@ class SpielSzene { // Klasse für die Haupt-Spielszene
     this.gs.maxWellen = this.gs.wellenManager.getMaxWellen(level); // Maximale Wellen für Level holen
     let bonusLeben = (this.gs.upgrades) ? this.gs.upgrades.getStartLeben() : 0; // Upgrade-Bonus für Startleben
     let bonusMuenzen = (this.gs.upgrades) ? this.gs.upgrades.getStartMuenzen() : 0; // Upgrade-Bonus für Startgeld
-    this.gs.leben = 20 + bonusLeben; // Startleben zurücksetzen (mit Upgrade-Bonus)
-    this.gs.muenzen = 150 + bonusMuenzen; // Startgeld zurücksetzen (mit Upgrade-Bonus)
+    this.gs.leben = 25 + bonusLeben; // Startleben (etwas höher für mehr Luft am Anfang)
+    this.gs.muenzen = 250 + bonusMuenzen; // Startgeld (mehr Spielraum für ersten Lehrer)
     this.gs.welle = 0; // Wellen-Zähler zurücksetzen
     this.gs.welleAktiv = false; // Keine aktive Welle am Start
     this.gs.gegner = []; // Gegner-Liste leeren
@@ -89,7 +125,7 @@ class SpielSzene { // Klasse für die Haupt-Spielszene
     if (this.gs.welleAktiv) { // Nur wenn Welle läuft
       let neueGegner = this.gs.wellenManager.update(this.gs.pfad, gs); // Neue Ballons spawnen
       for (let ng of neueGegner) { // Neue Gegner auf Boss prüfen
-        if (ng.typ === 'schwarz' && this.gs.sound) this.gs.sound.bossErscheint(); // Sound: Boss erscheint
+        if ((ng.typ === 'schwarz' || ng.typ === 'rosa' || ng.typ === 'weiss') && this.gs.sound) this.gs.sound.bossErscheint(); // Sound: Boss erscheint
       }
       this.gs.gegner = this.gs.gegner.concat(neueGegner); // Neue Ballons hinzufügen
     }
@@ -147,7 +183,7 @@ class SpielSzene { // Klasse für die Haupt-Spielszene
     });
     // Boss-Aura: Bosse beschleunigen nahe Ballons
     for (let boss of this.gs.gegner) { // Alle Gegner als potenzielle Bosse prüfen
-      if (boss.typ === 'schwarz' && boss.aktiv) { // Ist es ein Boss?
+      if ((boss.typ === 'schwarz' || boss.typ === 'rosa' || boss.typ === 'weiss') && boss.aktiv) { // Ist es ein Boss?
         for (let g of this.gs.gegner) { // Nahe Ballons suchen
           if (g !== boss && g.aktiv) { // Nicht den Boss selbst
             if (dist(boss.x, boss.y, g.x, g.y) <= boss.boostRadius) { // In Boost-Radius?
