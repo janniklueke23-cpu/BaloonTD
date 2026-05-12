@@ -198,7 +198,7 @@ class UIManager { // Klasse für alle Spieloberflächen-Elemente
       'pfingsten':'Erzählt Geschichten und verlangsamt Schüler in Reichweite. Support-Lehrer.',
       'pfister':  'Wirft Bier­flaschen mit Säure-Splash – langsam, aber Flächen­schaden über Zeit.',
       'koch':     'Wirft Verweise – sehr langsam, aber starker Einzel­schaden.',
-      'raum':     'Hacker am Laptop – produziert Geld und verstärkt umliegende Lehrer.',
+      'raum':     'Handelt Aktien – produziert Geld und verstärkt umliegende Lehrer.',
       'motsious': 'Sitzt am Teilchen­beschleuniger und streut Teilchen in eine Richtung.',
       'brust':    'Schießt Blitze, die zwischen mehreren Schülern hin und her springen.',
       'fight':    'Fährt mit dem Motorrad zwischen Grill und Zigarre. Anlauf = Schaden.'
@@ -212,7 +212,7 @@ class UIManager { // Klasse für alle Spieloberflächen-Elemente
       'pfingsten':'Support · Verlangsamt',      // Pfingsten: Verlangsamer
       'koch':     'Verweise · Langsam · Stark', // Koch: hoher Schaden
       'pfister':  'Bierflaschen · Säure',       // Pfister: Säureschaden
-      'raum':     'Hacker · Geld · Buff',       // Raum: Support – Geld & Buff
+      'raum':     'Aktien · Geld · Buff',       // Raum: Support – Geld & Buff
       'motsious': 'Strahl · Teilchen',          // Motsious: Teilchenbeschleuniger
       'brust':    'Blitze · Kette',             // Brust: Lightning
       'fight':    'Motorrad · Überfährt'        // Fight: Motorrad
