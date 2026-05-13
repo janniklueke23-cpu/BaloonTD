@@ -1,14 +1,14 @@
 // uiManager.js – Zeichnet alle UI-Elemente: HUD, Shop-Panel, Upgrade-Panel, Buttons
 
 const TURMSHOP_EINTRAEGE = [ // Liste aller kaufbaren Lehrer im Shop (preislich aufsteigend)
-  { typ: 'blech',    name: 'Hr. Blech',    kosten: 110, farbe: [55, 55, 75]   }, // Standard-Kreidewerfer
+  { typ: 'blech',    name: 'Hr. Blech',    kosten: 100, farbe: [55, 55, 75]   }, // Standard-Kreidewerfer
   { typ: 'pfingsten',name: 'Hr. Pfingsten',kosten: 150, farbe: [70, 100, 50]  }, // Verlangsamer (Support)
-  { typ: 'pfister',  name: 'Hr. Pfister',  kosten: 170, farbe: [120, 80, 30]  }, // Säure-Flaschen
-  { typ: 'koch',     name: 'Hr. Koch',     kosten: 220, farbe: [160, 40, 40]  }, // Verweis-Werfer (Stark)
-  { typ: 'raum',     name: 'Hr. Zimmer',   kosten: 260, farbe: [40, 130, 180] }, // Geld + Buff
-  { typ: 'motsious', name: 'Hr. Motsious', kosten: 300, farbe: [70, 70, 110]  }, // Teilchenbeschleuniger
-  { typ: 'brust',    name: 'Hr. Schulter', kosten: 340, farbe: [220, 180, 30] }, // Kettenblitze
-  { typ: 'fight',    name: 'Hr. Fight',    kosten: 520, farbe: [40, 40, 50]   }  // Motorrad mit Anlauf
+  { typ: 'koch',     name: 'Hr. Koch',     kosten: 200, farbe: [160, 40, 40]  }, // Verweis-Werfer (Stark)
+  { typ: 'raum',     name: 'Hr. Zimmer',   kosten: 250, farbe: [40, 130, 180] }, // Geld + Buff
+  { typ: 'brust',    name: 'Hr. Rücken', kosten: 300, farbe: [220, 180, 30] }, // Kettenblitze
+  { typ: 'pfister',  name: 'Hr. Fister',  kosten: 350, farbe: [120, 80, 30]  }, // Säure-Flaschen
+  { typ: 'motsious', name: 'Hr. Muzius', kosten: 400, farbe: [70, 70, 110]  }, // Teilchenbeschleuniger
+  { typ: 'fight',    name: 'Hr. Fight',    kosten: 450, farbe: [40, 40, 50]   }  // Motorrad mit Anlauf
 ];
 
 class UIManager { // Klasse für alle Spieloberflächen-Elemente
