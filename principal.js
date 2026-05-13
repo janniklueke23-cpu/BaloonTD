@@ -2,7 +2,7 @@ class Koch extends Turm { // Koch erbt von der Turm-Basisklasse
   constructor(x, y) { // Konstruktor: erstellt einen neuen Koch-Turm
     super(x, y, 'koch', 175); // Elternkonstruktor mit Typ 'koch' und Kosten 175 aufrufen
     this.name = 'Herr Koch'; // Anzeigename des Turms
-    this.reichweite = 145; // Reichweite in Pixel (größer als Standard)
+    this.reichweite = 1000; // Reichweite in Pixel (größer als Standard)
     this.feuerRate = 135; // Frames zwischen Schüssen (sehr langsam)
     this.schaden = 4; // Hoher Schaden pro Verweis-Geschoss
     this.schussTyp = 'koch'; // Geschoss-Typ für spezielle Darstellung
