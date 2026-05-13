@@ -86,7 +86,7 @@ class VerweisGeschoss extends Geschoss { // Spezifisches Verweisgeschoss von Her
   constructor(x, y, ziel, schaden, durchdringen, maxTreffer, panzerbrechend) { // Konstruktor
     super(x, y, ziel, schaden, 'koch', durchdringen, maxTreffer); // Elternkonstruktor aufrufen
     this.panzerbrechend = panzerbrechend; // Panzerbrechend-Flag speichern
-    this.geschwindigkeit = 30; // Verweisgeschosse sind etwas langsamer
+    this.geschwindigkeit = 100; // Verweisgeschosse sind etwas langsamer
     this.partikelFarbe = [220, 100, 100]; // Rötliche Partikel bei Treffer
     this.rotation = 0; // Anfangsrotation des fliegenden Papiers
   }
