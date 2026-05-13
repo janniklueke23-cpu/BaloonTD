@@ -1,6 +1,6 @@
 class Motsious extends Turm { // Hr. Motsious – sitzt am Teilchenbeschleuniger und streut Teilchen in eine Richtung
   constructor(x, y) { // Konstruktor mit Positions-Parametern
-    super(x, y, 'motsious', 220); // Basisklasse mit Typ und Kosten initialisieren
+    super(x, y, 'motsious', 400); // Basisklasse mit Typ und Kosten initialisieren
     this.name = 'Hr. Motsious'; // Anzeigename des Lehrers
     this.reichweite = 200; // Lange Wirkungsweite (Strahl-Reichweite)
     this.feuerRate = 18; // Sehr hohe Schussfrequenz – Strahl-Effekt
@@ -15,11 +15,24 @@ class Motsious extends Turm { // Hr. Motsious – sitzt am Teilchenbeschleuniger
   }
 
   _initialeRichtung(x, y) { // Schießt Richtung Mitte des Spielfelds, falls kein Ziel da
-    let zielX = 370; // Mitte des Spielfelds X
-    let zielY = 345; // Mitte des Spielfelds Y
-    return atan2(zielY - y, zielX - x); // Winkel zur Spielfeldmitte
+       richtungWaehlen = this;
   }
 
+  mousePressed() {
+
+  // Richtung setzen
+  if (richtungWaehlen) {
+
+    richtungWaehlen.setzeRichtung(
+      mouseX,
+      mouseY
+    );
+
+    richtungWaehlen = null;
+
+    return;
+  }
+  
   getPfadeInfo() { // Beide Upgrade-Pfade beschreiben
     return [
       { // Pfad 0: Energie – mehr Schaden, längere Reichweite
