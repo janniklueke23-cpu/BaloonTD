@@ -1,6 +1,6 @@
 class Koch extends Turm { // Koch erbt von der Turm-Basisklasse
   constructor(x, y) { // Konstruktor: erstellt einen neuen Koch-Turm
-    super(x, y, 'koch', 175); // Elternkonstruktor mit Typ 'koch' und Kosten 175 aufrufen
+    super(x, y, 'koch', 200); // Elternkonstruktor mit Typ 'koch' und Kosten 175 aufrufen
     this.name = 'Herr Koch'; // Anzeigename des Turms
     this.reichweite = 1000; // Reichweite in Pixel (größer als Standard)
     this.feuerRate = 135; // Frames zwischen Schüssen (sehr langsam)
@@ -86,7 +86,7 @@ class VerweisGeschoss extends Geschoss { // Spezifisches Verweisgeschoss von Her
   constructor(x, y, ziel, schaden, durchdringen, maxTreffer, panzerbrechend) { // Konstruktor
     super(x, y, ziel, schaden, 'koch', durchdringen, maxTreffer); // Elternkonstruktor aufrufen
     this.panzerbrechend = panzerbrechend; // Panzerbrechend-Flag speichern
-    this.geschwindigkeit = 7; // Verweisgeschosse sind etwas langsamer
+    this.geschwindigkeit = 30; // Verweisgeschosse sind etwas langsamer
     this.partikelFarbe = [220, 100, 100]; // Rötliche Partikel bei Treffer
     this.rotation = 0; // Anfangsrotation des fliegenden Papiers
   }
