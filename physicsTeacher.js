@@ -18,7 +18,7 @@ class Motsious extends Turm { // Hr. Motsious – sitzt am Teilchenbeschleuniger
        richtungWaehlen = this;
   }
 
-  mousePressed() {
+  _mousePressed() {
 
   // Richtung setzen
   if (richtungWaehlen) {
