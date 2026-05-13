@@ -14,15 +14,12 @@ class Motsious extends Turm { // Hr. Motsious – sitzt am Teilchenbeschleuniger
     this.zielUmschalten = 0; // Timer für automatisches Neuausrichten
   }
 
- _initialeRichtung(x, y) { // Schießt Richtung Mitte des Spielfelds, falls kein Ziel da
+  _initialeRichtung(x, y) { // Schießt Richtung Mitte des Spielfelds, falls kein Ziel da
     let zielX = 370; // Mitte des Spielfelds X
     let zielY = 345; // Mitte des Spielfelds Y
     return atan2(zielY - y, zielX - x); // Winkel zur Spielfeldmitte
-
   }
 
-
-  
   getPfadeInfo() { // Beide Upgrade-Pfade beschreiben
     return [
       { // Pfad 0: Energie – mehr Schaden, längere Reichweite
@@ -188,6 +185,10 @@ class TeilchenGeschoss extends Geschoss { // Teilchen das in feste Richtung flie
     push(); // Zustand sichern
     translate(this.x, this.y); // Zur Geschoss-Position
     this._projektilZeichnen(); // Teilchen zeichnen
+    pop(); // Zustand wiederherstellen
+  }
+}
+
     pop(); // Zustand wiederherstellen
   }
 }
