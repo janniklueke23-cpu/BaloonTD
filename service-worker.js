@@ -2,7 +2,7 @@
 // Strategie: Cache-First für alle Spiel-Assets, Netzwerk-Fallback. Bei neuer Version
 // wird der alte Cache gelöscht (CACHE_NAME erhöhen → Force-Refresh).
 
-const CACHE_NAME = 'lvs-mobile-v6'; // Cache-Name. Bei Asset-Änderungen Versionsnummer erhöhen.
+const CACHE_NAME = 'lvs-mobile-v7'; // Cache-Name. Bei Asset-Änderungen Versionsnummer erhöhen.
 const ASSETS = [ // Liste aller Dateien die offline verfügbar sein müssen
   './mobile.html',
   './manifest.webmanifest',
