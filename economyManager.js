@@ -70,7 +70,8 @@ class EconomyManager { // Klasse für die gesamte Spielwirtschaft
   }
 
   welleAbgeschlossen(welleNummer) { // Berechnet und vergibt den Wellenbonus
-    let bonus = this.wellenBonus + welleNummer * 10; // Bonus steigt mit jeder Welle
+    // Bonus wächst sublinear, damit das Endgame nicht in Geld ertrinkt
+    let bonus = this.wellenBonus + Math.floor(welleNummer * 5 + Math.sqrt(welleNummer) * 8); // Sublineare Skalierung
     this.muenzenHinzufuegen(bonus); // Bonus zum Kontostand hinzufügen
     this.gs.wellenBonus = bonus; // Bonus im Spielzustand speichern (für die Anzeige)
     this.muenzenDieseWelle = 0; // Zähler für nächste Welle zurücksetzen
