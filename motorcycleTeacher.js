@@ -1,6 +1,6 @@
 class Fight extends Turm { // Hr. Fight – fährt mit dem Motorrad zwischen 2 gewählten Punkten
   constructor(x, y, punktB) { // Erster Punkt = Grill, zweiter Punkt = Zigarre
-    super(x, y, 'fight', 280); // Basisklasse mit Typ und Kosten initialisieren
+    super(x, y, 'fight', 450); // Basisklasse (Kosten passend zu Shop)
     this.name = 'Hr. Fight'; // Anzeigename des Lehrers
     this.reichweite = 60; // Sichtradius (für Reichweiten-Anzeige bei Auswahl)
     this.feuerRate = 30; // Frames zwischen Berührungs-Schaden-Ticks

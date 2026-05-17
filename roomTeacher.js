@@ -1,6 +1,6 @@
 class Raum extends Turm { // Herr Raum: Support-Turm der Geld produziert und Lehrer in Reichweite verstärkt
   constructor(x, y) { // Konstruktor mit Positions-Parametern
-    super(x, y, 'raum', 200); // Basisklasse mit Typ und Kosten initialisieren
+    super(x, y, 'raum', 250); // Basisklasse (Kosten passend zu Shop)
     this.name = 'Hr. Zimmer'; // Anzeigename des Lehrers
     this.reichweite = 110; // Wirkungsbereich in Pixeln (auch Buff-Reichweite)
     this.feuerRate = 240; // Geld wird alle 4 Sekunden produziert (60 fps * 4)

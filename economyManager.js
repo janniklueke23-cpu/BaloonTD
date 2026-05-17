@@ -23,15 +23,17 @@ class EconomyManager { // Klasse für die gesamte Spielwirtschaft
   }
 
   turmKosten(typ) { // Gibt die Grundkosten eines Lehrers zurück (mit Rabatt-Upgrade)
-    const kosten = { // Tabelle: Lehrer-Typ → Preis in Münzen (rebalanciert)
-      'blech':    110, // Blech (Standard-Kreidewerfer)
-      'pfingsten':150, // Pfingsten (Verlangsamer)
-      'pfister':  170, // Pfister (Säure mit Flächenschaden)
-      'koch':     220, // Koch (sehr starker Einzelschaden)
-      'raum':     260, // Baum (Geld-Generator + Buff – Support)
-      'motsious': 300, // Motsious (Teilchen mit Spread + Durchdringen)
-      'brust':    340, // Schulter (Kettenblitz – sehr stark gegen Gruppen)
-      'fight':    520  // Fight (mobiler Lehrer mit Anlauf-Schaden, Bomben & Feuer)
+    // WICHTIG: muss exakt mit TURMSHOP_EINTRAEGE in uiManager.js übereinstimmen,
+    // sonst zeigt der Shop einen anderen Preis als tatsächlich abgezogen wird!
+    const kosten = { // Tabelle: Lehrer-Typ → Preis in Münzen
+      'blech':    100, // Hr. Blech (Standard-Kreidewerfer)
+      'pfingsten':150, // Hr. Pfingsten (Verlangsamer)
+      'koch':     200, // Hr. Koch (starker Einzelschaden)
+      'raum':     250, // Hr. Zimmer (Geld-Generator + Buff)
+      'brust':    300, // Hr. Rücken (Kettenblitz)
+      'pfister':  350, // Hr. Fister (Säure mit Splash)
+      'motsious': 400, // Hr. Muzius (Teilchenbeschleuniger)
+      'fight':    450  // Hr. Fight (mobiler Anlauf-Schaden)
     };
     let basis = kosten[typ] || 100; // Basispreis holen
     let rabatt = (this.gs.upgrades) ? this.gs.upgrades.getRabatt() : 0; // Rabatt aus Upgrades holen

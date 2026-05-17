@@ -1,6 +1,6 @@
 class Pfister extends Turm { // Pfister-Klasse erbt von der Turm-Basisklasse
   constructor(x, y) { // Konstruktor mit Positions-Parametern
-    super(x, y, 'pfister', 140); // Basisklasse mit Typ und Kosten initialisieren
+    super(x, y, 'pfister', 350); // Basisklasse (Kosten passend zu Shop)
     this.name = 'Herr Pfister'; // Anzeigename des Lehrers
     this.reichweite = 115; // Wirkungsbereich in Pixeln
     this.feuerRate = 85; // Feuerrate in Frames zwischen Schüssen

@@ -1,6 +1,6 @@
 class Koch extends Turm { // Koch erbt von der Turm-Basisklasse
   constructor(x, y) { // Konstruktor: erstellt einen neuen Koch-Turm
-    super(x, y, 'koch', 200); // Elternkonstruktor mit Typ 'koch' und Kosten 175 aufrufen
+    super(x, y, 'koch', 200); // Elternkonstruktor mit Typ 'koch' (Kosten passend zu Shop)
     this.name = 'Herr Koch'; // Anzeigename des Turms
     this.reichweite = 1000; // Reichweite in Pixel (größer als Standard)
     this.feuerRate = 135; // Frames zwischen Schüssen (sehr langsam)
