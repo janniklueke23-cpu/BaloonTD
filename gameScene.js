@@ -424,26 +424,49 @@ class SpielSzene { // Klasse für die Haupt-Spielszene
       }
       // Zweiter Klick: prüfen dass die Punkte nicht zu nah aneinander liegen
       if (dist(mx, my, this.gs.fightPunkt1.x, this.gs.fightPunkt1.y) < 60) return; // Zu nah – ignorieren
+      // Erst Lehrer erstellen, dann zahlen (Refund-Schutz)
+      let neuerFight = null; // Fight-Lehrer-Objekt
+      try { // Sicherheits-try
+        neuerFight = new Fight(this.gs.fightPunkt1.x, this.gs.fightPunkt1.y, { x: mx, y: my }); // Mit beiden Punkten
+      } catch (e) { // Bei Fehler nicht crashen
+        console.error('Fehler beim Erstellen von Hr. Fight:', e); // Diagnose
+        neuerFight = null; // Sicherheits-Null
+      }
+      if (!neuerFight) { // Konnte nicht erstellt werden
+        this.gs.fightPunkt1 = null; // Vorgang abbrechen
+        this.gs.ausgewaehlteTurmTyp = null; // Auswahl beenden
+        return; // Ohne Geld-Abzug abbrechen
+      }
       let kosten = this.gs.wirtschaft.turmKosten('fight'); // Kosten holen
       if (!this.gs.wirtschaft.muenzenAbziehen(kosten)) { // Nicht genug Münzen?
         this.gs.fightPunkt1 = null; // Vorgang abbrechen
-        return; // Beenden
+        return; // Beenden ohne Lehrer zu platzieren
       }
-      let neuerTurm = new Fight(this.gs.fightPunkt1.x, this.gs.fightPunkt1.y, { x: mx, y: my }); // Mit beiden Punkten
-      this.gs.tuerme.push(neuerTurm); // Lehrer hinzufügen
+      this.gs.tuerme.push(neuerFight); // Lehrer hinzufügen
       if (this.gs.sound) this.gs.sound.turmPlatziert(); // Sound: gesetzt
       this.gs.fightPunkt1 = null; // Zurücksetzen
       this.gs.ausgewaehlteTurmTyp = null; // Auswahl beenden
       return; // Fertig
     }
     // ── Standard-Platzierung (alle anderen Lehrer) ──────────────────────
-    let kosten = this.gs.wirtschaft.turmKosten(this.gs.ausgewaehlteTurmTyp); // Kosten holen
-    if (!this.gs.wirtschaft.muenzenAbziehen(kosten)) return; // Nicht genug Münzen: abbrechen
-    let neuerTurm = this._turmErstellen(this.gs.ausgewaehlteTurmTyp, mx, my); // Lehrer erstellen
-    if (neuerTurm) { // Lehrer erfolgreich erstellt?
-      this.gs.tuerme.push(neuerTurm); // Lehrer zur Liste hinzufügen
-      if (this.gs.sound) this.gs.sound.turmPlatziert(); // Sound: Lehrer gesetzt
+    let typ = this.gs.ausgewaehlteTurmTyp; // Typ zwischenspeichern (für Refund-Fall)
+    let kosten = this.gs.wirtschaft.turmKosten(typ); // Kosten holen
+    // ZUERST den Lehrer erstellen – nur wenn das klappt wird Geld abgezogen.
+    // Das verhindert den Bug "Geld weg aber kein Lehrer platziert".
+    let neuerTurm = null; // Lehrer-Objekt
+    try { // Constructor könnte werfen wenn etwas falsch ist
+      neuerTurm = this._turmErstellen(typ, mx, my); // Lehrer instantiieren
+    } catch (e) { // Bei Exception: Spiel nicht crashen, einfach abbrechen
+      console.error('Fehler beim Erstellen des Lehrers ' + typ + ':', e); // Diagnose-Log
+      neuerTurm = null; // Sicherstellen dass nichts platziert wird
     }
+    if (!neuerTurm) { // Lehrer konnte nicht erstellt werden (unbekannter Typ oder Exception)
+      this.gs.ausgewaehlteTurmTyp = null; // Auswahl aufheben damit Spieler neu wählt
+      return; // Abbrechen ohne Geld abzuziehen
+    }
+    if (!this.gs.wirtschaft.muenzenAbziehen(kosten)) return; // Erst jetzt zahlen (sollte nach kannKaufen klappen)
+    this.gs.tuerme.push(neuerTurm); // Lehrer zur Liste hinzufügen
+    if (this.gs.sound) this.gs.sound.turmPlatziert(); // Sound: Lehrer gesetzt
     this.gs.ausgewaehlteTurmTyp = null; // Auswahl zurücksetzen
   }
 

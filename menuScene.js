@@ -164,7 +164,7 @@ class MenuSzene { // Klasse für alle Menü-Bildschirme
     this._menuTitel(); // Spieltitel
     // Gesamtmünzen-Anzeige (persistenter Counter)
     noStroke(); fill(255, 215, 0); textAlign(RIGHT, TOP); textSize(15); // Gold
-    text('🪙 Gesamt: ' + (gs.upgrades ? gs.upgrades.daten.gesamtMuenzen : 0), 950, 10); // Anzeige
+    text('🪙 Gesamt: ' + (gs.upgrades ? gs.upgrades.daten.gesamtMuenzen.toLocaleString('de-DE') : 0), 950, 10); // Anzeige
     // 5 Hauptmenü-Buttons
     this._menuButton('spielen',       '▶ ' + T('spielen'),        [45, 165, 65]); // Grüner Spielen-Button
     this._menuButton('einstellungen', '⚙ ' + T('einstellungen'),  [55, 85, 160]); // Blauer Einstellungen-Button
@@ -393,7 +393,7 @@ class MenuSzene { // Klasse für alle Menü-Bildschirme
     // Verfügbare Münzen anzeigen
     noStroke(); fill(255, 215, 0); textAlign(CENTER, TOP); textSize(16); // Gold
     let verfuegbar = this.gs.upgrades.verfuegbareMuenzen(); // Verfügbare Münzen holen
-    text(T('verfuegbar') + ' 🪙 ' + verfuegbar + '  (Gesamt gesammelt: ' + this.gs.upgrades.daten.gesamtMuenzen + ')', 480, 128); // Anzeige
+    text(T('verfuegbar') + ' 🪙 ' + verfuegbar.toLocaleString('de-DE') + '  (Gesamt gesammelt: ' + this.gs.upgrades.daten.gesamtMuenzen.toLocaleString('de-DE') + ')', 480, 128); // Anzeige
     // Upgrade-Karten über den Upgrade-Manager zeichnen
     this.gs.upgrades.drawUpgradeScreen(); // Upgrade-Manager zeichnet die Karten
     this._zurueckButton(); // Zurück-Button

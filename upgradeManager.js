@@ -1,14 +1,16 @@
 // upgradeManager.js – Verwaltet permanente Spieler-Upgrades die über alle Spielrunden erhalten bleiben
 
+// Meta-Upgrades: persistent über Runden hinweg, bezahlt aus gesamtMuenzen.
+// Stufe 3 jedes Upgrades ist ein echtes Endgame-Ziel mit Preisen bis 1 Mio.
 const UPGRADE_DEFS = {
   startgeld: {
     name:   'Startkapital',
     symbol: '💰',
     farbe:  [220, 180, 40],
     stufen: [
-      { kosten: 50,  beschreibung: '+50 Startmünzen',  kurztext: '+50 🪙' },
-      { kosten: 150, beschreibung: '+150 Startmünzen', kurztext: '+150 🪙' },
-      { kosten: 300, beschreibung: '+300 Startmünzen', kurztext: '+300 🪙' }
+      { kosten: 5000,    beschreibung: '+100 Startmünzen',   kurztext: '+100 🪙'  },
+      { kosten: 50000,   beschreibung: '+500 Startmünzen',   kurztext: '+500 🪙'  },
+      { kosten: 1000000, beschreibung: '+2000 Startmünzen',  kurztext: '+2000 🪙' }
     ]
   },
   leben: {
@@ -16,9 +18,9 @@ const UPGRADE_DEFS = {
     symbol: '❤️',
     farbe:  [200, 60, 60],
     stufen: [
-      { kosten: 75,  beschreibung: '+2 Startleben',  kurztext: '+2 ❤️' },
-      { kosten: 200, beschreibung: '+5 Startleben',  kurztext: '+5 ❤️' },
-      { kosten: 400, beschreibung: '+10 Startleben', kurztext: '+10 ❤️' }
+      { kosten: 5000,   beschreibung: '+5 Startleben',  kurztext: '+5 ❤️'  },
+      { kosten: 75000,  beschreibung: '+15 Startleben', kurztext: '+15 ❤️' },
+      { kosten: 1000000, beschreibung: '+40 Startleben', kurztext: '+40 ❤️' }
     ]
   },
   rabatt: {
@@ -26,9 +28,9 @@ const UPGRADE_DEFS = {
     symbol: '🏷️',
     farbe:  [60, 140, 200],
     stufen: [
-      { kosten: 100, beschreibung: '10% Rabatt auf alle Lehrer', kurztext: '-10% Kosten' },
-      { kosten: 250, beschreibung: '20% Rabatt auf alle Lehrer', kurztext: '-20% Kosten' },
-      { kosten: 500, beschreibung: '30% Rabatt auf alle Lehrer', kurztext: '-30% Kosten' }
+      { kosten: 10000,   beschreibung: '10% Rabatt auf alle Lehrer', kurztext: '-10% Kosten' },
+      { kosten: 100000,  beschreibung: '20% Rabatt auf alle Lehrer', kurztext: '-20% Kosten' },
+      { kosten: 1000000, beschreibung: '30% Rabatt auf alle Lehrer', kurztext: '-30% Kosten' }
     ]
   },
   muenzbonus: {
@@ -36,9 +38,9 @@ const UPGRADE_DEFS = {
     symbol: '🪙',
     farbe:  [80, 180, 80],
     stufen: [
-      { kosten: 80,  beschreibung: '+10% Münzen pro Ballon', kurztext: 'x1.10 🪙' },
-      { kosten: 200, beschreibung: '+25% Münzen pro Ballon', kurztext: 'x1.25 🪙' },
-      { kosten: 450, beschreibung: '+50% Münzen pro Ballon', kurztext: 'x1.50 🪙' }
+      { kosten: 8000,    beschreibung: '+10% Münzen pro Ballon', kurztext: 'x1.10 🪙' },
+      { kosten: 80000,   beschreibung: '+25% Münzen pro Ballon', kurztext: 'x1.25 🪙' },
+      { kosten: 1000000, beschreibung: '+50% Münzen pro Ballon', kurztext: 'x1.50 🪙' }
     ]
   }
 };
@@ -125,13 +127,13 @@ class UpgradeManager {
   }
 
   getStartMuenzen() {
-    const boni = [50, 150, 300];
+    const boni = [100, 500, 2000]; // Passend zu den UPGRADE_DEFS-Beschreibungen
     let stufe = this.daten.gekauft['startgeld'];
     return stufe > 0 ? boni[stufe - 1] : 0;
   }
 
   getStartLeben() {
-    const boni = [2, 5, 10];
+    const boni = [5, 15, 40]; // Passend zu den UPGRADE_DEFS-Beschreibungen
     let stufe = this.daten.gekauft['leben'];
     return stufe > 0 ? boni[stufe - 1] : 0;
   }
@@ -253,7 +255,7 @@ class UpgradeManager {
       textAlign(CENTER, CENTER);
       textSize(13);
       textStyle(BOLD);
-      text(T('kaufen') + '  🪙' + naechsteKosten, k.x + k.b / 2, k.y + k.h - 29);
+      text(T('kaufen') + '  🪙' + naechsteKosten.toLocaleString('de-DE'), k.x + k.b / 2, k.y + k.h - 29);
       textStyle(NORMAL);
     } else {
       noStroke();
@@ -290,7 +292,7 @@ class UpgradeManager {
     textStyle(NORMAL);
     fill(180, 180, 220);
     textSize(14);
-    text(d.name + ' – 🪙' + d.kosten, 480, 304);
+    text(d.name + ' – 🪙' + d.kosten.toLocaleString('de-DE'), 480, 304);
     let mausx = skMx();
     let mausy = skMy();
     let jaHover = mausx >= 340 && mausx <= 480 && mausy >= 340 && mausy <= 378;

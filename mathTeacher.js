@@ -1,6 +1,6 @@
 class Blech extends Turm { // Blech erbt von der Turm-Basisklasse
   constructor(x, y) { // Konstruktor: erstellt einen neuen Blech-Turm
-    super(x, y, 'blech', 100); // Elternkonstruktor mit Typ 'blech' und Kosten 100 aufrufen
+    super(x, y, 'blech', 100); // Elternkonstruktor mit Typ 'blech' (Kosten passend zu Shop)
     this.name = 'Herr Blech'; // Anzeigename des Turms
     this.reichweite = 120; // Reichweite in Pixel
     this.feuerRate = 55; // Frames zwischen Schüssen

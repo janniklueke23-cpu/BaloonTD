@@ -1,6 +1,6 @@
 class Pfingsten extends Turm { // Pfingsten-Klasse erbt von der Turm-Basisklasse
   constructor(x, y) { // Konstruktor mit Positions-Parametern
-    super(x, y, 'pfingsten', 130); // Basisklasse mit Typ und Kosten initialisieren
+    super(x, y, 'pfingsten', 150); // Basisklasse (Kosten passend zu Shop)
     this.name = 'Herr Pfingsten'; // Anzeigename des Lehrers
     this.reichweite = 135; // Wirkungsbereich in Pixeln
     this.feuerRate = 12; // Häufiger Auslöser für Flächeneffekt

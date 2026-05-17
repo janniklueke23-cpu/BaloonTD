@@ -56,6 +56,13 @@ class Ballon { // Hauptklasse für alle Ballon-Gegner
     this.x = pfad[0].x; // Startposition X (erster Wegpunkt)
     this.y = pfad[0].y; // Startposition Y (erster Wegpunkt)
     this.hp = BALLON_HP[typ] || 1; // Aktuelle HP aus der Tabelle laden
+    // Boss-HP skalieren mit Level: in höheren Leveln deutlich mehr HP für echte Herausforderung
+    if (typ === 'schwarz' || typ === 'rosa' || typ === 'weiss') { // Nur für Bosse skalieren
+      let level = (window.gs && window.gs.level) || 1; // Aktuelles Level (fallback 1)
+      const hpMultPerLevel = [1, 1, 1, 1.6, 2.5, 4, 7, 12]; // Skalierung je Level (Index 0 = Level 1)
+      let mult = hpMultPerLevel[level - 1] || 1; // Multiplikator holen
+      this.hp = Math.max(1, Math.floor(this.hp * mult)); // HP entsprechend erhöhen
+    }
     this.maxHp = this.hp; // Maximale HP merken (für Boss-Lebensanzeige)
     this.radius = BALLON_RADIUS[typ] || 13; // Radius des Ballons
     this.basisGeschwindigkeit = BALLON_GESCHWINDIGKEIT[typ] || 1.5; // Grundgeschwindigkeit

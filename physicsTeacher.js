@@ -188,7 +188,3 @@ class TeilchenGeschoss extends Geschoss { // Teilchen das in feste Richtung flie
     pop(); // Zustand wiederherstellen
   }
 }
-
-    pop(); // Zustand wiederherstellen
-  }
-}
