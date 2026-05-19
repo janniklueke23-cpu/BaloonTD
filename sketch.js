@@ -45,6 +45,7 @@ let gs = {
   ausgewaehlteTurmTyp: null,   // Welcher Lehrer ist gerade im Shop angeklickt zum Platzieren (z.B. 'blech') – null wenn keiner
   angeklickterTurm:    null,   // Welcher bereits platzierte Lehrer ist gerade ausgewählt (für das Upgrade-Panel)
   fightPunkt1:         null,   // Bei Hr. Fight: speichert den ersten von zwei Klicks (Grill-Position) bis der zweite kommt
+  motsiousPunkt1:      null,   // Bei Hr. Muzius: speichert den Lehrer-Standort (1. Klick) bis der Schuss-Zielpunkt (2. Klick) kommt
   tuerme:              [],     // Liste aller im Level platzierten Lehrer (Array, weil sich die Anzahl ändert)
   gegner:              [],     // Liste aller aktuell lebenden Schüler auf dem Pfad
   punkte:              0,      // Punktzahl in dieser Runde (für die Highscore-Liste)
@@ -353,7 +354,8 @@ function mousePressed() {
     // 3) Wurde im Shop-Panel auf einen Lehrer geklickt?
     let shopTyp = gs.ui.getShopKlick(mx, my); // gibt den Typ-String zurück (z.B. 'blech') oder null
     if (shopTyp) {
-      gs.fightPunkt1 = null; // Falls gerade Hr. Fight platziert werden sollte (1. Punkt schon gesetzt): abbrechen
+      gs.fightPunkt1 = null; // Falls gerade Hr. Fight platziert werden sollte: abbrechen
+      gs.motsiousPunkt1 = null; // Falls gerade Hr. Muzius platziert werden sollte: ebenfalls abbrechen
       if (gs.ausgewaehlteTurmTyp === shopTyp) {
         gs.ausgewaehlteTurmTyp = null; // Schon ausgewählt? → erneuter Klick bricht die Auswahl ab
       } else {
@@ -428,6 +430,7 @@ function keyPressed() {
       if (gs.ausgewaehlteTurmTyp) {
         gs.ausgewaehlteTurmTyp = null; // Auswahl im Shop aufheben
         gs.fightPunkt1 = null;          // Auch laufende Fight-Platzierung abbrechen
+        gs.motsiousPunkt1 = null;       // Auch laufende Muzius-Platzierung abbrechen
       } else if (gs.angeklickterTurm) {
         gs.angeklickterTurm = null; // Upgrade-Panel schließen
         gs.tuerme.forEach(t => t.ausgewaehlt = false); // Alle Lehrer "deselektieren"

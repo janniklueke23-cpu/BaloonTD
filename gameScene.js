@@ -414,7 +414,41 @@ class SpielSzene { // Klasse für die Haupt-Spielszene
   turmPlatzieren(mx, my) { // Versucht einen Lehrer an der Mausposition zu platzieren
     if (!this.gs.ausgewaehlteTurmTyp) return; // Kein Lehrer-Typ ausgewählt: abbrechen
     if (mx > 740 || my < 50) return; // Im Panel oder HUD: abbrechen
-    if (!this.gs.platzierungGueltig(mx, my)) return; // Ungültige Position: abbrechen
+    // ── Sonderfall Hr. Muzius: 2-Klick-Platzierung (Lehrer + Schuss-Richtung) ──
+    if (this.gs.ausgewaehlteTurmTyp === 'motsious') {
+      if (!this.gs.motsiousPunkt1) { // Erster Klick: Lehrer-Standort
+        if (!this.gs.platzierungGueltig(mx, my)) return; // 1. Klick muss eine gültige Lehrer-Position sein
+        this.gs.motsiousPunkt1 = { x: mx, y: my }; // Standort merken
+        if (this.gs.sound) this.gs.sound.menuKlick(); // Klick-Sound
+        return; // Auf zweiten Klick warten
+      }
+      // Zweiter Klick: irgendwo auf dem Spielfeld (darf auch auf dem Weg sein – ist nur eine Richtung)
+      // Mindestabstand 30 px, damit die Richtung sinnvoll definiert ist.
+      if (dist(mx, my, this.gs.motsiousPunkt1.x, this.gs.motsiousPunkt1.y) < 30) return; // Zu nah – ignorieren
+      let neuerMuzius = null; // Lehrer-Objekt
+      try {
+        neuerMuzius = new Motsious(this.gs.motsiousPunkt1.x, this.gs.motsiousPunkt1.y, { x: mx, y: my });
+      } catch (e) {
+        console.error('Fehler beim Erstellen von Hr. Muzius:', e);
+        neuerMuzius = null;
+      }
+      if (!neuerMuzius) { // Erstellung gescheitert: abbrechen ohne Geld-Abzug
+        this.gs.motsiousPunkt1 = null;
+        this.gs.ausgewaehlteTurmTyp = null;
+        return;
+      }
+      let kostenM = this.gs.wirtschaft.turmKosten('motsious'); // Preis holen
+      if (!this.gs.wirtschaft.muenzenAbziehen(kostenM)) { // Nicht genug Geld?
+        this.gs.motsiousPunkt1 = null;
+        return;
+      }
+      this.gs.tuerme.push(neuerMuzius); // Lehrer ins Spiel einfügen
+      if (this.gs.sound) this.gs.sound.turmPlatziert(); // Sound: platziert
+      this.gs.motsiousPunkt1 = null; // State zurücksetzen
+      this.gs.ausgewaehlteTurmTyp = null;
+      return;
+    }
+    if (!this.gs.platzierungGueltig(mx, my)) return; // Ungültige Position für alle anderen Lehrer
     // ── Sonderfall Hr. Fight: 2-Klick-Platzierung ────────────────────────
     if (this.gs.ausgewaehlteTurmTyp === 'fight') { // Hr. Fight braucht zwei Punkte
       if (!this.gs.fightPunkt1) { // Erster Klick: Grill-Position merken
