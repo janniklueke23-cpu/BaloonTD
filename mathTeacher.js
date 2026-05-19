@@ -36,9 +36,9 @@ class Blech extends Turm { // Blech erbt von der Turm-Basisklasse
   _upgradeAnwenden() { // Upgrade-Effekte je nach gewähltem Pfad und Stufe anwenden
     if (this.upgradePfad === 0) { // Pfad 0: Schnellfeuer
       if (this.upgradeStufe === 1) { // Stufe 1: Feuerrate erhöhen
-        this.feuerRate = 90; // 40% schneller
+        this.feuerRate = 45; // 40% schneller
       } else if (this.upgradeStufe === 2) { // Stufe 2: Noch schneller
-        this.feuerRate = 120; // Nochmals schneller
+        this.feuerRate = 30; // Nochmals schneller
       } else if (this.upgradeStufe === 3) { // Stufe 3: Zweites Ziel beschießen
         this.doppelwurf = true; // Doppelwurf aktivieren
       }
