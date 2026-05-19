@@ -3,7 +3,7 @@ class Blech extends Turm { // Blech erbt von der Turm-Basisklasse
     super(x, y, 'blech', 100); // Elternkonstruktor mit Typ 'blech' (Kosten passend zu Shop)
     this.name = 'Herr Blech'; // Anzeigename des Turms
     this.reichweite = 120; // Reichweite in Pixel
-    this.feuerRate = 55; // Frames zwischen Schüssen
+    this.feuerRate = 60; // Frames zwischen Schüssen
     this.schaden = 1; // Schaden pro Kreidegeschoss
     this.schussTyp = 'blech'; // Geschoss-Typ für spezielle Darstellung
     this.kopfFarbe = [235, 215, 175]; // Hautfarbe für den Kopf
@@ -17,17 +17,17 @@ class Blech extends Turm { // Blech erbt von der Turm-Basisklasse
       { // Pfad 0: Schnellfeuer – Fokus auf hohe Feuerrate
         name: 'Schnellfeuer',
         upgrades: [
-          { name: 'Schneller Schießen',  beschreibung: 'Feuerrate +40%',                kosten: 50  },
-          { name: 'Kreidestrom',         beschreibung: 'Nochmals schneller, Schaden x2', kosten: 100 },
-          { name: 'Doppelwurf',          beschreibung: 'Trifft 2 Ziele gleichzeitig',   kosten: 200 }
+          { name: 'Schneller Schießen',  beschreibung: 'Schnellere Feuerrate (+50%)', kosten: 70  },
+          { name: 'Kreidestrom',         beschreibung: 'Verdoppelte Feuerrate', kosten: 140 },
+          { name: 'Doppelwurf',          beschreibung: 'Trifft 2 Ziele gleichzeitig',   kosten: 250 }
         ]
       },
       { // Pfad 1: Sprengkraft – Fokus auf Schaden und Explosionen
         name: 'Sprengkraft',
         upgrades: [
-          { name: 'Größere Kreide',  beschreibung: 'Schaden x3, trifft 2 Ballons',     kosten: 50  },
+          { name: 'Größere Kreide',  beschreibung: 'Schaden x3, trifft 2 Ballons',     kosten: 80  },
           { name: 'Mehr Reichweite', beschreibung: 'Reichweite +40px',                  kosten: 100 },
-          { name: 'Kreidebombe',     beschreibung: 'Explosionsschaden beim Aufprall',   kosten: 200 }
+          { name: 'Kreidebombe',     beschreibung: 'Explosionsschaden beim Aufprall',   kosten: 240 }
         ]
       }
     ];
@@ -36,10 +36,9 @@ class Blech extends Turm { // Blech erbt von der Turm-Basisklasse
   _upgradeAnwenden() { // Upgrade-Effekte je nach gewähltem Pfad und Stufe anwenden
     if (this.upgradePfad === 0) { // Pfad 0: Schnellfeuer
       if (this.upgradeStufe === 1) { // Stufe 1: Feuerrate erhöhen
-        this.feuerRate = Math.floor(this.feuerRate * 0.6); // 40% schneller
-      } else if (this.upgradeStufe === 2) { // Stufe 2: Noch schneller + mehr Schaden
-        this.feuerRate = Math.floor(this.feuerRate * 0.55); // Nochmals schneller
-        this.schaden = 2; // Schaden verdoppeln
+        this.feuerRate = 90; // 40% schneller
+      } else if (this.upgradeStufe === 2) { // Stufe 2: Noch schneller
+        this.feuerRate = 120; // Nochmals schneller
       } else if (this.upgradeStufe === 3) { // Stufe 3: Zweites Ziel beschießen
         this.doppelwurf = true; // Doppelwurf aktivieren
       }
