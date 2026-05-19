@@ -59,13 +59,23 @@ class Raum extends Turm { // Herr Raum: Support-Turm der Geld produziert und Leh
     }
   }
 
-  update(gegner, spielGeschwindigkeit) { // Eigene Update-Methode: Buff anwenden, Geld produzieren
-    this.feuerTimer -= spielGeschwindigkeit; // Timer für Geldauszahlung
-    if (this.feuerTimer <= 0) { // Zeit für Geld-Tick?
-      this._geldAuszahlen(); // Münzen ans Konto schreiben
-      this.feuerTimer = this.feuerRate; // Timer zurücksetzen
+  update(gegner, spielGeschwindigkeit) { // Eigene Update-Methode: Geld nur während aktiver Welle
+    // Nur während einer laufenden Welle Geld produzieren – zwischen den Wellen
+    // kann der Spieler nicht beliebig viel Cash anhäufen.
+    let welleLaeuft = window.gs && window.gs.welleAktiv;
+
+    if (welleLaeuft) { // Nur dann Geld-Timer und Geld-Auszahlung
+      this.feuerTimer -= spielGeschwindigkeit; // Timer herunterzählen
+      if (this.feuerTimer <= 0) { // Zeit für Geld-Tick?
+        this._geldAuszahlen(); // Münzen aufs Konto buchen
+        this.feuerTimer = this.feuerRate; // Timer zurücksetzen
+      }
+    } else { // Zwischen den Wellen: Timer auf Anfangswert halten damit nicht direkt nach Wellenstart sofort ausgezahlt wird
+      this.feuerTimer = this.feuerRate;
     }
-    if (this.trefferBonus > 0 && window.gs) { // Treffer-Bonus aktiv?
+
+    // Treffer-Bonus auch nur während Wellen
+    if (welleLaeuft && this.trefferBonus > 0 && window.gs) { // Treffer-Bonus aktiv und Welle läuft?
       let aktuell = window.gs.ballonsGeknallt || 0; // Aktuellen Stand holen
       if (aktuell > this._lastBallonsGeknallt) { // Neue Ballons geplatzt?
         let differenz = aktuell - this._lastBallonsGeknallt; // Anzahl neuer Treffer
@@ -74,7 +84,7 @@ class Raum extends Turm { // Herr Raum: Support-Turm der Geld produziert und Leh
         }
         this._lastBallonsGeknallt = aktuell; // Stand aktualisieren
       }
-    } else if (window.gs) { // Treffer-Bonus inaktiv: Stand trotzdem nachführen
+    } else if (window.gs) { // Außerhalb einer Welle ODER Treffer-Bonus inaktiv: Stand trotzdem nachführen
       this._lastBallonsGeknallt = window.gs.ballonsGeknallt || 0; // Stand merken
     }
   }

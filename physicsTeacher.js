@@ -1,23 +1,20 @@
-class Motsious extends Turm { // Hr. Motsious – sitzt am Teilchenbeschleuniger und streut Teilchen in eine Richtung
-  constructor(x, y) { // Konstruktor mit Positions-Parametern
+class Motsious extends Turm { // Hr. Muzius – feste Schussrichtung (2-Klick-Platzierung), unendliche Reichweite
+  constructor(x, y, zielPunkt) { // Konstruktor: x/y = Standort, zielPunkt = vom Spieler gewählter Richtungs-Punkt
     super(x, y, 'motsious', 400); // Basisklasse mit Typ und Kosten initialisieren
     this.name = 'Hr. Motsious'; // Anzeigename des Lehrers
-    this.reichweite = 200; // Lange Wirkungsweite (Strahl-Reichweite)
+    this.reichweite = 9999; // "Unendliche" Reichweite – Strahl geht über das ganze Spielfeld
+    this.sichtReichweite = 1500; // Nur für _besteZielFinden: praktisch jeder Schüler zählt als Ziel-Trigger
     this.feuerRate = 18; // Sehr hohe Schussfrequenz – Strahl-Effekt
     this.schaden = 1; // Schaden pro Teilchen
     this.kopfFarbe = [225, 200, 180]; // Hautfarbe des Kopfes
     this.koerperFarbe = [70, 70, 110]; // Lila-Hemd für Wissenschaftler
-    this.streuung = 0.18; // Halber Streuwinkel der Teilchen in Radiant
+    this.streuung = 0.05; // Sehr enge Streuung – Strahl wirkt nun gezielt statt breit
     this.teilchenProSchuss = 1; // Anzahl Teilchen pro Schuss
-    this.richtung = this._initialeRichtung(x, y); // Anfängliche Schussrichtung Richtung Pfad
-    this.durchdringend = false; // Teilchen durchdringen Schüler?
-    this.zielUmschalten = 0; // Timer für automatisches Neuausrichten
-  }
-
-  _initialeRichtung(x, y) { // Schießt Richtung Mitte des Spielfelds, falls kein Ziel da
-    let zielX = 370; // Mitte des Spielfelds X
-    let zielY = 345; // Mitte des Spielfelds Y
-    return atan2(zielY - y, zielX - x); // Winkel zur Spielfeldmitte
+    // Vom Spieler gewählter zweiter Punkt = Schussrichtung. Falls keiner übergeben:
+    // Standard-Richtung Richtung Spielfeldmitte (z.B. wenn der Konstruktor von außen aufgerufen wird).
+    this.zielPunkt = zielPunkt || { x: 370, y: 345 }; // Fallback: Spielfeldmitte
+    this.richtung = atan2(this.zielPunkt.y - y, this.zielPunkt.x - x); // Schussrichtung FESTLEGEN (wird nie verändert)
+    this.durchdringend = true; // Per Default durchdringt der Strahl, weil er sonst nur den ersten Schüler trifft
   }
 
   getPfadeInfo() { // Beide Upgrade-Pfade beschreiben
@@ -65,36 +62,19 @@ class Motsious extends Turm { // Hr. Motsious – sitzt am Teilchenbeschleuniger
     }
   }
 
-  update(gegner, spielGeschwindigkeit) { // Eigene Update-Methode mit Richtungs-Anpassung
-    this.zielUmschalten -= spielGeschwindigkeit; // Timer für Neuausrichtung
-    if (this.zielUmschalten <= 0) { // Alle 30 Frames neu ausrichten
-      this.zielUmschalten = 30; // Timer zurücksetzen
-      let nahestes = this._nahestesZiel(gegner); // Nahesten Schüler in Reichweite suchen
-      if (nahestes) { // Ziel gefunden?
-        let dx = nahestes.x - this.x; // Differenz X
-        let dy = nahestes.y - this.y; // Differenz Y
-        this.richtung = atan2(dy, dx); // Richtung anpassen
-      }
+  // Die Richtung ist beim Platzieren festgelegt und ändert sich nicht mehr.
+  // Wir verwenden deshalb das Standard-update aus der Basisklasse.
+
+  _besteZielFinden(gegner) { // Überschreiben: solange irgendein Schüler lebt, soll geschossen werden
+    for (let g of gegner) { // Erstes aktives Ziel reicht als Trigger – die Richtung steht ja fest
+      if (g.aktiv) return g; // Sobald ein Schüler lebt: Schießen
     }
-    super.update(gegner, spielGeschwindigkeit); // Basis-Update (Schießen, Geschosse)
+    return null; // Sonst keinen Schuss auslösen
   }
 
-  _nahestesZiel(gegner) { // Nahestes aktives Ziel finden
-    let nahestes = null; // Bestes Ziel
-    let minD = Infinity; // Minimaler Abstand
-    for (let g of gegner) { // Alle Gegner durchsuchen
-      if (!g.aktiv) continue; // Inaktive überspringen
-      let d = dist(this.x, this.y, g.x, g.y); // Abstand
-      if (d <= this.reichweite && d < minD) { // Näher als bisher?
-        minD = d; // Neuen minimalen Abstand merken
-        nahestes = g; // Als Ziel speichern
-      }
-    }
-    return nahestes; // Ziel zurückgeben
-  }
-
-  _besteZielFinden(gegner) { // Überschreiben: Schießen wenn überhaupt ein Gegner in Reichweite ist
-    return this._nahestesZiel(gegner); // Nahestes Ziel als Auslöser
+  _istUnterMaus(mx, my) { // Klick-Trefferprüfung: Lehrer ODER Richtungs-Punkt
+    return dist(mx, my, this.x, this.y) <= this.radius + 8 // Klick auf den Lehrer
+        || dist(mx, my, this.zielPunkt.x, this.zielPunkt.y) <= 22; // Klick auf den Zielpunkt-Marker
   }
 
   _schiessen() { // Mehrere Teilchen in Schussrichtung mit Streuung abfeuern
@@ -117,6 +97,18 @@ class Motsious extends Turm { // Hr. Motsious – sitzt am Teilchenbeschleuniger
 
   draw() { // Eigenständige Zeichenmethode mit Beschleuniger-Visualisierung
     super.draw(); // Basisturm zuerst
+    // Strahl-Linie vom Lehrer zum Zielpunkt – bei Auswahl deutlich sichtbar, sonst dezent
+    let alphaLinie = this.ausgewaehlt ? 160 : 35; // Hell wenn ausgewählt, sonst nur Andeutung
+    stroke(180, 100, 220, alphaLinie); // Lila Strahl-Linie
+    strokeWeight(this.ausgewaehlt ? 2 : 1); // Etwas dicker wenn ausgewählt
+    if (this.ausgewaehlt) drawingContext.setLineDash([6, 5]); // Gestrichelt bei Auswahl
+    // Linie über das gesamte Spielfeld in Schussrichtung zeichnen
+    let endX = this.x + cos(this.richtung) * 1500; // Endpunkt weit hinter dem Spielfeld
+    let endY = this.y + sin(this.richtung) * 1500;
+    line(this.x, this.y, endX, endY); // Strahl-Linie
+    if (this.ausgewaehlt) drawingContext.setLineDash([]); // Strich-Muster zurücksetzen
+
+    // Beschleuniger-Rohr (rotiert mit Schussrichtung)
     push(); // Zustand sichern
     translate(this.x, this.y); // Zur Turmposition
     rotate(this.richtung); // In Schussrichtung drehen
@@ -125,6 +117,12 @@ class Motsious extends Turm { // Hr. Motsious – sitzt am Teilchenbeschleuniger
     fill(180, 100, 220, 200); // Lila Mündungs-Glühen
     ellipse(38, 0, 8, 8); // Mündung
     pop(); // Zustand wiederherstellen
+
+    // Zielpunkt-Marker (kleines Ziel-Symbol)
+    noStroke(); fill(180, 100, 220, this.ausgewaehlt ? 230 : 130); // Lila Marker
+    ellipse(this.zielPunkt.x, this.zielPunkt.y, 14, 14); // Äußerer Punkt
+    fill(255, 255, 255, this.ausgewaehlt ? 230 : 130); // Weißer innerer Punkt
+    ellipse(this.zielPunkt.x, this.zielPunkt.y, 6, 6); // Innenpunkt (wie ein Fadenkreuz)
   }
 }
 

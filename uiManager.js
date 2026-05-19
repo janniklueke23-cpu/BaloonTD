@@ -420,6 +420,42 @@ class UIManager { // Klasse für alle Spieloberflächen-Elemente
     if (mx > this.panelX) return; // Maus im Panel: keine Vorschau
     if (my < this.hudHoehe) return; // Maus im HUD: keine Vorschau
     let gueltig = this.gs.platzierungGueltig(mx, my); // Ist diese Position gültig?
+    // ── Spezialfall Hr. Muzius: 2-Klick-Platzierung (Lehrer + Schussrichtung) ──
+    if (this.gs.ausgewaehlteTurmTyp === 'motsious') { // Im Muzius-Modus
+      if (this.gs.motsiousPunkt1) { // Erster Klick (Lehrer-Standort) schon erfolgt
+        let abstand = dist(mx, my, this.gs.motsiousPunkt1.x, this.gs.motsiousPunkt1.y); // Abstand
+        let zweitGueltig = abstand >= 30; // Mindestabstand für sinnvolle Richtung
+        // Lehrer-Marker an Punkt 1
+        noStroke(); fill(180, 100, 220, 220); // Lila für Lehrer-Standort
+        ellipse(this.gs.motsiousPunkt1.x, this.gs.motsiousPunkt1.y, 24, 24); // Standort-Punkt
+        // Strahl-Linie über das gesamte Spielfeld in Richtung Maus
+        stroke(zweitGueltig ? color(180, 100, 220, 200) : color(255, 100, 100, 200));
+        strokeWeight(2);
+        drawingContext.setLineDash([8, 6]); // Gestrichelt
+        let dx = mx - this.gs.motsiousPunkt1.x;
+        let dy = my - this.gs.motsiousPunkt1.y;
+        let laenge = Math.sqrt(dx*dx + dy*dy) || 1;
+        let endX = this.gs.motsiousPunkt1.x + (dx/laenge) * 1500; // Verlängerung weit hinaus
+        let endY = this.gs.motsiousPunkt1.y + (dy/laenge) * 1500;
+        line(this.gs.motsiousPunkt1.x, this.gs.motsiousPunkt1.y, endX, endY); // Strahl
+        drawingContext.setLineDash([]); // Zurücksetzen
+        // Marker am Cursor
+        noStroke(); fill(zweitGueltig ? color(180, 100, 220, 220) : color(255, 100, 100, 200));
+        ellipse(mx, my, 14, 14); // Cursor-Marker
+        fill(255, 255, 255, 220); textAlign(CENTER, CENTER); textSize(13); textStyle(BOLD);
+        text(zweitGueltig ? '🎯 Klick: Schussrichtung setzen' : '⚠ Mindestabstand 30 Pixel', mx, my - 28);
+        textStyle(NORMAL);
+        return;
+      } else { // Noch kein Punkt: Hinweis "Lehrer platzieren"
+        noStroke();
+        fill(gueltig ? color(180, 100, 220, 200) : color(255, 100, 100, 200));
+        ellipse(mx, my, 24, 24); // Vorschau-Punkt
+        fill(255, 255, 255, 220); textAlign(CENTER, CENTER); textSize(13); textStyle(BOLD);
+        text('⚛ Klick: Lehrer-Standort wählen', mx, my - 28);
+        textStyle(NORMAL);
+        return;
+      }
+    }
     // ── Spezialfall Hr. Fight: bereits gesetzten ersten Punkt + Linie zur Maus zeigen ──
     if (this.gs.ausgewaehlteTurmTyp === 'fight') { // Im Fight-Modus
       if (this.gs.fightPunkt1) { // Erster Punkt schon gesetzt
