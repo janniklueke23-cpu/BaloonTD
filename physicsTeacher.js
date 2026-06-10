@@ -35,7 +35,7 @@ class Motsious extends Turm { // Hr. Motsious – sitzt am Teilchenbeschleuniger
         upgrades: [
           { name: 'Doppel-Strahl',  beschreibung: '2 Teilchen pro Schuss',       kosten: 80  },
           { name: 'Breiter Strahl', beschreibung: 'Größere Streuung, schneller', kosten: 160 },
-          { name: 'Quanten-Strom',  beschreibung: '5 Teilchen, schnellfeuer',     kosten: 290 }
+          { name: 'Quanten-Strom',  beschreibung: '3 Teilchen, schnellfeuer',     kosten: 290 }
         ]
       }
     ];
@@ -58,8 +58,8 @@ class Motsious extends Turm { // Hr. Motsious – sitzt am Teilchenbeschleuniger
         this.streuung = 0.32; // Größere Streuung
         this.feuerRate = 12; // Schneller schießen
       } else if (this.upgradeStufe === 3) { // Stufe 3: Quanten
-        this.teilchenProSchuss = 5; // Fünf Teilchen
-        this.feuerRate = 9; // Sehr schnell
+        this.teilchenProSchuss = 3; // Drei Teilchen
+        this.feuerRate = 7; // Sehr schnell
         this.streuung = 0.40; // Großer Streuwinkel
       }
     }
