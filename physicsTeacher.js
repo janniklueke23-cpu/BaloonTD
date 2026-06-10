@@ -26,16 +26,16 @@ class Motsious extends Turm { // Hr. Motsious – sitzt am Teilchenbeschleuniger
         name: 'Energie',
         upgrades: [
           { name: 'Stärkere Teilchen', beschreibung: 'Schaden x2',                 kosten: 80  },
-          { name: 'Längerer Strahl',   beschreibung: 'Reichweite +80px',            kosten: 160 },
-          { name: 'Plasma-Strom',      beschreibung: 'Schaden x4, durchdringend',   kosten: 290 }
+          { name: 'Längerer Strahl',   beschreibung: 'Reichweite wird erhöht',            kosten: 150 },
+          { name: 'Plasma-Strom',      beschreibung: 'Schaden x4, durchdringend',   kosten: 300 }
         ]
       },
       { // Pfad 1: Streuung – mehr Teilchen pro Schuss
         name: 'Streuung',
         upgrades: [
-          { name: 'Doppel-Strahl',  beschreibung: '2 Teilchen pro Schuss',       kosten: 80  },
-          { name: 'Breiter Strahl', beschreibung: 'Größere Streuung, schneller', kosten: 160 },
-          { name: 'Quanten-Strom',  beschreibung: '3 Teilchen, schnellfeuer',     kosten: 290 }
+          { name: 'Doppel-Strahl',  beschreibung: '2 Teilchen pro Schuss',       kosten: 130  },
+          { name: 'Breiter Strahl', beschreibung: 'Größere Streuung, schneller', kosten: 170 },
+          { name: 'Quanten-Strom',  beschreibung: '3 Teilchen, schnellfeuer',     kosten: 300 }
         ]
       }
     ];
