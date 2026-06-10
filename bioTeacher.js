@@ -19,7 +19,7 @@ class Pfister extends Turm { // Pfister-Klasse erbt von der Turm-Basisklasse
       { // Pfad 0: Stärke – mehr Schaden und längere Wirkung
         name: 'Stärke',
         upgrades: [
-          { name: 'Stärkere Säure', beschreibung: 'Säure-Schaden x2',            kosten: 60  },
+          { name: 'Stärkere Säure', beschreibung: 'Säure-Schaden',            kosten: 60  },
           { name: 'Zähe Säure',     beschreibung: 'Säure bleibt länger liegen',  kosten: 120 },
           { name: 'Klebrige Säure', beschreibung: 'Säure verlangsamt Schüler',   kosten: 210 }
         ]
@@ -38,7 +38,7 @@ class Pfister extends Turm { // Pfister-Klasse erbt von der Turm-Basisklasse
   _upgradeAnwenden() { // Upgrade-Effekte je nach gewähltem Pfad und Stufe anwenden
     if (this.upgradePfad === 0) { // Pfad 0: Stärke
       if (this.upgradeStufe === 1) { // Stufe 1: Stärkere Säure
-        this.saeureSchaden = 2; // Säureschaden verdoppeln
+        this.tickTimer = 15; // Säureschaden verdoppeln
       } else if (this.upgradeStufe === 2) { // Stufe 2: Zähe Säure
         this.saeureDauer = 240; // Säuredauer stark erhöhen
       } else if (this.upgradeStufe === 3) { // Stufe 3: Klebrige Säure
