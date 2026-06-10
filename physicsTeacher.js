@@ -60,7 +60,7 @@ class Motsious extends Turm { // Hr. Motsious – sitzt am Teilchenbeschleuniger
       } else if (this.upgradeStufe === 3) { // Stufe 3: Quanten
         this.teilchenProSchuss = 3; // Drei Teilchen
         this.feuerRate = 7; // Sehr schnell
-        this.streuung = 0.40; // Großer Streuwinkel
+        this.streuung = 0.30; // Großer Streuwinkel
       }
     }
   }
