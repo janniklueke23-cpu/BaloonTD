@@ -17,17 +17,17 @@ class Blech extends Turm { // Blech erbt von der Turm-Basisklasse
       { // Pfad 0: Schnellfeuer – Fokus auf hohe Feuerrate
         name: 'Schnellfeuer',
         upgrades: [
-          { name: 'Schneller Schießen',  beschreibung: 'Schnellere Feuerrate (+50%)', kosten: 70  },
+          { name: 'Schneller Schießen',  beschreibung: 'Schnellere Feuerrate', kosten: 70  },
           { name: 'Kreidestrom',         beschreibung: 'Verdoppelte Feuerrate', kosten: 140 },
-          { name: 'Doppelwurf',          beschreibung: 'Trifft 2 Ziele gleichzeitig',   kosten: 250 }
+          { name: 'Doppelwurf',          beschreibung: '2 Schüsse gleichzeitig',   kosten: 250 }
         ]
       },
       { // Pfad 1: Sprengkraft – Fokus auf Schaden und Explosionen
         name: 'Sprengkraft',
         upgrades: [
-          { name: 'Größere Kreide',  beschreibung: 'Schaden x3, trifft 2 Ballons',     kosten: 80  },
-          { name: 'Mehr Reichweite', beschreibung: 'Reichweite +40px',                  kosten: 100 },
-          { name: 'Kreidebombe',     beschreibung: 'Explosionsschaden beim Aufprall',   kosten: 240 }
+          { name: 'Explosion',  beschreibung: 'Geringer Flächenschaden',     kosten: 100  },
+          { name: 'Mehr Reichweite', beschreibung: 'Höhere Reichweite',    kosten: 100 },
+          { name: 'Kreidebombe',     beschreibung: 'Max. Flächenschaden',   kosten: 300 }
         ]
       }
     ];
@@ -36,21 +36,19 @@ class Blech extends Turm { // Blech erbt von der Turm-Basisklasse
   _upgradeAnwenden() { // Upgrade-Effekte je nach gewähltem Pfad und Stufe anwenden
     if (this.upgradePfad === 0) { // Pfad 0: Schnellfeuer
       if (this.upgradeStufe === 1) { // Stufe 1: Feuerrate erhöhen
-        this.feuerRate = 45; // 40% schneller
+        this.feuerRate = 45; // 50% schneller
       } else if (this.upgradeStufe === 2) { // Stufe 2: Noch schneller
-        this.feuerRate = 30; // Nochmals schneller
+        this.feuerRate = 30; // doppelt schneller
       } else if (this.upgradeStufe === 3) { // Stufe 3: Zweites Ziel beschießen
         this.doppelwurf = true; // Doppelwurf aktivieren
       }
     } else { // Pfad 1: Sprengkraft
       if (this.upgradeStufe === 1) { // Stufe 1: Größere Kreide
-        this.schaden = 3; // Schaden verdreifachen
-        this.durchdringen = true; // Durchdringen aktivieren
-        this.durchdrigenAnzahl = 2; // Bis zu 2 Ballons treffen
+        this.splashradius = 45
       } else if (this.upgradeStufe === 2) { // Stufe 2: Mehr Reichweite
-        this.reichweite += 40; // Reichweite erhöhen
+        this.reichweite += 50; // Reichweite erhöhen
       } else if (this.upgradeStufe === 3) { // Stufe 3: Kreidebombe
-        this.splashRadius = 45; // Explosionsradius aktivieren
+        this.splashRadius = 70; // Explosionsradius aktivieren
       }
     }
   }
