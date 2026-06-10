@@ -3,7 +3,7 @@ class Pfister extends Turm { // Pfister-Klasse erbt von der Turm-Basisklasse
     super(x, y, 'pfister', 350); // Basisklasse (Kosten passend zu Shop)
     this.name = 'Herr Pfister'; // Anzeigename des Lehrers
     this.reichweite = 115; // Wirkungsbereich in Pixeln
-    this.feuerRate = 85; // Feuerrate in Frames zwischen Schüssen
+    this.feuerRate = 90; // Feuerrate in Frames zwischen Schüssen
     this.schaden = 1; // Direktschaden pro Treffer
     this.kopfFarbe = [240, 200, 160]; // Hautfarbe des Kopfes
     this.koerperFarbe = [120, 80, 30]; // Braune bierbefleckte Körperfarbe
@@ -19,17 +19,17 @@ class Pfister extends Turm { // Pfister-Klasse erbt von der Turm-Basisklasse
       { // Pfad 0: Stärke – mehr Schaden und längere Wirkung
         name: 'Stärke',
         upgrades: [
-          { name: 'Stärkere Säure', beschreibung: 'Höhere Schadensrate',            kosten: 130  },
-          { name: 'Zähe Säure',     beschreibung: 'Säure bleibt länger liegen',  kosten: 120 },
-          { name: 'Klebrige Säure', beschreibung: 'Säure verlangsamt Schüler',   kosten: 230 }
+          { name: 'Flotte Finger', beschreibung: 'Höhere Feuerrate',            kosten: 130  },
+          { name: 'Hefe-Weizen',     beschreibung: 'Säure bleibt länger liegen',  kosten: 170 },
+          { name: 'Betrunkene Schüler', beschreibung: 'Säure verlangsamt Schüler',   kosten: 250 }
         ]
       },
       { // Pfad 1: Explosion – größere Fläche und mehrere Wolken
         name: 'Explosion',
         upgrades: [
-          { name: 'Größere Wolke',      beschreibung: 'Säureradius +22px',           kosten: 160 },
-          { name: 'Mehrfach-Spritzer',  beschreibung: 'Höhere Wurfrate',     kosten: 210 },
-          { name: 'Toxischer Nebel',    beschreibung: 'Schaden x3, verlangsamt immer', kosten: 320 }
+          { name: '0,5l Flaschen',      beschreibung: 'Höherer Säureradius',  kosten: 160 },
+          { name: 'Schneller Werfer',  beschreibung: 'Höhere Wurfrate',     kosten: 190 },
+          { name: 'Dreier-Packs',    beschreibung: 'Mehrfachwurf', kosten: 330 }
         ]
       }
     ];
@@ -38,7 +38,7 @@ class Pfister extends Turm { // Pfister-Klasse erbt von der Turm-Basisklasse
   _upgradeAnwenden() { // Upgrade-Effekte je nach gewähltem Pfad und Stufe anwenden
     if (this.upgradePfad === 0) { // Pfad 0: Stärke
       if (this.upgradeStufe === 1) { // Stufe 1: Stärkere Säure
-        this.tickTimer = 60; // Säureschaden verdoppeln
+        this.feuerrate = 60; // wirft jede Sekunde
       } else if (this.upgradeStufe === 2) { // Stufe 2: Zähe Säure
         this.saeureDauer = 240; // Säuredauer stark erhöhen
       } else if (this.upgradeStufe === 3) { // Stufe 3: Klebrige Säure
@@ -46,12 +46,11 @@ class Pfister extends Turm { // Pfister-Klasse erbt von der Turm-Basisklasse
       }
     } else { // Pfad 1: Explosion
       if (this.upgradeStufe === 1) { // Stufe 1: Größere Wolke
-        this.saeureRadius += 20; // Radius vergrößern
+        this.saeureRadius += 17; // Radius vergrößern
       } else if (this.upgradeStufe === 2) { // Stufe 2: Mehrfach-Spritzer
-        this.feuerrate = 65; // Wirft alle 65 frames
+        this.feuerrate = 75; // Wirft alle 75 frames
       } else if (this.upgradeStufe === 3) { // Stufe 3: Toxischer Nebel
-        this.tickTimer = 20; // Schnellerer Giftschaden
-        this.saeureVerlangsamt = true; // Verlangsamt immer
+        this.mehrfachSpritzer = true; 
       }
     }
   }
