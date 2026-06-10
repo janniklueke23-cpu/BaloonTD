@@ -7,8 +7,8 @@ class Brust extends Turm { // Hr. Brust – schießt Blitze die zwischen mehrere
     this.schaden = 2; // Schaden pro Blitz
     this.kopfFarbe = [225, 200, 175]; // Hautfarbe des Kopfes
     this.koerperFarbe = [220, 180, 30]; // Gelbes Hemd – elektrisch
-    this.kettenAnzahl = 2; // Anzahl Kettensprünge pro Blitz
-    this.kettenReichweite = 80; // Maximaler Sprung-Abstand zwischen Schülern
+    this.kettenAnzahl = 1; // Anzahl Kettensprünge pro Blitz
+    this.kettenReichweite = 60; // Maximaler Sprung-Abstand zwischen Schülern
     this.aktiveBlitze = []; // Liste sichtbarer Blitz-Animationen
     this.kontinuierlich = false; // Stufe 3 Pfad 1: Dauer-Blitz
   }
@@ -18,17 +18,17 @@ class Brust extends Turm { // Hr. Brust – schießt Blitze die zwischen mehrere
       { // Pfad 0: Schaden – mehr Schaden und Kettenglieder
         name: 'Schaden',
         upgrades: [
-          { name: 'Stärkere Blitze', beschreibung: 'Schaden x2',                     kosten: 90  },
-          { name: 'Mehr Ketten',     beschreibung: 'Springt zwischen 4 Schülern',     kosten: 175 },
-          { name: 'Donnerschlag',    beschreibung: 'Schaden x4, panzerbrechend',      kosten: 310 }
+          { name: 'Stärkere Blitze', beschreibung: 'Dreifache Verkettung',                     kosten: 170  },
+          { name: 'Mehr Ketten',     beschreibung: 'Höhere Kettenreichweite',     kosten: 170 },
+          { name: 'Donnerschlag',    beschreibung: 'Sechsfache Verkettung',      kosten: 350 }
         ]
       },
       { // Pfad 1: Tempo – schneller und größere Reichweite
         name: 'Tempo',
         upgrades: [
-          { name: 'Schnellfeuer',  beschreibung: 'Feuerrate +40%',                  kosten: 90  },
-          { name: 'Mehr Reichweite', beschreibung: 'Reichweite +50px',              kosten: 175 },
-          { name: 'Gewitter',      beschreibung: 'Dauerblitz, springt 6 Schüler',   kosten: 310 }
+          { name: 'Schnellfeuer',  beschreibung: 'Feuerrate +40%',                  kosten: 100  },
+          { name: 'Mehr Reichweite', beschreibung: 'Höhere Reichweite',              kosten: 140 },
+          { name: 'Gewitter',      beschreibung: 'Dauerblitz',   kosten: 350 }
         ]
       }
     ];
@@ -37,22 +37,19 @@ class Brust extends Turm { // Hr. Brust – schießt Blitze die zwischen mehrere
   _upgradeAnwenden() { // Upgrade-Effekte je nach Pfad und Stufe anwenden
     if (this.upgradePfad === 0) { // Pfad 0: Schaden
       if (this.upgradeStufe === 1) { // Stufe 1: Stärkere Blitze
-        this.schaden = 4; // Verdoppelter Schaden
+        this.kettenanzahl = 3; // Verdoppelter Schaden
       } else if (this.upgradeStufe === 2) { // Stufe 2: Mehr Ketten
-        this.kettenAnzahl = 4; // Springt auf 4 Schüler
+        this.kettenReichweite = 100; // Springt auf 4 Schüler
       } else if (this.upgradeStufe === 3) { // Stufe 3: Donnerschlag
-        this.schaden = 8; // Vierfacher Schaden
-        this.panzerbrechend = true; // Panzerbrechend
+        this.kettenanzahl = 6; // Vierfacher Schaden
       }
     } else { // Pfad 1: Tempo
       if (this.upgradeStufe === 1) { // Stufe 1: Schnellfeuer
-        this.feuerRate = Math.floor(this.feuerRate * 0.6); // 40% schneller
+        this.feuerRate = 40; // 40% schneller
       } else if (this.upgradeStufe === 2) { // Stufe 2: Mehr Reichweite
         this.reichweite += 50; // Reichweite erhöhen
-        this.kettenReichweite += 30; // Auch Sprung-Reichweite erhöhen
       } else if (this.upgradeStufe === 3) { // Stufe 3: Gewitter
-        this.kettenAnzahl = 6; // 6 Sprünge
-        this.feuerRate = Math.floor(this.feuerRate * 0.5); // Nochmal schneller
+        this.feuerRate = 15; // Nochmal schneller
         this.kontinuierlich = true; // Dauerblitz
       }
     }
