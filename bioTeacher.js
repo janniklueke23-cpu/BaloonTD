@@ -19,17 +19,17 @@ class Pfister extends Turm { // Pfister-Klasse erbt von der Turm-Basisklasse
       { // Pfad 0: Stärke – mehr Schaden und längere Wirkung
         name: 'Stärke',
         upgrades: [
-          { name: 'Stärkere Säure', beschreibung: 'Säure-Schaden',            kosten: 60  },
+          { name: 'Stärkere Säure', beschreibung: 'Höhere Schadensrate',            kosten: 130  },
           { name: 'Zähe Säure',     beschreibung: 'Säure bleibt länger liegen',  kosten: 120 },
-          { name: 'Klebrige Säure', beschreibung: 'Säure verlangsamt Schüler',   kosten: 210 }
+          { name: 'Klebrige Säure', beschreibung: 'Säure verlangsamt Schüler',   kosten: 230 }
         ]
       },
       { // Pfad 1: Explosion – größere Fläche und mehrere Wolken
         name: 'Explosion',
         upgrades: [
-          { name: 'Größere Wolke',      beschreibung: 'Säureradius +22px',           kosten: 60  },
-          { name: 'Mehrfach-Spritzer',  beschreibung: '3 Wolken beim Einschlag',     kosten: 120 },
-          { name: 'Toxischer Nebel',    beschreibung: 'Schaden x3, verlangsamt immer', kosten: 210 }
+          { name: 'Größere Wolke',      beschreibung: 'Säureradius +22px',           kosten: 160 },
+          { name: 'Mehrfach-Spritzer',  beschreibung: 'Höhere Wurfrate',     kosten: 210 },
+          { name: 'Toxischer Nebel',    beschreibung: 'Schaden x3, verlangsamt immer', kosten: 320 }
         ]
       }
     ];
@@ -38,7 +38,7 @@ class Pfister extends Turm { // Pfister-Klasse erbt von der Turm-Basisklasse
   _upgradeAnwenden() { // Upgrade-Effekte je nach gewähltem Pfad und Stufe anwenden
     if (this.upgradePfad === 0) { // Pfad 0: Stärke
       if (this.upgradeStufe === 1) { // Stufe 1: Stärkere Säure
-        this.tickTimer = 15; // Säureschaden verdoppeln
+        this.tickTimer = 60; // Säureschaden verdoppeln
       } else if (this.upgradeStufe === 2) { // Stufe 2: Zähe Säure
         this.saeureDauer = 240; // Säuredauer stark erhöhen
       } else if (this.upgradeStufe === 3) { // Stufe 3: Klebrige Säure
@@ -46,11 +46,11 @@ class Pfister extends Turm { // Pfister-Klasse erbt von der Turm-Basisklasse
       }
     } else { // Pfad 1: Explosion
       if (this.upgradeStufe === 1) { // Stufe 1: Größere Wolke
-        this.saeureRadius += 22; // Radius vergrößern
+        this.saeureRadius += 20; // Radius vergrößern
       } else if (this.upgradeStufe === 2) { // Stufe 2: Mehrfach-Spritzer
-        this.mehrfachSpritzer = true; // Drei Wolken beim Einschlag aktivieren
+        this.feuerrate = 65; // Wirft alle 65 frames
       } else if (this.upgradeStufe === 3) { // Stufe 3: Toxischer Nebel
-        this.saeureSchaden = 3; // Schaden verdreifachen
+        this.tickTimer = 20; // Schnellerer Giftschaden
         this.saeureVerlangsamt = true; // Verlangsamt immer
       }
     }
