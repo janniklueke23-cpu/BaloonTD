@@ -26,7 +26,7 @@ class Blech extends Turm { // Blech erbt von der Turm-Basisklasse
         name: 'Sprengkraft',
         upgrades: [
           { name: 'Explosion',  beschreibung: 'Geringer Flächenschaden',     kosten: 100  },
-          { name: 'Mehr Reichweite', beschreibung: 'Höhere Reichweite',    kosten: 100 },
+          { name: 'Weitsicht', beschreibung: 'Höhere Reichweite',    kosten: 100 },
           { name: 'Kreidebombe',     beschreibung: 'Max. Flächenschaden',   kosten: 300 }
         ]
       }
