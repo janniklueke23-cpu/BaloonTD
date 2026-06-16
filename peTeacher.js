@@ -40,17 +40,17 @@ class Pfingsten extends Turm { // Pfingsten-Klasse erbt von der Turm-Basisklasse
       { // Pfad 0: Masse – mehr Ziele gleichzeitig verlangsamen
         name: 'Masse',
         upgrades: [
-          { name: 'Mehr Zuhörer',    beschreibung: '6 Schüler gleichzeitig',           kosten: 65  },
-          { name: 'Langeweile',      beschreibung: 'Macht kleinen Schaden',             kosten: 130 },
-          { name: 'Totale Langweile',beschreibung: 'Alle Schüler verlangsamt',          kosten: 220 }
+          { name: 'Mehr Zuhörer',    beschreibung: '6 Schüler gleichzeitig',           kosten: 100  },
+          { name: 'Langeweile',      beschreibung: 'Macht kleinen Schaden',             kosten: 150 },
+          { name: 'Totale Langweile',beschreibung: 'Alle Schüler werden verlangsamt',          kosten: 230 }
         ]
       },
       { // Pfad 1: Tiefe – stärkere Verlangsamung bis zum Einfrieren
         name: 'Tiefe',
         upgrades: [
-          { name: 'Tiefe Stimme', beschreibung: 'Verlangsamung 75% statt 50%',          kosten: 65  },
+          { name: 'Tiefe Stimme', beschreibung: 'Verlangsamung 75% statt 50%',          kosten: 80  },
           { name: 'Schlafstunde', beschreibung: 'Schüler bleiben manchmal stehen',       kosten: 130 },
-          { name: 'Hypnose',      beschreibung: 'Alle einfrieren, macht Schaden',        kosten: 220 }
+          { name: 'Hypnose',      beschreibung: 'Alle einfrieren',        kosten: 270 }
         ]
       }
     ];
@@ -74,7 +74,6 @@ class Pfingsten extends Turm { // Pfingsten-Klasse erbt von der Turm-Basisklasse
         this.stehenBleiben = true; // Zufälliges Einfrieren aktivieren (8% Chance)
       } else if (this.upgradeStufe === 3) { // Stufe 3: Hypnose – alles einfrieren + Schaden
         this.allesVerlangsamt = true; // Alle Schüler betreffen
-        this.machSchaden = true; // Schaden aktivieren
         this.verlangsamDauer = 200; // Verlangsamungsdauer stark erhöhen
       }
     }
