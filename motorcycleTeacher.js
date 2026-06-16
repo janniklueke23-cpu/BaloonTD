@@ -39,16 +39,16 @@ class Fight extends Turm { // Hr. Fight – fährt mit dem Motorrad zwischen 2 g
         name: 'Power',
         upgrades: [
           { name: 'Mehr Schaden',     beschreibung: 'Höhere Feuerrate',           kosten: 170  },
-          { name: 'Schneller Fahren', beschreibung: 'Höhere Fahrgeschwindigkeit',  kosten: 180 },
-          { name: 'Stachelräder',     beschreibung: 'Schaden x4, + Feuerrate', kosten: 320 }
+          { name: 'Schneller Fahren', beschreibung: 'Höhere Fahrgeschwindigkeit',  kosten: 200 },
+          { name: 'Stachelräder',     beschreibung: 'Schaden x4, + Feuerrate', kosten: 350 }
         ]
       },
       { // Pfad 1: Geschenke – Bomben & Feuer
         name: 'Geschenke',
         upgrades: [
-          { name: 'Christbaumkugeln', beschreibung: 'Wirft Bomben beim Fahren',   kosten: 90  },
-          { name: 'BBQ-Feuerspur',    beschreibung: 'Hinterlässt brennende Spur', kosten: 180 },
-          { name: 'Weihnachtsmann',   beschreibung: 'Größere Bomben + Feuer + Mütze', kosten: 320 }
+          { name: 'Weihnachtself', beschreibung: 'Wirft Kugeln beim Fahren',   kosten: 230  },
+          { name: 'BBQ-Feuerspur',    beschreibung: 'Hinterlässt brennende Spur', kosten: 250 },
+          { name: 'Weihnachtsmann',   beschreibung: 'Größere Bomben auf der Spur', kosten: 320 }
         ]
       }
     ];
