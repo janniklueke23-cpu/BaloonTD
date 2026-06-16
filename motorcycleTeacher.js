@@ -38,9 +38,9 @@ class Fight extends Turm { // Hr. Fight – fährt mit dem Motorrad zwischen 2 g
       { // Pfad 0: Power – schneller, mehr Schaden
         name: 'Power',
         upgrades: [
-          { name: 'Mehr Schaden',     beschreibung: 'Anlauf-Schaden x2',           kosten: 90  },
+          { name: 'Mehr Schaden',     beschreibung: 'Höhere Feuerrate',           kosten: 170  },
           { name: 'Schneller Fahren', beschreibung: 'Höhere Fahrgeschwindigkeit',  kosten: 180 },
-          { name: 'Stachelräder',     beschreibung: 'Schaden x4, größere Wendekreise', kosten: 320 }
+          { name: 'Stachelräder',     beschreibung: 'Schaden x4, + Feuerrate', kosten: 320 }
         ]
       },
       { // Pfad 1: Geschenke – Bomben & Feuer
@@ -57,12 +57,12 @@ class Fight extends Turm { // Hr. Fight – fährt mit dem Motorrad zwischen 2 g
   _upgradeAnwenden() { // Upgrade-Effekte anwenden
     if (this.upgradePfad === 0) { // Pfad 0: Power
       if (this.upgradeStufe === 1) { // Stufe 1: Mehr Schaden
-        this.schadenBoost = 2; // Doppelter Anlauf-Schaden
+        this.feuerRate = 22; // Doppelter Anlauf-Schaden
       } else if (this.upgradeStufe === 2) { // Stufe 2: Schneller Fahren
         this.fahrTempoBoost = 1.6; // 60% schneller fahren
       } else if (this.upgradeStufe === 3) { // Stufe 3: Stachelräder
         this.schadenBoost = 4; // Vierfacher Schaden
-        this.kreisRadius = 38; // Größere Wendekreise
+        this.feuerrate = 17; // Größere Wendekreise
         this.stachel = true; // Stacheln aktivieren
       }
     } else { // Pfad 1: Geschenke
