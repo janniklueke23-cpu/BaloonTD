@@ -18,16 +18,16 @@ class Brust extends Turm { // Hr. Brust – schießt Blitze die zwischen mehrere
       { // Pfad 0: Schaden – mehr Schaden und Kettenglieder
         name: 'Schaden',
         upgrades: [
-          { name: 'Stärkere Blitze', beschreibung: 'Dreifache Verkettung',                     kosten: 170  },
-          { name: 'Mehr Ketten',     beschreibung: 'Höhere Kettenreichweite',     kosten: 170 },
-          { name: 'Donnerschlag',    beschreibung: 'Sechsfache Verkettung',      kosten: 350 }
+          { name: 'Verkettung', beschreibung: 'Dreifache Verkettung',                     kosten: 200  },
+          { name: 'Kettenreichweite',     beschreibung: 'Höhere Kettenreichweite',     kosten: 170 },
+          { name: 'Lange Verkettung',    beschreibung: 'Sechsfache Verkettung',      kosten: 350 }
         ]
       },
       { // Pfad 1: Tempo – schneller und größere Reichweite
         name: 'Tempo',
         upgrades: [
-          { name: 'Schnellfeuer',  beschreibung: 'Feuerrate +40%',                  kosten: 100  },
-          { name: 'Mehr Reichweite', beschreibung: 'Höhere Reichweite',              kosten: 140 },
+          { name: 'Schnellfeuer',  beschreibung: 'Höhere Feuerrate',             kosten: 130  },
+          { name: 'Mehr Reichweite', beschreibung: 'Höhere Reichweite',              kosten: 180 },
           { name: 'Gewitter',      beschreibung: 'Dauerblitz',   kosten: 350 }
         ]
       }
