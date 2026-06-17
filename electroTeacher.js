@@ -37,11 +37,11 @@ class Brust extends Turm { // Hr. Brust – schießt Blitze die zwischen mehrere
   _upgradeAnwenden() { // Upgrade-Effekte je nach Pfad und Stufe anwenden
     if (this.upgradePfad === 0) { // Pfad 0: Schaden
       if (this.upgradeStufe === 1) { // Stufe 1: Stärkere Blitze
-        this.kettenanzahl = 3; // Verdoppelter Schaden
+        this.kettenAnzahl = 3; // Verdoppelter Schaden
       } else if (this.upgradeStufe === 2) { // Stufe 2: Mehr Ketten
         this.kettenReichweite = 100; // Springt auf 4 Schüler
       } else if (this.upgradeStufe === 3) { // Stufe 3: Donnerschlag
-        this.kettenanzahl = 6; // Vierfacher Schaden
+        this.kettenAnzahl = 6; // Vierfacher Schaden
       }
     } else { // Pfad 1: Tempo
       if (this.upgradeStufe === 1) { // Stufe 1: Schnellfeuer
