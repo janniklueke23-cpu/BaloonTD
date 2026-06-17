@@ -3,7 +3,7 @@
 class EconomyManager { // Klasse für die gesamte Spielwirtschaft
   constructor(spielZustand) { // Konstruktor erhält den zentralen Spielzustand
     this.gs = spielZustand; // Referenz auf den Spielzustand speichern
-    this.wellenBonus = 25000000; // Basisbonus in Münzen am Ende jeder Welle
+    this.wellenBonus = 30; // Basisbonus in Münzen am Ende jeder Welle
     this.muenzenDieseWelle = 0; // Zählt die in der aktuellen Welle verdienten Münzen
   }
 
