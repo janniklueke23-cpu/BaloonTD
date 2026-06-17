@@ -7,8 +7,8 @@ class Brust extends Turm { // Hr. Brust – schießt Blitze die zwischen mehrere
     this.schaden = 2; // Schaden pro Blitz
     this.kopfFarbe = [225, 200, 175]; // Hautfarbe des Kopfes
     this.koerperFarbe = [220, 180, 30]; // Gelbes Hemd – elektrisch
-    this.kettenAnzahl = 3; // Anzahl Kettensprünge pro Blitz
-    this.kettenReichweite = 100; // Maximaler Sprung-Abstand zwischen Schülern
+    this.kettenAnzahl = 1; // Anzahl Kettensprünge pro Blitz
+    this.kettenReichweite = 60; // Maximaler Sprung-Abstand zwischen Schülern
     this.aktiveBlitze = []; // Liste sichtbarer Blitz-Animationen
     this.kontinuierlich = false; // Stufe 3 Pfad 1: Dauer-Blitz
   }
