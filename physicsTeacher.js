@@ -2,8 +2,8 @@ class Motsious extends Turm { // Hr. Motsious – sitzt am Teilchenbeschleuniger
   constructor(x, y) { // Konstruktor mit Positions-Parametern
     super(x, y, 'motsious', 400); // Basisklasse mit Typ und Kosten initialisieren
     this.name = 'Hr. Motsious'; // Anzeigename des Lehrers
-    this.reichweite = 200; // Lange Wirkungsweite (Strahl-Reichweite)
-    this.feuerRate = 18; // Sehr hohe Schussfrequenz – Strahl-Effekt
+    this.reichweite = 2000; // Lange Wirkungsweite (Strahl-Reichweite)
+    this.feuerRate = 10; // Sehr hohe Schussfrequenz – Strahl-Effekt
     this.schaden = 1; // Schaden pro Teilchen
     this.kopfFarbe = [225, 200, 180]; // Hautfarbe des Kopfes
     this.koerperFarbe = [70, 70, 110]; // Lila-Hemd für Wissenschaftler
