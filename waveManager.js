@@ -8,19 +8,19 @@ const LEVEL_WELLEN = { // Wellen-Definitionen für alle Level
     // Welle 1: nur 5 Rote, sehr langsam zum Üben
     [{ typ: 'rot', anzahl: 5, verzoegerung: 40 }],
     // Welle 2: 8 Rote
-    [{ typ: 'rot', anzahl: 8, verzoegerung: 32 }],
+    [{ typ: 'rot', anzahl: 8, verzoegerung: 35 }],
     // Welle 3: Rot + erste Blaue
-    [{ typ: 'rot', anzahl: 8, verzoegerung: 28 }, { typ: 'blau', anzahl: 3, verzoegerung: 35 }],
+    [{ typ: 'rot', anzahl: 8, verzoegerung: 30 }, { typ: 'blau', anzahl: 3, verzoegerung: 35 }],
     // Welle 4: mehr Blaue
-    [{ typ: 'rot', anzahl: 6, verzoegerung: 22 }, { typ: 'blau', anzahl: 8, verzoegerung: 30 }],
+    [{ typ: 'rot', anzahl: 6, verzoegerung: 25 }, { typ: 'blau', anzahl: 8, verzoegerung: 32 }],
     // Welle 5: nur Blaue
-    [{ typ: 'blau', anzahl: 12, verzoegerung: 28 }],
+    [{ typ: 'blau', anzahl: 12, verzoegerung: 30 }],
     // Welle 6: erste Grüne
     [{ typ: 'blau', anzahl: 10, verzoegerung: 25 }, { typ: 'gruen', anzahl: 3, verzoegerung: 40 }],
     // Welle 7: Mix
     [{ typ: 'rot', anzahl: 8, verzoegerung: 15 }, { typ: 'blau', anzahl: 8, verzoegerung: 25 }, { typ: 'gruen', anzahl: 5, verzoegerung: 35 }],
     // Welle 8 (Boss-Welle Level 1)
-    [{ typ: 'gruen', anzahl: 8, verzoegerung: 25 }, { typ: 'gelb', anzahl: 2, verzoegerung: 60 }]
+    [{ typ: 'gruen', anzahl: 8, verzoegerung: 25 }, { typ: 'gelb', anzahl: 2, verzoegerung: 50 }]
   ],
 
   2: [ // Level 2: Die Mensa (12 Wellen)
