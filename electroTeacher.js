@@ -26,7 +26,7 @@ class Brust extends Turm { // Hr. Brust – schießt Blitze die zwischen mehrere
       { // Pfad 1: Tempo – schneller und größere Reichweite
         name: 'Tempo',
         upgrades: [
-          { name: 'Schnellfeuer',  beschreibung: 'Höhere Feuerrate',             kosten: 130  },
+          { name: 'Bosskämpfer',  beschreibung: 'Mehr Bossschaden',             kosten: 130  },
           { name: 'Mehr Reichweite', beschreibung: 'Höhere Reichweite',              kosten: 180 },
           { name: 'Gewitter',      beschreibung: 'Dauerblitz',   kosten: 350 }
         ]
@@ -45,7 +45,7 @@ class Brust extends Turm { // Hr. Brust – schießt Blitze die zwischen mehrere
       }
     } else { // Pfad 1: Tempo
       if (this.upgradeStufe === 1) { // Stufe 1: Schnellfeuer
-        this.feuerRate = 40; // 40% schneller
+        this.schaden = 4
       } else if (this.upgradeStufe === 2) { // Stufe 2: Mehr Reichweite
         this.reichweite += 50; // Reichweite erhöhen
       } else if (this.upgradeStufe === 3) { // Stufe 3: Gewitter
